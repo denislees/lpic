@@ -49,3 +49,12 @@ http://localhost:901
 
 # webmin
 
+TCP Wrappers
+
+/etc/hosts.deny
+/etc/hosts.allow
+	Sempre eh a lista do allow que vai sobreescrever a lista do deny.
+	
+# nfsd
+# portmap
+	servicos para o nfs 
