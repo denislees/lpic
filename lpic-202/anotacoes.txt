@@ -1,0 +1,51 @@
+Samba
+
+Para o que o samba funcione precisa ter o usuario no windows e tambem no linux.
+
+# useradd -m quesada 
+	(m: machine, ou seja, adiciona usuario para a maquina. sem a pasta /home)
+
+# useradd -m fabio
+	adiciona o usuario fabio sem a conta.
+
+# gpasswd -a quesada gerencia 
+	adiciona o usuario quesada para o grupo gerenecia
+	(poderia ser # adduser quesada -g gerencia)
+
+# smbpasswd
+	-a : adiciona um novo usuario
+	-x : exclude remove um usuario
+	-m : machine adiciona um uma conta de computador
+	-d : disable user
+	-e : enable user
+
+
+# pdbedit
+	-a : adiciona
+	-L : lista os ususario
+	-r : altera as opcoes
+	-x : deleta
+	-m : adiciona uma conta de computador
+	-v : lista de modo detalhada (ou -vv -vvv)
+
+# testparm
+	testa o arquivo de configuracao do samba
+	/etc/samba/smb.conf
+
+/etc/samba/smb.conf
+	arquivo de configuracao do samba.
+
+/var/log/samba/%m.log
+	arquivo de log.
+
+Para o samba funcionar, precisa existir o usuario no linux e depois precisa ser adicionado no samba com o comando smbpasswd -a <usuario>.
+
+# swat
+
+http://localhost:901
+	ferramenta para administrar o samba pelo navegador.
+
+	porta padrao 901
+
+# webmin
+
