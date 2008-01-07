@@ -169,4 +169,58 @@ diskfree para verificar se a mudança foi realizada com sucesso.
 /etc/hosts.deny
 	os arquivos que especificam as regras do ipdtables.
 
+ZONE
+----
+SOA	Start of Authority	Defines a DNS Zone
+NS	Name Server		Identifies servers, delegates subdomains
+
+Base
+----
+A	IPv4 Address		name to address translation
+AAAA	IPv6 Address		name to ipv6 address translation
+PRT	Pointer			Address to name translation (reverse)
+MX	Mail Exchange 		controls email routing
+
+Security and DNSSEC
+-------------------
+DS	Delegation Signer	Hashos signed child zone's key-signing key
+DNSKEY	public key		Public key for a DNS name
+NSEC	next secure		used with DNSSEC for negative answers
+NSEC3	next secure v3		used with DNSSEC for negative answers
+RRSIG	signature		signed, authenticated resources record set
+DLV	lookaside		nonroot trust anchor for DNSSEC
+SSHFP	SSH Fingerprint		SSH host key, allows verification via DNS
+SPF	sender policy		indentifies mail servers, inhibits forging
+DKIM	domain keys		verify email sender and message integrity
+
+Option
+......
+CNAME	Canonical Name		Nicknames or aliases for a host
+SRV	services		gives locations of well-know services
+TXT	text			comments or untyped information
+
+
+email para o administrador do dominio: "hostmaster.atrust.com"
+seria: hostmaster@atrust.com 
+ou seja, substitue o primeiro ponto por arroba @
+
+configuracao do bind9
+
+view "internal" {
+	match-clients { our_nets; }; // only our network
+	recursion yes; // internal clients only
+	zone "examples.com" { //complete view of the zone
+		type master;
+		file "example-internal.db";
+	};
+};	
+
+view "external" {
+	match-clients { any; };
+	recursion no;
+	zone "examples.com" {
+		type master;
+		file "example-external.db";
+	};
+};
 

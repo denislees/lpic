@@ -58,3 +58,81 @@ TCP Wrappers
 # nfsd
 # portmap
 	servicos para o nfs 
+
+openssl ca-certificates
+
+ssl -nfs 443
+
+# man a2ensite
+
+a2ensite default-ssl
+man a2enmod
+a2enmod ssl
+
+# openssl genrsa -des3 -out serkey 1024
+# openssl rsa -in serkey -out server.key
+# openssl req -new -key server.key out server.csr
+# openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
+
+default-ssl 
+
+	/etc/apache2/sites-available/default-ssl
+ssl certificateFile 
+	SSLCertificateFile 	/etc/ssl/certs/server.crt	
+	SSLCertificateKeyFile	/etc/ssl/private/server.key
+
+vsFTPd: very secure file transfer protocol daemon
+	/etc/ftpusers
+	lista de usuarios que o ftp nao permite logar como. (e.g., root)
+
+/etc/vsftpd.conf
+	arquivo de configuracao do vsftp.
+
+isc-dhcp-server
+	servidor de DHCP
+
+/etc/dhcp/dhcp.conf
+	arquivo de configuracao do servidor dhcp
+/var/lib/dhcp/dhcpd.leases
+	arquivo que ficam os ips atrelados aos macs
+
+# service isc-dhcp-server start|stop
+
+/etc/default/isc-dhcp-server
+	arquivo de configuracao do isc-dhcp-server para configurar qual placa de rede deve fornecer os IPs (executar o servico)
+
+/etc/dhcp/dhcp.conf
+	host lab01 {
+		hardware ethernet	00:00:00:00:00:00;
+		fixed-address		192.168.0.1;
+		option routers		192.168.0.1;
+	}
+
+mail transport agent (MTA)
+	principal quem entrega os e-mails
+	{ sendmail, postfix, qmail, exim }
+
+mail user agent (MUA)
+	clientes de email
+	{ evolution, thunderbird, outlook }
+
+mail delivery agent (MDA)
+
+Enviar email pelo telnet
+conectar na porta 25
+
+	helo <anything>
+	mail from: <remetente>
+	rcpt to: <destino>
+	data
+	<mensagem>
+	.
+
+receber email pelo telnet
+conectar na porta 110
+	user <usuario>
+	pass <senha>
+	list
+	retr <numero>
+
+
