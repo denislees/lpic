@@ -1,0 +1,334 @@
+resumo-102.txt
+
+
+SHELL, SCRIPTING, AND DATA MANAGEMENT
+
+105.1: Customize and Use the Shell Environment
+
+- Shell é apresentado por uma interface completamente por texto.
+- Shell pode ser divido em dois tipos:
+	- Derivados do bourne shell (sh)
+	- Derivados do c-shell (tcsh)
+- Shells sao separados do kernel e sao executados assim como qualquer aplicativo.
+- Shell podem ser customizados alterando variáveis.
+- Shells podem utilizar arquivos de configuraçao na inicializaçao.
+- Shells passam variaveis de ambiente (envrironment variable) para os seus filhos.
+
+Bash
+- bash é descendente do sh.
+- variáveis locais nao sao passados para os outros processos.
+- variáveis de ambiente (environment variables) sao passados para outros processos.
+- toda variável é local até ser exportado, onde se transforma em variável de ambiente (environment variable).
+- variável local:
+	# pi=3.14
+- exportando a variável local para se tornar variável de ambiente:
+	# export pi
+- pode ser apenas em uma linha, como no exemplo abaixo:
+	# export pi=3.14
+- aliases sao para criar novos comandos ou modificar comandos existentes.
+	# alias more='less'
+- funcoes sao definidas para scripts e estao dentro dos scrips.
+	# lsps () { ls -l; ps; }
+- configuracao do bash controla o comportamento do bash (que coisa, nao?)
+
+Objective 105.2: Customize or Write Simple Scripts
+
+- scripts sao arquivos textos contendo comandos.
+- scripts precisam ter bits apropriados dizendo que sao executaveis para serem executados.
+- eles sao identificados como scripts dentro dos arquivos (e qual intepretador deve ser utilizado)
+	#!/bin/bash
+
+Ambiente (Environment)
+- colcando o #!/bin/bash ele instancia um novo shell. entao as variaveis locais nao poderao ser lidas por esse script.
+- iguais aos programas binarios, eles tambem podem retornar valores de executacao com sucesso ou falho.
+- normalmente os scripts enviam email aos administradores com erros de status.
+
+Objective 105.3: SQL Data Management
+
+- variaveis mais comuns sao: integer, float, boolean, date, timestamp, datetime, char, varchar, blog and text.
+- esse comando cria uma tabela com uma coluna unica que autoincrementa. (wow)
+	create table test(id integer unsigned not null auto_increment, column1 varchar(255), primary key(id));
+- INSERT: adicionar dado na tabela.
+- UPDATE: modifica dados ja existentes na tabela.
+- ALTER TABLE: modifica (adiciona/remove) colunas da tabela (ou seus tipos).
+- LEFT JOIN: mostrar dados de duas ou mais tabelas que tenham algum relacionamento. caso exista algum dado na tabela da esquerda, ele mostrara mesmo se nao existir na tabela da direita.
+
+The X Window System
+
+Objective 106.1: Install and Configure X11
+
+- x.org é a implementaçao mais popular do X Window, substituindo o XFree86
+- gerenciadores de janelas possuem funcoes como minimizar, maximizar e mover.
+- arquivo de configuracao é: /etc/X11/xorg.conf
+- x window pode acessar as fontes localmente ou remotamente (xfs)
+
+Objective 106.2: Set Up a Display Mananger
+
+- Display Mananger cuida do processo do login.
+- Display Mananger é executado normalmente quando o sistema entra em runlevel 5.
+- xdm, gdm e kdm.
+- remote graphical logins: XDMCP protocol.
+
+Objetvtive 106.3: Accessibility
+
+- Emacspeak, orca e Blinux.
+- desktop environments: StickyKeys, MouseKeys, and RepeatKeys.
+- Teclado na tela é o recurso mais usado como assistência.
+
+Administrative Tasks
+
+Objective 107.1: Manage User and Group Accounts and Related System Files
+
+passwd and group
+- todas as infomacoes dos usuarios estao guardadas no arquivo /etc/passwd
+- cada linha do /etc/passwd contem:
+	username : password : UID : GID : nome do usuario : home directory : default shell
+- todas as informacoes dos grupos estao guardados no arquivo /etc/group
+- cada linha do /etc/group contem:
+	group name : group password : GID e numero de membros da lista
+- passwrd e group sao setados para a leitura
+
+Shadow Files
+- Por medidas de segurança, é possível colocar as senhas criptografadas em um arquivo separado.
+- Esses arquivos apenas o root pode ler.
+- /etc/passwd -> /etc/shadow
+- /etc/group -> /etc/gshadow
+
+User and group management commands
+
+adduser user
+	cria uma conta chamada "user"
+usermod user
+	modifica o usuario
+userdel user
+	apaga um usuario
+groupadd group
+	adiciona um grupo
+groupmod group
+	modifica os parametros de um grupo
+groupdel group
+	deleta um grupo
+passwd username
+	de maneira interativa especifica uma senha para algum usuario
+chage user
+	modifica a data de expiracao da senha entre outros paramentros da senha e do usuario.
+
+Objective 107.2: Automate System Administration Tasks by Scheduling Jobs
+
+- cron e at podem ser usados para agendar trabalhos futuros.
+- os trabalhos (jobs) podem ser scripts ou programas soltos.
+- crond examina todos os arquivos contab a cada minuto.
+- o comando 'crontab' apenas visualiza o arquivo de conf. o -e e para edicao.
+- ordem das entradas do crontab
+	minuto	hora	dia 	mes 	dia da semana 	commando
+- asterisco pega todas as possibilidades do campo
+- o proprio sistema tem os seus arquivos de crontab:
+	/etc/crontab e /etc/cron.d
+
+Usando o at
+
+- agenda apenas um comando para um tempo futuro (obviamente)
+	at <time> <comando>
+- formato
+	hh:mm, midnight, noon and so on.
+- atd e o daemon
+
+User access
+- acesso ao cron e listado nos arquivos cron.allow e cron.deny
+- acesso ao at e listado nos arquivos at.allow e at.deny
+
+Objective 107.3: Localization and INternationalization
+
+- Network Time Protocol (NTP) permite sincronizar os relogios do computador com a internet.
+- "ntpd -q" atualiza pelo servidor NTP.
+- hwclock (hardware clock)
+- /etc/localtime - e o link simbolico para o arquivo de configuracao da timezone que esta configurado no seu "locale"
+	# ls -l /etc/localtime
+- tzselect: altera o timezone do seu computador.
+
+Essential System Services
+
+Objective 108.1: Maintain System Time
+
+- refere-se a sessao anterior sobre "localization" e "internationalization".
+
+Objective 108.2: System Logging
+
+Syslog
+
+- syslog mostra todas as mensagens de eventos do sistema.
+- syslog e formado por dois processos:
+	- syslogd (userlevel) 
+	- klogd (kernellevel)
+- /etc/syslog.conf arquivo de configuracao do syslog
+	facility.level action:
+	facility:
+		quem criou a mensagem. auth, authpriv, cron, daemon, kern, lpr, mail, mark, news, syslog, user, or local0 through local7.
+	level:
+		info, notice, warning, err, crit, alert, or emerg.
+	action:
+		mensagem sobre o selection. pode ser o nome de um arquivo, hostname, lista de usuários separados por vírgula ou asterísco (todos os usuários).
+- /var/log/messages
+	local onde ficam as mensagens
+
+Logfile rotation
+- Maioria dos arquivos possui isso ativado, para evitar que o disco fique cheio. Cada vez que um arquivo de log chega a um determinado tamanho, o sistema operacinoal faz um copia desse arquivo e começa um novo arquivo de log.
+- logrotate: conf /etc/logrotate.conf
+
+Examining logfiles
+- Os arquivos podem ser examinados com as ferramentas normais do sistema, como: tail, less e grep.
+- As informaçoes do syslogd possuem:
+	data, hora, origem do hostname, quem enviou e descriçao do texto.
+
+Objetive 108.3: Mail Transfer Agent (MTA) Basics
+- Os MTAs mais usados sao: sendmail, postfix, qmail e exim
+- O mais antigo é o sendmail.
+- "/etc/aliases" arquivo de configuracao para setar os usuarios do sistema que possuem email.
+- "newaliases" precisa ser executado toda vez que o "/etc/aliases" for editado
+- cada usuário pode fazer forward dos seus e-mails editando o arquivo ".forward" do seu home
+- "mailq" pode ser usado para verificar a fila de e-mails no servidor (e.g., e-mails que nao sairam.)
+
+Objective 108.4: Manage Printers and Printing
+
+CUPS
+
+- Common Unix Printing System (CUPS)
+- É o padrao na maioria das distribuçoes do linux.
+- "cupsd" é o daemon que controla a fila de impressao.
+- "/etc/cups/" é onde ficam os arquivos de configuraçao do CUPS
+- http://localhost:631/ é a forma interativa de configurar o CUPS
+- CUPS mantém a compatibilidade do antigo lpd.
+- CUPS também suporta a compatibilidade do arquivo de configuraçao /etc/printcap
+
+Legacy printing (lpd)
+- "lpd" é o daemon do lpd.
+- "lpr" é quem envia as jobs para a fila de impressao.
+- "lpq" faz a query das impressoes
+- "lprm" remove uma job da fila
+- "lpc" versao interativa para controlar as queues.
+- filtros traduzem o formato dos dados para que as impressoras possam entender.
+- spool é o diretório onde as filas de impressao ficam.
+
+/etc/printcap
+
+lp|ljet:\
+	:sd=/var/spool/lpd/lp:\
+	:mx#0:\
+	:sh:\
+	:lp=/dev/lp0:\
+	:if=/var/spool/lpd/lp/filter:
+	:lf=/var/spool/lpd/lp/log:
+
+lp:ljet:\
+	Dois nomes alternativos para essa impressora: lp e ljet
+sd
+	spool directory
+mx
+	max size of a print jobs in blocks
+sh
+	supress header pages (elimina ou nao os headers.)
+lp
+	local printer
+if
+	input filter
+lf
+	log file
+
+Networking Fundamentals
+
+Objective 109.1: Fundamentals of Internet Protocols
+
+Endereços e Máscaras
+
+- IPs sao formados por 32bits
+- Classe A: 8 bits para redes, 24 bits para hosts
+- Classe B: 16 bits para redes, 16 bits para hosts
+- Classe C: 24 bits para redes, 8 bits para hosts
+- n bits, produz = 2ˆn - 2 hosts
+	(e.g., (2ˆ8)-2=254)
+
+Protocolos
+
+TCP/IP
+	representa o maior suite de protocolos de rede.
+IP
+	internet protocol
+ICMP
+	sem conexao e é usado para testar e monitorar o fluxo da rede. detectar destinos inalcançaveis.
+UDP
+	user datagrm protocol. sem conexao e usado para transferir dados. e.g. do uso DNS e NFS
+TCP
+	transmission control protocol. com conexao e usado para transferir dados com checagem. e.g. de uso FTP e telnet
+PPP
+	point-to-point protocol. usado em conexoes seriais. e.g. de uso modems.
+
+TCP/IP services
+- existe o uso de portas
+- /etc/services é onde ficam as especificacoes de uso das portas
+- portas de 1 a 1023 sao usadas por processos de super usuário.
+
+TCP/IP utilities
+- ftp: file transfer protocol. usado para trocar arquivos com servidores remotos.
+- ssh: secure shell session
+- web browser: http
+- ping: manda ICMP para ver se determinado host está vivo.
+- dig: obter informaçoes dos servidores DNS
+- traceroute: mostra por quais hosts o pacote precisa passar até chegar ao seu destino.
+- fwhois: consulta o banco de dados para saber quem é o dono do ip e/ou domínio.
+
+Objective 109.2: Basic Network Configuration
+- ifconfig: ver informacoes da interface e alterar suas configuracoes
+- dhclient: renovar as suas informacoes de IP fazendo a requisicao pelo servidor DHCP
+- route: informa as rotas que o seu computador usa e também utilizado para adicionar novas rotas.
+
+Objective 109.3: Configuraçao Básica da Rede
+- /etc/hostname: contém o nome do hostname para o sistema.
+- /etc/networks mostra a equivalencia entre nomes e enderecos para as redes
+- host: retorna as informacoes de DNS
+- hostname, domainname e dnsdomainname: mostra informacoes
+- netstat: mostra as informacoes das conexoes, tabela de rotas, estatisticas da interface, masquerade connections, muilticast memberships.
+
+Objective 109.4: Configuring Client Side DNS
+- /etc/hosts mapa estático entre IPs e nomes.
+- /etc/nsswitch.conf redireciona para nameservers especificos, arquivos locais, DNS e NIS.
+- /etc/host.conf controla DNS para bibliotecas antigas
+- /etc/host.conf é raramente usado e foi substituído pelo /etc/nsswitch.conf
+- /etc/resolv.conf contém informaçoes para especificar os servidores DNS.
+
+Segurança
+
+Objective 110.1: Perfrom SEcurity Administration Tasks
+- find: pode procurar arquivos com SUID usando o parametro -perm
+- chage: usado para gerenciar a idade das senhas e das contas.
+- nmap: programa para scanear portas de hosts
+- sudo: comando para oferecer permissao de super usuário para usuários comuns.
+	/etc/sudoers: é o arquivo de configuraçao
+- ulimit: modificar os limites dos usuarios.
+	/etc/security/limits.conf
+	- hard limits: sao os limites que os usuarios nao podem ultrapassar
+	- soft limits: sao limites que podem ultrapassar temporariamente usando o programa "ulimit"	 
+
+Objective 110.2: Set Up Host Security
+
+TCP wrappers
+- Configurando TCP wrappers (tcpd)
+	/etc/hosts.allow
+	/etc/hosts.deny
+- inetd e xinetd sao daemons dos wrappers
+- tcpd usa o syslog /var/log/secure
+
+Shadow Passwords
+- /etc/shadow
+- /etc/gshadow
+
+Objective 110.3: Securing Data with Encryption
+- sempre usar SSH para comunicar entre dois computadores linux
+- SSH: autenticacao por: username/password, public/private key
+- ssh-keygen -t dsa: cria chave privada e pública
+	/.ssh/id_dsa.pub (public key)
+- public key copy /.ssh/authorized_keys2
+- gpg --gen-key: cria chave privada e pública 
+	(Gnu Privacy Guard)
+- gpg --import bobskey.asc: import user's public key into your keyring
+- gpg -e -u "Meu Nome" -r "Bobs Name" /tmp/filename.txt : encriptando o arquivo
+

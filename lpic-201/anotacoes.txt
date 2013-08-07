@@ -1,0 +1,32 @@
+
+# hostname --fqdn.
+
+# hostname -f
+	mostra o seu hostname com o domínio
+
+# host nessus.example.com
+	mostra o ip do host (o contrário do ping, praticamente.)
+
+# host nessus.example.com 10.20.102.7
+	ele faz a resoluçao do host usando o DNS 10.20.102.7
+
+/etc/hosts
+	arquivo que indica a resoluçao local e personalizada dos hosts para ips.
+
+/etc/resolv.conf
+	é onde fica especificado os servidores de DNS que o computador precisa verificar. nameserver <ip>
+
+/etc/network
+	para saber se você está usando DHCP ou IP estático.
+
+/proc/sys/net/ipv4/ip_forward
+	routing tables.
+
+# iptables -L
+	mostra os dados do iptables presentes no momento.
+
+/etc/hosts.allow
+/etc/hosts.deny
+	os arquivos que especificam as regras do ipdtables.
+
+

@@ -1,0 +1,417 @@
+Shells, Scripting, and Data Management (Topic 105)
+
+1. Why is it dangerous to have "." (the current working directory) in your $PATH variable?
+With . in $PATH any user can delete or do much more wrong stuffs with term commands.
+
+2. What characteristic of a bash variable changes when the variable is exported?
+As variáveis estao limitadas apenas nesse domínio que eles foram criadas. Para utilizar as variáveis em outros ambientes (e.g., bash), precisa usar o comando export. Lembrando que quando uma variável é criada em um script, ela também ficará presa no ambiente do script, pois cada script possui a sua própria instância do bash.
+
+3. What configuration files will bash read when a shell is started?
+/etc/profile -> /etc/bashrc -> /.bash_profile -> /.bashrc -> /.bash_logout
+
+4. Describe the concept of shell aliases.
+Shell aliases sao atalhos de comandos. É como se fosse um "apelido" para um determinado comando. Também podem chamar scripts ou serem "scripts" para serem executados.
+
+5. When is a shell function more suitable than a shell alias?
+-
+
+6. Describe the function of /etc/profile.
+-
+
+7. what must the author of a new script file do to the file's mode in order to make it executable?
+Colocar o interpretador do script no começo ele pelo "shebang" e alterar o bit identificador de executável pelo comando 'chmod'.
+
+8. How does the shell determine what interpreter to execute when starting a script?
+Pelo "shebang": e.g., #!/bin/bash
+
+9. How can a shell script use return values of the commands it executes?
+Cada comando seta um valor para o $? para saber se o comando foi executado com sucesso. 0 para sucesso e 1 para falha.
+
+10. What are some common open source databases available on Linux systems?
+MySQL.
+
+11. Describe the common MySQL datatypes and when they are appropriate to use.
+
+CHAR(size): número de caracteres
+VARCHAR(size): é o mesmo que o CHAR, mas pode numero. caso ultrapasse 255, é convertido como TEXT.
+TEXT: guarda no máximo 65.535 caracteres.
+INT(size): numero.
+FLOAT(size,d): numero quebrado, especificando as casas decimais.
+
+12. What is the difference between a join and a left join in a SQL query?
+
+"left join" prioriza a tabela do lado esquerdo em relaçao a tabela da direita. ou seja, mesmo que a tabela do lado direito nao tenha dados, ele vai mostrar os dados da tabela direita.
+
+Exercises
+
+1. Using bash, enter the export command and the set command. Which set of variables is a subset of the other? What is the difference between the variables reported by export and those reported by set? Finally, enter which export. Where is the export commnd located?
+
+Quando a variável é criada através do comando set, ela fica disponível localmente. Já o export, deixa ela visível para outras instâncias do bahs. O comando export é compilado diretamente no kernel do sistema operacional, portanto nao possui executável/bin.
+
+2. Examine /etc/profile. How is the default umask set? What customizations are done in the file for system users?
+
+É configurado através do pam_umask. O arquivo de configuraçao fica localizado em /etc/login.defs.
+A configuraçao padrao para os usuários é: umask 022
+
+3. Create a simple bash script using the #!/bin/bash syntax, set the executable mode bits, and execute the shell. If it runs correctly, add errors to see the diagnostic messages. Have the script report both exported and nonexported variables. Verify that the nonexported variables do not survive the startup of the new shell.
+
+-
+
+4. Create some bash aliases in your current shell. Start a new shell by running the command bash in your current shell. Do your aliases work in this child shell? Why or why not?
+
+Nao funciona pelo fato do novo bash apagar todos os outros aliases.
+
+5. Create a MySQL table structure that could be used to store the fields in the file /etc/passwd. Write a shell script to parse this file, one line at a time, and call the mysql command-line program to insert the users defined in /etc/passwd into your table. Once this is completed, write a SQL query to list all usernames that have a shell of /bin/bash.
+
+-
+
+The X Window System (Topic 106)
+
+1. What is the main X window configuration file?
+/etc/X11/xorg.conf
+
+2. What are the troubleshooting steps you need to take when X Window won't start?
+-
+
+3. How can you switch between desktop environments (for example, running KDE instead of Gnome)?
+-
+
+4. What are some common functions that can be used to assist visually impaired users with using X Window?
+ORCA
+
+5. What file would you edit to make an application run every time you log into X Window?
+.Xdefaults
+.x11-init
+
+Administrative Tasks (Topic 107)
+
+1. What woud happen to a user account if the default shell were changed to /bin/false?
+O usuário fica impossibilitado de logar.
+
+2. When a new account is created with useradd -m, what files are used to populate the new home directory?
+.bashrc, .profile, .bash_logout
+Ou seja, todos os arquivos que estao dentro do diretorio /etc/skel
+
+3. Compare and contrast the execution of /etc/profile and /etc/bashrc
+/etc/profile é sempre lido assim que o usuário é logado no sistema, enquanto o bashrc só é lido se estiver na home do usuário.
+Lembrando que se existir o .bash_profile e/ou .bash_login no home, o bash nao lerá o .profile quando for iniciado.
+
+4. Compare and contras cron and at.
+Maior diferença entre os dois é que o cron é reincidente, enquanto o at acontece apenas uma vez. No entanto, os dois possuem o mesmo objetivo: programar quando comando ou script deverá ser executado.
+
+5. Is there a cron command?
+Nao. O cron é programado para ser disparado configurando um arquivo e esse é lido pelo crond que é o daemon (serviço). O único comando que existe é o crontab que é para configurar esse arquivo, ou com o -e para editar o arquivo com segurança.
+/etc/crontab e /etc/cron.d
+
+6. Describe the fomrat of a crontab file, describing each of the six fields.
+	minuto	hora	dia 	mes 	dia da semana 	commando
+minuto: descreve o minuto que será acionado o comando
+hora: descreve a hora que será acionado o comando
+dia: descreve que dia do mês que será acionado o comando
+mes: descreve que mês que será acionado o comando
+dia da semana: 
+comando: comando em si.
+
+7. What does an asterisk mean in crontab fields 1 through 5?
+indica que pode ser qualquer um dos números possíveis no campo. ou seja, o campo todo fica válido.
+
+Exercises
+
+1. Add a user with useradd, including a new home directory populated with files from /etc/skel
+Só usar o comando: useradd -m nomedousuario
+Lembrando que o parametro "m" cria o diretorio home do usuário.
+E que tudo que está no diretório "/etc/skel" é adicionado lá.
+
+2. Add a group with groupadd
+groupadd nomedogrupo
+Simples assim.
+
+3. Use usermod to add your new user to the new group.
+usermod -G nomedogrupo
+Lembrando que o parametro "-g" é para substituir a lista de grupos que o usuário está incluso.
+
+4. Set the new user's password using passwd.
+passwd usuario
+Esse comando nao possui muito segredo. Quando usado sem especificar o usuário, você alterará a senha do usuário que você está logado.
+
+5. Log into the new account, and use newgrp to change to the new group.
+su usuario (para alterar de usuário)
+newgroup nomedogrupo (para ativar o grupo no usuário temporariamente - enquanto ele estiver logado)
+
+6. Delete the new group and user (including home directory using groupdel and userdel)
+groupdel nomedogrupo
+userdel -r usuario (o "-r" remove também o home directory do usuário)
+
+7. Examine the contents of /etc/skel. How similar are they to your own home directory?
+Possui os arquivos iniciais de quando um usuário é criado com a sua home directory, pois o sistema copia todos os arquivos dentro do "/etc/skel" e copia para o home directory do novo usuário.
+
+8. Review the contents of /etc/profile and /etc/bashrc
+
+9. Add an entry in your personal crontab file to performa a task, such as sending you an email message. Confirm that the action occurs as expected. Experiment with the five time specifiers.
+
+10. Schedule a command in the future with at. How is at different from cron?
+
+Essential System SErvices (Topic 108)
+
+Review Questions
+
+1. Why is accurate time important on a Linux System? What options exist to keep; time in sync?
+É importante pois alguns comandos essenciais dependendem de um relógio configurado corretamente para funcionar.
+"ntp" é uma ferramenta para atualizar o relógio do sistema com algum servidor confiável.
+
+2. Describe the difference between system time and the hardware clock.
+Sao relógios distintos. Do sistema é temporário e funciona assim que o sistema é iniciado. Já o hardware clock fica sempre ligado independente se o computador for desligado, pois uma bateria externa mantém ele funcionando sempre.
+"hwclock" é o comando para verificar o horário configurado para o hardware clock.
+
+3. How is time stored on a Linux system? How is the time zone used to modify this value?
+A configuraçao é guardada no arquivo /etc/localtime que na verdade é um link simbólico para o arquivo de sua zona.
+"tzselect" é o comando para configurar o sistema.
+
+4. What two things does the syslogd server use to categorize log entries? What are the limitations of this format?
+facility.level
+facility: quem criou a mensagem: auth, cron e etc
+level: info, notice, warning, err, crit, alert, or emerg
+Nao é possivel transmitir os logs via TCP
+
+5. Give some examples of what kinds of messages you would expect to see in /var/log/messages
+feb 24 11:20:11 debian kernel: kernel supported cpus
+
+6. What does lpd do to handle incoming print jobs destined for empty print queues?
+
+7. Describe the kindls of information included in /etc/printcap
+
+Todas as informaçoes necessárias para usar uma determinada impressora.
+	lp:ljet:\
+		Dois nomes alternativos para essa impressora: lp e ljet
+	sd
+		spool directory
+	mx
+		max size of a print jobs in blocks
+	sh
+		supress header pages (elimina ou nao os headers.)
+	lp
+		local printer
+	if
+		input filter
+	lf
+		log file
+
+8. What is the function of a print filter?
+É o interpretador da impressora, ou seja, faz o mesmo papel de um driver. Transforma arquivos do sistema em uma linguagem que a impressora consegue entender.
+
+9. What does the -P option specify to the print commands?
+Especifica quais páginas a impressora deve imprimir do arquivo alvo.
+
+10. When is it useful to pipe into the standard input of lpr intead of simply using a filename as an argument?
+-
+
+11. How is the Ghostscript program used in printing to a non-PostScript printer?
+-
+
+12. What filter is used on a Linux system to print a remote printers on Windows clients?
+-
+
+13. What are the common Mail Transport Agents (MTAs) used on Linux Systems? Give a brief.
+Os MTAs mais usados sao: sendmail, postfix, qmail e exim
+sendmail é o mais antigo e inseguro.
+
+14. What command would you use to view the contents of the mail queue on a system running sendmail? What command would you use to force a resend of that queue?
+"mailq" 
+"sendmail -q"
+
+15. What is the easiest way to forward all email incoming into an account to another email address?
+Editando o arquivo .forward.
+
+16. What file is used to maintain email aliases for local users?
+/etc/aliases.
+usar o comando "newaliases" toda vez que o arquivo "/etc/aliases" for editado.
+
+Exercises
+1. Run the date command on your system. Is your system clock accurate? Run the command ntpd -gnq. Did you system time change? By how much?
+"date" para verificar as horas do sistema.
+Ficou uma hora atrasado.
+
+2. Add this line:
+*.* /etc/log/everything
+
+to /etc/syslog.conf and restart syslog. Now run tail -f /var/log/everything. What kinds of things do you see? How often are events written to this log?
+
+Nao atualiza muito nao. :p
+
+3. Add the local5 facility to your configuration. Use logger to write to your new logfile, and verify its contents. Compare your log entries with those in /var/log/messages.
+-
+
+4. Examine /etc/logrotate.conf. What happnes after /var/log/message is rotated?
+Cria um novo arquivo e move o arquivo antigo para outro lugar.
+
+5. On a system with an existing printer, examine /etc/printcap. Which print filter is used for the printer? Which queue or queues are directed at the printer?
+A impressora presente nao possui filtro.
+"/var/spool/cups"
+"/var/spool/lpd"
+
+6. Check the printer status with lpq -P printer and lpc status. Print to the queue using lpr -P printer file.
+-
+
+7. Examine /var/spool/lpd for the spool directory of your print queue. Examine the files you find there.
+-
+
+8. Determine what MTA is installed on your system. Is it listening on TCP port 25? How can you tell?
+"lsof -i :25"
+"netstat -l" Lista todas as portas abertas (listen)
+
+9. Type the command netnet localhost 25. What do you see?
+Exim server respondendo ao pedido de conexao.
+
+10. Tye the command echo "test" | mail root. Now type tail /var/log/maillog. Was your mail delivered? How you can tell?
+-
+
+Networking Fundamentals (Topic 109)
+
+Review Questions
+
+1. Describe how the subnet mask affects the maximun number of hosts that can be put on a TCP/IP network.
+n = numero de bites reservado para hosts.
+(2^n) - 2 é a fórmula para descobrir quantos hosts cada rede possuirá.
+É subtraido dois pois um é broadcast e o outro é a identificaçao para a própria rede.
+
+2. Name the three default address classes and the subnet masks associated with then.
+24 bits: classe A: 255.0.0.0
+16 bits: classe B: 255.255.0.0
+8 bits: classe C: 255.255.255.0
+
+3. Identify the IPv4 private address ranges.
+As classes A, B e C sao privados. Ou seja: 10.0.0.0 (a), 172.16.0.0 (b), 192.168.0.0 (c)
+
+4. What are some advantages IPv6 has over IPv4?
+Critografia nativa.
+Fim do uso do NAT.
+Fim do Broadcast.
+Fim da necessidade de um DHCP para adquirir um IP na rede.
+Maior números de IPs disponíveis em suas combinaçoes.
+
+5. The UDP protocol is said to be connectionless. Descibe this concept and its consequences for applications that use UDP.
+user datagrm protocol. sem conexao e usado para transferir dados. e.g. do uso DNS e NFS
+
+6. What is a TCP port? Give some examples of common TCP ports and the applications and protocols that use them.
+transmission control protocol. com conexao e usado para transferir dados com checagem. e.g. de uso FTP e telnet
+
+7. What user command is frequently used to send ICMP messages to remote hosts to verify those hosts'connectivity?
+PING
+
+8. Describe the contents and use of /etc/hosts
+/etc/hosts mapa estático entre IPs e nomes.
+
+9. In what configuration file are DNS servers listed? What is intended if the local loopback address is included there on a workstation?
+"/etc/nsswitch.conf"
+"/etc/resolv.conf"
+
+10. Name two modes of the netstat command and the program's output in each case.
+-
+
+11. Descibe why the route command is needed for a single interface on a nonrouting workstation.
+Para redirecionar corretamente os pacotes no gateway padrao. Sem essa configuraçao, nao é possivel utilizar a placa de rede.
+
+12. How does traceroute determine the identities of intermediate gateways?
+-
+
+13. Describe the advantages and consequences of implementing DHCP.
+A vantagem é que todo computador que é conectado na rede, consegue um IP sem precisar de alguém que saiba a faixa específica de ips disponíveis para configurar. A desvantagem é no caso de existir servidores que nao podem ter IPs que sejam dinâmicos (o que acontece no DHCP quando expira o IP de um host).
+
+Exercises
+
+1. Examine your system's TCP/IP configuration using ifconfig eth0 or similar command for your network interface. Are you using DHCP? What type of subnet are you runnnig with? Is it a class A, B or C address? Are you using a private address? Experiment with taking the interface offline using ifconfig eth0 down and ifconfig eth0 up.
+
+Sim, existe um DHCP. subnet é 255.255.255.0 ou seja /24 (numero de bits para a rede)
+É classe C. Uso privado, pois é classe C. Todas as redes classe A, B e C sao designadas para serem privadas.
+
+2. Examine the contents of /etc/services. How many protocols do you recognize?
+TCP e UDP
+
+3. Use the dig command to locate information from DNS servers abtou a domain name.
+-
+
+4. Examine your /etc/hosts file. How much name resolution is accomplished in this file manually?
+-
+
+5. Examine your /etc/resolv.conf file. How many DNS servers do you have available?
+Apenas um. (que também faz o papel de gateway, já que ele está em uma máquina virtual.)
+
+6. Execute netstat -r. How many rotes are reported? What are the routes on the local network and interface for?
+Existem duas rotas. Uma é de saída padrao e outra é de entrada padrao. Ou seja, é necessário especificar quais rotas os pacotes gerais devem tomar ao sair e ao entrar para a rede configurada para aquela placa de rede.
+
+7. Use traceroute to examine the route to a favorite website.
+-
+
+Security (Topic 110)
+
+Review Questions
+
+1. What daemon is associated with the control files /etc/hosts.allow and /etc/hosts.deny?
+inetd and tcpd (wrappers)
+
+2. In general terms, describe a method to locate SUID programs in the local filesystem. Why might an administratior do this routinely?
+É perigoso pois arquivos que possuem SUID, todos os seus processos filhos herdarao a sua permissao.
+
+3. What is the danger of making /bin/vi SUID?
+O programa "vim" ter SUID e ser executado com o "sudo" é como permitir dar permissao para todos os comandos, pelo fato do "vim" poder executar comandos no shell com processos filhos.
+
+4. Why shoud a user run ssh instead of telnet?
+"telnet" nao possui criptografia alguma, é texto puro passando de um lado para o outro, enquanto o ssh é criptografado e por isso possui uma maior segurança. 
+
+5. Descibe shadow passswords and the file where the password are stored. Why don't we store encrypted password strings in /etc/passwd anymore?
+Pois é possível fazer um "bruteforce" gerando hashs aleatórios até encontrar o do usuário. Entao, essa infomacao nao é interessante deixar exposta assim.
+
+6. How can the tool /usr/sbin/lsof help you identify potential security issues?
+Ele mostra quais usuários estao executando o que. Sem contar que ainda é possivel verificar quais arquivos os outros processos estao utilizando.
+
+7. What is the difference between a hard limit and a soft limit, with regard to the ulimit command?
+hard limit nao é acessivel para o usuário comum alterá-lo. E, uma vez alcançado, nao é mais possível gravar arquivos (ou seja, lá qual tipo de limitaçao foi colocado.)
+soft limit dá apenas um aviso que está chegando no limite sem restringir de verdade e é configurável usando o ulimit para usuários normais.
+
+8. Why is it advisibla to use sudo rather than su in an environment with multiple administrators?
+Pois com o "sudo" é possível logar todos os comandos executados e qual usuário executou o comando de super usuário.
+
+9. What kinds of things can you ascertain about a remote system with the nmap command?
+É possível verificar quais portas estao abertas, quais vulneralibilidades ele possui e também o sistema operacional que ele está executando (sem muitos detalhes).
+
+10.Describe the process of key-based authentication between systems using ssh.
+Para evitar a autenticacao continua toda vez que for executado o comando "ssh" o servidor e o cliente podem manter uma chave guardada que evita esse processo de autenticacao. Essa chave serve tanto para autenticacao como para criptografar os dados trocados.
+
+11. What is the difference between a public and a private key? What are they used for?
+public key serve para critografar os dados.
+private key serve para descriptografar os dados.
+
+12. Describe how to encrypt a file with gpg.
+gpg --output doc.gpg --encrypt -- recipient blake@cyb.org doc
+
+Exercises
+
+1. Use find as described in Chapter 22 to locate SUID files. Is the list larger than you expected? are the entries on your list justifiably SUID programs?
+"find /bin -perm -4000 -type f"
+
+2. Create an entry in /etc/sudoers that lets your user accont run any command as root. Run some commands through sudo and what the file /var/log/messages. What entries do you see? How would this be useful in a multiadministrator environment?
+
+3. Loot at the file /etc/shadow. What user accounts do not have passwords? Why don't they?
+Pois sao usuários de sistema que nao sao e nao podem ser utilizados por usuários humanos.
+
+4. Experiment with the chage command to set the password age for your account.
+-
+
+5. Run ulimit -a. What default limits are set? What would be some useful limits to place on users?
+-
+
+6. Run netstat --tcp -anp | grep LISTEN. What processes on your system are listening on TCP ports? If you were to harden this system. How would you change this configuration?
+-
+
+7. Run nmap localhost. Does this output match what you saw from the previous netstat command? Why or why not?
+One is listing only network open ports and for localhost is only local system comunication.
+
+8. If you have xinetd installed. go to the /etc/xinetd.d directory and determine what services are enabled.
+chargen, daytime, discard, echo, time.
+
+9. Run ssh-keygen -t dsa. What files were created in /.ssh? What are the permissions on those files?
+chave privada: 600
+chave pública: 644
+
+
+FIM

@@ -1,0 +1,168 @@
+Questions
+
+(OK) 1. what environment variable holds the list of all directories that are searched by the shell when you type a command name?
+	(3) $PATH
+
+(OK) 2. In the bash shell, entering the !! command has the same effect as which one of the following (assuming bahs is in emacs mode)?
+	(1) Ctrl-P and Enter
+
+(OK) 3. Name the command that displays pages from the online users manual and command reference.
+	man, (The man command displays manpages)
+
+(--) 4. Which of the following commands displays the comments from a bash script? Select all that apply.
+	(3) grep ^# /etc/init.d/httpd
+	((b), (c) find and locate do not search the contents of files.)
+
+(OK) 5. Which one of the following answers creates an environment variable VAR1, present the enviroment of a bash child process?
+	(1) VAR1="fail"; export VAR1
+
+(OK) 6. What SQL command is used to modify data present in a table?
+	(3) UPDATE
+
+(OK) 7. What output will the following command generate: seq -s";" -w 1 10
+	(1) 01;02;03;04;05;06;07;08;09;10
+	(The -w option to seq instructs it to pad with zeros)
+
+(OK) 8. Adam wants to protect himself from inadvertenly overwriting files when copying them, so he wants to alias cp to prevent overwrite. How should he go about this? Select one.
+	(1) Put alias cp='cp i' in /.bashrc
+
+(OK) 9. Consider the following script, stored in a file with proper modes for execution:
+	#!/bin/bash
+	for $v1 in a1 a2
+	do
+	echo $v1
+	done
+	Which one of the following best represents the output produced on a terminal by this script?
+	(5) no output is produced, because the script has an error.
+	(The script has an error and will not produce the expected output. in a for statement, the loop variable does not have the dollar sign. Changing line 2 to v1 in a1 a2 will correct the error and produce the output in answer b.)
+
+(OK) 10. Monica consults the /etc/passwd file expecting to find encrypted passwords for all of the users on her system. She sees the following:
+	jdoe:x:500:500::/home/jdoe:/bin/bash
+	bsmith:x:501:501::/home/bsmith:/bin/tcsh
+	Which of the following is true? Select one.
+	(4) The passwords are in /etc/shadow
+	(The shadow password system has been implemented, placing all passwords in /etc/shadow as denoted by the x following the username)
+
+(--) 11. What is the main configuration for X Window?
+	(5) None of the above
+	(d) /etc/X11/xorg.conf
+
+(OK) 12. What file in the user's home directory will an X Window application look to for configuration settings such as color and video mode?
+	(3) /.Xresources
+
+(--) 13. What is the protocol XDMCP used for?
+	(2) Remote control of a running X Window display.
+	(d) Graphical login support for remote hosts on the network
+
+(--) 14. Which of the following are not commonly used display managers for X Window? Choose two.
+	(1) xdm, (4) xfce
+	(d) xfce and (e) x11
+
+(OK) 15. Emacsspeak is:
+	(3) An assistive technology that handles screen reading for a number of console applications.
+
+(--) 16. Which one of the following outcomes results from the following command?
+	# chmod g+s /home/software
+	(2) The SGID bit will be set for /home/software, preventing access by those not a member of the software group.
+	(c) The g indicates that we're operating on the group privilege, and the +s indicates that we should add the " set id" bit, which means that the SGID property will be applied.
+
+(--) 17. Which one of these files determines how messages are stored using syslogd?
+	(3) /etc/syslogd.conf
+	(b) /etc/syslog.conf
+
+(--) 18. Which MTA was designed specifically with security in mind?
+	(4) Exim
+	(c) Qmail
+
+(OK) 19. Where are mail logs usually stored in a standard syslog setup?
+	(4) /var/log/maillog
+
+(--) 20. How manu hosts can exist on a subnet with mask 255.255.255.128? Select one.
+	(4) 127
+	(e) With the top bit of the last byte set in the subnet mask (128), there are 7 bits left. 27 is 128, less the network address and broadcast address, leaving 126 addresses for hosts.
+
+(--) 21. For an Internet workstation with a single network interface, what routes must be added to interface eth0 after it is initialized? Select one.
+	(1) None
+	(d) Routes to the interface and the network are required to exchange information on the local LAN. To access the Internet or other nonlocal networks, a default gateway is also necessary.
+
+(--) 22. On a Linux server, what service is most likely "listening" on port 25? Select one.
+	(2) SSHd
+	(c) As defined in /etc/services, port 25 is the SMTP port, often monitored by postfix.
+
+(--) 23. Which one of these protocols is a Layer 4 connection-oriented protocol? Select one.
+	(4) ICMP
+	(a) TCP. UDP is also a Layer 4 protocol, but it is connectionless.
+
+(OK) 24. Which command will display information about Ethernet interface eth0? Select one.
+	(2) ifconfig eth0
+
+(OK) 25. What does the printcap entry sd indicate? Select one.
+	(2) A printer's spool directory
+
+(--) 26. Which of the following is a valid entry in /etc/fstab for a remote NFS mount from server fs1? Select one.
+	(2) /mnt/fs1 fs1:/proc nfs defaults 0 0 
+	(c) Answer a attempts to mount the /proc filesystem. Answers b, d and e have incorrect syntax.
+
+(OK) 27. Which network protocol is used by SSH and FTP? Select one.
+	(3) TCP
+
+(--) 28. Which of the following programs will display DNS information froa host? Choose all that apply.
+	(4) dig
+	(a), (b), (d) and (e)
+
+(OK) 29. Which of the following statement regarding the ICMP protocol is not true? Select one.
+	(3) is also known as UDP
+	(Although both ICMP and UDP are connectionless, they are different protocols.)
+
+(--) 30. What server daemon resolves domain names to IP addresses for requesting hosts?
+	nsresolv
+	(The  DNS daemon is "named". It is included in a package called BIND)
+
+(OK) 31. What function does a print filter serve? Select one.
+	(2) It translates various data formats into a page description language.
+
+(OK) 32. Consider the following excerpt from the file /etc/resolv.conf on a Linux workstation:
+	nameserver 127.0.0.1
+	nameserver 192.168.1.5
+	nameserver 192.168.250.2
+	What can be said about this configuration? Select one.
+	(4) A caching-only nameserver is the first nameserver queried.
+	(The presence of the localhost address 127.0.0.1 indicates that named is nunning. Since the system is a workstation, it's safe to assume that is not serving DNS to a wider community.)
+
+(OK) 33. Name the file that contains siple mappings between IP addresses and system names.
+	/etc/hosts
+
+(--) 34. What program can be used to interactively change the behavior of a print queue? Select One.
+	(3) lpq
+	(e) lpc ( is the line printer control program)
+
+(OK) 35. What program will display a list of each hop across the network to a specified destinations? Select one.
+	(3) traceroute
+
+(--) 36. What are the names of the two system-wide bash configuration files? Include the full path for both.
+	/etc/bashrc, /etc/bash_login
+	(/etc/profile and /etc/bashrc)
+
+(OK) 37. How can a nonprivileged user configure sendmail to forward mail to another account? Select one.
+	(2) She can create a .forward file containing the new address.
+
+(OK) 38. How does a process indicate to the controlling shell that i has exited with an error condition? Select one.
+	(4) It sets an exit code with a nonzero value.
+
+(OK) 39. Consider the following trivial script called myscript:
+	#!/bin/bash
+	echo "Hello"
+	echo $myvar
+	Also consider this command sequence and result:
+	# set myvar='World'
+	# ./myscript
+	Hello
+
+	The script ran without error but didn't echo Worl. Why not? Select one.
+	(2) The script executes in a new shell, and myvar wasn't exported.
+
+(OK) 40. Consider the following line from /etc/passwd:
+	adamh:x:500:1000:Adam Haeder:/home/adamh:/bin/bash
+
+	What does the number 1000 mean?
+	(2) The primary group that adamh belongs to is group 1000.
