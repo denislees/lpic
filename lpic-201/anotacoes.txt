@@ -1,4 +1,125 @@
 
+####################################################################################
+#
+# 1 Linux Kernel 
+#
+####################################################################################
+
+####################################################################################
+#
+# 2 System Startup 
+#
+####################################################################################
+
+####################################################################################
+#
+# 3 Filesystem Startup 
+#
+####################################################################################
+
+####################################################################################
+#
+# 4 Advanced Storage Device Administration 
+#
+####################################################################################
+
+$ ls /dev/disk/by-label -lah
+	volume label
+
+$ ls /dev/disk/by-id -lah
+	By id
+
+$ ls /dev/disk/by-uuid -lah
+	By uuid
+
+# e2label <dev> <label>
+	As time goes on you make changes and may need to change the name of a label. Very simple with e2label:
+# e2label /dev/sdb5 music
+	So, for example, if I want to change my sdb5 name from storage to music, I would use the command:
+
+md -> multiple disks
+
+$ sudo mdadm --create /dev/md0 --level=5 --raid-devices=3 /dev/sdb1 /devsdc1 /devsdd1
+
+/proc/mdstat
+	contains a summary of mds status and the status of all the system's RAID arrays.
+
+/var/log/messages
+	log file and notification of mdadm
+
+/etc/mdadm.conf
+	arquivo que fica a configuração do mdadm
+
+# mdadm --detail --scan
+	dumps the current RAID setup into a configuration file.
+
+# sh -c 'echo DEVICE /dev/sdb1 /dev/sdc1 /dev/sdd1 > etc/mdadm.conf'
+# sh -c 'mdadm --detail --scan >> /etc/mdadm.conf'
+# cat /etc/mdadm.conf
+	para criar um arquivo de configuração completo do mdadm.conf
+
+# mdadm -As /dev/md0
+	para iniciar um multiple disk partition depois de configurar o mdadm.conf
+
+mdadm has a --monitor mode in which it runs continuously as a daemon process and notifies you by email when problems are detected on a RAID array. precisa especificar no arquivo de configuração (i.e.: /etc/mdadm.conf) para qual e-mail ele deverá enviar.
+
+# update-rc.d mdadm enable
+
+# cat /proc/mdstat
+	status do RAID corrente.
+# tail /var/log/messages
+	para saber se o RAID subiu corretamente.
+
+# mdadm -r
+	para remover um dos discos na configuração do RAID.
+	# mdadm /dev/md0 -r /dev/sdc1 
+
+LVM Logical Volume Menagement
+
+# pvcreate /dev/md0
+	primeiro se deve criar o physical volume.
+# vgcreate DEMO /dev/md0
+	segundo colocar o phycical volume dentro do volume group.
+# vgdisplay
+	mostra os dados do volume group
+
+# lvcreate -L 100G -n web1 DEMO 
+	ultimo passo é criar um logical volume e entao criar um sistema de arquivo naquele volume.
+
+# mkfs /dev/DEMO/web1
+# mkdir /mnt/web1
+# mount /dev/DEMO/web1 /mnt/web1
+
+# lvcreate -L 100G -s -n web1-snap DEMO/web1
+	cria um snapshot do logical volume.
+
+lembrando que a snapshot precisa ser especificado com o seguinte formato: volume_group/volume
+
+# lvdisplay
+	mostra o status da sua snapshot.
+
+
+
+
+
+####################################################################################
+#
+# 5 Networking Configuration 
+#
+####################################################################################
+
+####################################################################################
+#
+# 6 System Maintenance 
+#
+####################################################################################
+
+####################################################################################
+#
+# 7 DNS
+#
+####################################################################################
+
 # hostname --fqdn.
 
 # hostname -f
