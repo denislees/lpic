@@ -98,8 +98,27 @@ lembrando que a snapshot precisa ser especificado com o seguinte formato: volume
 # lvdisplay
 	mostra o status da sua snapshot.
 
+use lvresize para adicionar mais espaço para o logical volume
 
+# umount /mnt/web1
+# lvchange -an DEMO/web1
+# lvresize -L +10G DEMO/web1
+# lvchange -ay DEMO/web1
 
+# lvchange -> o comando precisa desativar o volume para alterar o tamanho e depois ser reativado.
+
+# resize2fs -> agora o sitema de arquivo pode ser alterado com o resize2fs
+# resize2fs /dev/DEMO/web1
+
+mas antes é preciso fazer o fsck e só então é preciso usar o resize2fs.
+
+# e2fsch -f /dev/DEMO/web1
+# resize2fs /dev/DEMO/web1
+
+# mount /dev/DEMOweb1 /mnt/web1
+# df -h /mnt/web1
+
+diskfree para verificar se a mudança foi realizada com sucesso.
 
 
 ####################################################################################
