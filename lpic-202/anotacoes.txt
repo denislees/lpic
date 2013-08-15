@@ -135,4 +135,15 @@ conectar na porta 110
 	list
 	retr <numero>
 
+arquivo de configuracao de referencia para os emails
+	/etc/aliases
 
+
+/var/log/mail.log
+	aquivo de log do postfix
+
+# iptables -A INPUT -p icmp -j DROP
+	bloqueia todas as requisicoes icmp
+
+# iptables -F
+	limpa as regrinhas da firewall
