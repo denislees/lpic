@@ -147,3 +147,74 @@ arquivo de configuracao de referencia para os emails
 
 # iptables -F
 	limpa as regrinhas da firewall
+
+# iptables -L -t filter
+	-L: list
+	-t: type
+
+filters: INPUT, FORWARD, OUTPUT
+
+# iptables -L -t nat
+
+nat: PREROUTING, POSTROUTING, OUTPUT
+
+# iptables -L -t mangle 
+
+mangle: INPUT, FORWARD, OUTPUT, PREROUTING, POSTROUTING 
+
+Tabela padrao do iptables eh a filter. ou seja, se voce digitar apenas o # iptables -L, sera igual ao # iptables -L -t filter.
+
+# iptables -A INPUT -p icmp -j REJECT
+	-A INPUT: add
+	-p protocol
+	-j jump (action)
+
+# iptables -F
+	-F flush 
+		apaga todas as regras do seu iptables.
+
+# iptables-save > /etc/iptables_backup
+	cria um arquivo de backup com as regras atuais.
+
+# iptables-restore < /etc/iptables_backup
+	recria as regras do arquivo para as regras atuais.
+
+# iptables -A OUTPUT -d 127.0.0.1 -o lo -j ACCEPT
+# iptables -A OUTPUT -s 127.0.0.1 -i lo -j ACCEPT
+	regra para deixar o loopback funcionar 
+	-A: Add
+	-d: destination ip
+	-o: output device
+	-j: jump/action
+	-s: source ip
+
+# iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
+# iptables -A INPUT -p udp --sport 53 -j ACCEPT
+	deixando o DNS funcionar
+	-dport: destination port
+	-sport: source port
+
+# iptables -A INPUT -p icmp --icmp-type echo-request -m limit --limit 1/s -j ACCEPT
+	bloqueando ping of death
+	--icpm-type: colocando outros parametros no protocolo escolhido
+	-m: modulo carregado
+	--limit: colocando parametro no modulo escolhido
+
+/proc/sys/net/ipv4/ip_forward
+	seta se faz forward ou nao. (0 ou 1 dentro do arquivo)
+
+# iptables -t nat -A PREROUTING -i eth0 -p tcp -j DNAT --to 172.158.50.135
+	roteia todos os pacotes para um ip especifico
+
+# iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 31278
+	redirecionando todas as requisicoes na porta 80 para o squid.
+
+# iptables -t nat -F
+	flush na tabela nat
+
+# iptables -P INPUT ACCEPT
+	aceita tudo
+
+# iptables -P FORWARD ACCEPT
+	faz forward tudo
+
