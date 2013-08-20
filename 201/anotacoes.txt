@@ -1,0 +1,341 @@
+GRUB 2
+
+/boot/grub/grub.cfg
+	arquivo de configuracao
+
+menuentry "Fedora" {
+	set root=(hd0,1)
+	linux /mvlinuz ro root=/dev/hda4 mem=2048M
+	initrd /initrd
+}
+
+menuentry "windows" {
+	set root=(hd0,2)
+	chainloader +1
+}
+
+partitions are numbered starting from 1 rather than from 0. A similar change in disk numbering is not implemented.
+
+/etc/default/grub 
+	local onde deve ser editado as configuracoes do grub2. logo depois devera fazer o comando update-grub
+
+# grub-install /dev/hda
+	modo para instalar o grub boot loader.
+
+# grub-install '(hd0)'
+	tambem funciona para instalar o grub no hd
+
+se nao houver o /etc/inittab, voce pode especificar o init basico pelo comando: init=/bin/bash no grub.
+
+<C>: grub interactive mode
+
+/etc/inittab
+	arquivo de inicializacao de runlevels dos scripts e comandos gerais.
+	identifica o runlevel dos servicos tambem.
+
+id:runlevels:action:process
+
+/etc/init.d/rc ou /etc/rc.d/rc
+	esse eh o script que chama todos os outros scripts.
+
+/etc/rc.d/rc?.d
+/etc/init.d/rc?.d
+/etc/rc?.d
+	onde os scripts estao guardados.
+
+estrutura de nomes dos servicos nos diretorios rc
+	/etc/rc?.d/ ou /etc/init.d/rc?.d/
+	<S> ou <K>: start or kill
+	<num>: numero da ordem de execucao
+	<servico>: nome do servico que devera ser executado.
+
+	lembrando que sao soft links, os servicos reais estao no
+		/etc/init.d
+
+eh possivel utilizar o servico diretamente sem precisar ser na inicializacao
+	/etc/init.d/samba start
+
+# update-rc.d
+	mais do que colocar o script na mao no diretorio /etc/rc?.d/ existem programas para configurar isso automaticamente:
+
+# update-rc.d <options> name action
+	opcoes: -n
+	name: nome do servico para alterar
+	action: enable <runlevels>
+	
+# chkconfig
+	mesma coisa que update-rc.d mas no redhat.	
+
+
+# mount 
+	defaults: rw, suid, dev, exec, auto, nouser, async
+	-a : reloads file /etc/fstab
+	-r : mount the filesystem read-only
+	-t fstype : especifica o filesystem
+	-v : verbose
+	-w : mount the filesystem in read/write mode.
+
+# umount
+	desmonta o device montado.
+	possui seis paramentros:
+		device, mount point, filesystem, mount options, dump frequency, pass number for fsck
+
+	-a : desmonta todos os devices montados (/dev/mtab>
+	-f fstype : especifica o filesystem
+
+/etc/fstab
+	devices que devem ser montados na inicializacao do sistema.
+
+/etc/mtab
+/proc/mounts
+	mostra os devices ja montados.
+
+# mkswap
+	-c : check the device for bad blocks before creating the swap area.
+	-f : force
+	-vn : especify swap style. 
+
+# swapon
+	ativa o swap para poder ser utilizado 
+	-a : enable all devices marked as swap in /etc/fstab
+	-h : display help information
+	-s : display a swap usage summary
+
+# swapoff
+	destiva o swap alvo
+	-a : disable all devices.
+
+# tune2fs
+	-m : numero de mounts ate fazer o fsck
+	-i : intervalo de tempo ate fazer o fsck
+	-l : list all information
+
+# dumpe2fs
+	
+# debugfs
+	usado para fazer undelete no sistema.
+	funciona apenas no ext2
+
+# fsck.ext2
+# e2fsck
+	apenas checa o ext2, ext3
+
+# mkfs.ext2
+# mke2fs
+	cria um filesystem
+	-N <numero> : numero de inodes
+
+x parted, unfortunetely, has been know to corrupt partition tables and ruin filesystems. before using it, as before any major operation on your system, back up your data and feel relieved if you don't have to restore it later.
+x the filesystems containing the partitions you are working on need to be unmounted when you work on them.
+x you should go down to single-user mode if you're doing large operations.
+
+# genisoimage -J -r -v -o /tmp/arquivo.iso /diretorio/ /diretorio2/
+	-J jouliet : sistema para o windows ver
+	-r : tira as permissoes dos arquivos
+	-v : verbose
+	-o : output file
+
+/etc/auto.master
+	arquivo de configuracao do autofs
+
+# mke2fs -j -L test /dev/sda1
+	cria fs no ext3
+	altera o nome para test
+
+# tune2fs -L <nome> <device>
+	altera o nome do device
+
+
+
+$ ls /dev/disk/by-label -lah
+	volume label
+
+$ ls /dev/disk/by-id -lah
+	By id
+
+$ ls /dev/disk/by-uuid -lah
+	By uuid
+
+# e2label <dev> <label>
+	As time goes on you make changes and may need to change the name of a label. Very simple with e2label:
+# e2label /dev/sdb5 music
+	So, for example, if I want to change my sdb5 name from storage to music, I would use the command:
+
+md -> multiple disks
+
+$ sudo mdadm --create /dev/md0 --level=5 --raid-devices=3 /dev/sdb1 /devsdc1 /devsdd1
+
+/proc/mdstat
+	contains a summary of mds status and the status of all the system's RAID arrays.
+
+/var/log/messages
+	log file and notification of mdadm
+
+/etc/mdadm.conf
+	arquivo que fica a configuração do mdadm
+
+# mdadm --detail --scan
+	dumps the current RAID setup into a configuration file.
+
+# sh -c 'echo DEVICE /dev/sdb1 /dev/sdc1 /dev/sdd1 > etc/mdadm.conf'
+# sh -c 'mdadm --detail --scan >> /etc/mdadm.conf'
+# cat /etc/mdadm.conf
+	para criar um arquivo de configuração completo do mdadm.conf
+
+# mdadm -As /dev/md0
+	para iniciar um multiple disk partition depois de configurar o mdadm.conf
+
+mdadm has a --monitor mode in which it runs continuously as a daemon process and notifies you by email when problems are detected on a RAID array. precisa especificar no arquivo de configuração (i.e.: /etc/mdadm.conf) para qual e-mail ele deverá enviar.
+
+# update-rc.d mdadm enable
+
+# cat /proc/mdstat
+	status do RAID corrente.
+# tail /var/log/messages
+	para saber se o RAID subiu corretamente.
+
+# mdadm -r
+	para remover um dos discos na configuração do RAID.
+	# mdadm /dev/md0 -r /dev/sdc1 
+
+LVM Logical Volume Menagement
+
+# pvcreate /dev/md0
+	primeiro se deve criar o physical volume.
+# vgcreate DEMO /dev/md0
+	segundo colocar o phycical volume dentro do volume group.
+# vgdisplay
+	mostra os dados do volume group
+
+# lvcreate -L 100G -n web1 DEMO 
+	ultimo passo é criar um logical volume e entao criar um sistema de arquivo naquele volume.
+
+# mkfs /dev/DEMO/web1
+# mkdir /mnt/web1
+# mount /dev/DEMO/web1 /mnt/web1
+
+# lvcreate -L 100G -s -n web1-snap DEMO/web1
+	cria um snapshot do logical volume.
+
+lembrando que a snapshot precisa ser especificado com o seguinte formato: volume_group/volume
+
+# lvdisplay
+	mostra o status da sua snapshot.
+
+use lvresize para adicionar mais espaço para o logical volume
+
+# umount /mnt/web1
+# lvchange -an DEMO/web1
+# lvresize -L +10G DEMO/web1
+# lvchange -ay DEMO/web1
+
+# lvchange -> o comando precisa desativar o volume para alterar o tamanho e depois ser reativado.
+
+# resize2fs -> agora o sitema de arquivo pode ser alterado com o resize2fs
+# resize2fs /dev/DEMO/web1
+
+mas antes é preciso fazer o fsck e só então é preciso usar o resize2fs.
+
+# e2fsch -f /dev/DEMO/web1
+# resize2fs /dev/DEMO/web1
+
+# mount /dev/DEMOweb1 /mnt/web1
+# df -h /mnt/web1
+
+diskfree para verificar se a mudança foi realizada com sucesso.
+
+
+
+
+
+# hostname --fqdn.
+
+# hostname -f
+	mostra o seu hostname com o domínio
+
+# host nessus.example.com
+	mostra o ip do host (o contrário do ping, praticamente.)
+
+# host nessus.example.com 10.20.102.7
+	ele faz a resoluçao do host usando o DNS 10.20.102.7
+
+/etc/hosts
+	arquivo que indica a resoluçao local e personalizada dos hosts para ips.
+
+/etc/resolv.conf
+	é onde fica especificado os servidores de DNS que o computador precisa verificar. nameserver <ip>
+
+/etc/network
+	para saber se você está usando DHCP ou IP estático.
+
+/proc/sys/net/ipv4/ip_forward
+	routing tables.
+
+# iptables -L
+	mostra os dados do iptables presentes no momento.
+
+/etc/hosts.allow
+/etc/hosts.deny
+	os arquivos que especificam as regras do ipdtables.
+
+ZONE
+----
+SOA	Start of Authority	Defines a DNS Zone
+NS	Name Server		Identifies servers, delegates subdomains
+
+Base
+----
+A	IPv4 Address		name to address translation
+AAAA	IPv6 Address		name to ipv6 address translation
+PRT	Pointer			Address to name translation (reverse)
+MX	Mail Exchange 		controls email routing
+
+Security and DNSSEC
+-------------------
+DS	Delegation Signer	Hashos signed child zone's key-signing key
+DNSKEY	public key		Public key for a DNS name
+NSEC	next secure		used with DNSSEC for negative answers
+NSEC3	next secure v3		used with DNSSEC for negative answers
+RRSIG	signature		signed, authenticated resources record set
+DLV	lookaside		nonroot trust anchor for DNSSEC
+SSHFP	SSH Fingerprint		SSH host key, allows verification via DNS
+SPF	sender policy		indentifies mail servers, inhibits forging
+DKIM	domain keys		verify email sender and message integrity
+
+Option
+......
+CNAME	Canonical Name		Nicknames or aliases for a host
+SRV	services		gives locations of well-know services
+TXT	text			comments or untyped information
+
+
+email para o administrador do dominio: "hostmaster.atrust.com"
+seria: hostmaster@atrust.com 
+ou seja, substitue o primeiro ponto por arroba @
+
+configuracao do bind9
+
+view "internal" {
+	match-clients { our_nets; }; // only our network
+	recursion yes; // internal clients only
+	zone "examples.com" { //complete view of the zone
+		type master;
+		file "example-internal.db";
+	};
+};	
+
+view "external" {
+	match-clients { any; };
+	recursion no;
+	zone "examples.com" {
+		type master;
+		file "example-external.db";
+	};
+};
+
+
+
+
+
+-----
+

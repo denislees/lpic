@@ -1,0 +1,553 @@
+
+#################################################################################
+#
+# GERAL
+#
+#################################################################################
+
+1. you want to temporarily stop the postfix server while you make some changes to its configuration. which of the following commands, when typed by root, will do this on at least some distributions? (choose all that apply.)
+	(a) stop postfix
+	(d) /etc/rc.d/postfix stop
+
+2. how can you check for recent kernetl messages related to the seconf ethernet device (eth1) on a computer?
+	(c) type dmesg | grep eth1
+
+3. what is the purpose of the initrd line in a grub configuration?
+	(d) it tells grub where to find the initial ram disk, which holds kernel modules and configuration files used by the kernel before it has mounted its disk-based root filesystem.
+
+4. your computer's swap space is spread across two hard disks, one of wich is significantly faster than the other. how can you ajust the /etc/fstab entries for the two swap partition to optimize swap performance?
+	(b) use the pri=priority option on each swap partition, giving a higher priority value to the disk with better performance
+
+5. as part of a security check, you want to ensure that your web server computer, www.bapngeae.edu, runs only the webserver software (on tcp port 80) and a secure shell (ssh) login server (on tcp port 22). what command can you run from a remote computer to ensure that this is so? (consider only tcp traffic.)
+	(b) nmap -sT www.pangea.edu
+
+6. when configuring a source code package, you see the following error message:
+checking for qt.... configure: error: qt (>= qt 3.0) (headers and libraries) not found. please check your instalation!
+whick of the following actions is most likely to correct this problem?
+	(b) locate and install an appropriate qt development package.
+
+7. what uname parameter can you use to determine your current running kernel version number?
+	(a) -r or --kernel-release
+
+8. An external disk with a single partition (/ dev/ sdb1) uses ReiserFS, and when it’s automounted, it’s given an ugly name based on the disk’s UUID. You know that your automounter uses a disk’s label when one is available, so you want to give the filesystem the label MyStuff. How can you do this without damaging existing data on the disk?
+	(c) reiserfstune -l MyStuff /dev/sdb1
+
+9.  You’re replacing an old PATA disk, /dev/ hdb, with a new SATA disk, /dev/ sdc. You use an LVM configuration with one physical volume, /dev/ hdb2, on /dev/ hdb. How can you transfer the data from /dev/ hdb2 to its new home on /dev/ sdc1, after adding /dev/ sdc1 to the volume group?
+	(d) pvmove /dev/hdb2 /dev/sdc1
+
+10. What is the effect of the following command, assuming the device files have conventional meanings? # dd if =/ dev/ sdb3 of =/ dev/ dvd
+	(d) nothing; it's an invalid use of the dd command
+
+11. what tyep of record is found in reverse zone files but not in forward zone files?
+	(d) PTR
+
+12. a dns server is running on a computer with two network interfaces, eth0 (192.168.7.92) and eth1 (172.24.21.19). You want the server to be accessible only to the eth1 network. what you want the server to be accessible only to the eth1 network. what /ect/named.conf configuration will help accomplish this goal?
+	(c) listen-on { 172.24.21.19; };
+
+13. You’re preparing to compile a Linux kernel. Before proceeding, you want to ensure that you’ve removed all the old configuration and temporary files. What would you type to do so?
+	(c) make mrproper
+
+14. After assembling a RAID array on /dev/ md0 from /dev/ sda1, /dev/ sdb1, and /dev/ sdc1, you use fdisk to create four primary partitions on this device. What device filenames will they have?
+	(b)/dev/ md0p1, /dev/ md0p2, /dev/ md0p3, and /dev/ md0p4
+
+15. You want to connect a laptop computer to a public Wi-Fi network, but you don’t know its name or other relevant data.
+	(d) iwlist wlan0 scanning
+
+16. in which of the following situations does it make the most sense to use NAT?
+	(a) computers on your network need to be able to run client programs and access the internet, but you run no servers that should be accessible from the Internet.
+
+17. What types of information can a DHCP server deliver to clients, in addition to their IP addresses? (Select all that apply.)
+	(b) a suggested default web page for web boewsers
+	(c) the ip address of a windows netbios name server
+
+18. your outgoing mail server runs postfix, and you find the following line in its configuration file. what is the effect of this line?
+	myorigin = luna.edu
+	(b) if a mail client omits the hostname in the return address of an outgoing email message, @luna.edu will be appended to the username in the address.
+
+19. you're configuring dovecot for a site that uses the maildir format for incoming mail, storing email in the Mail folder in user's home directories. what option can you set in its configuration file to tell dovecot to use this directory?
+	(a) mail_location = maildir: /Mail
+
+20. you're talking over administration of a computer that runs pure-ftpd and launches the server via a local startup script. you discover the --chrooteveryone option, among others, as an option to the pure-ftpd binary in the local startup script. what is the effect of this option?
+	(a) the server locks itself into a chroot jail for all users except for root.
+
+21. what if the filename of the Xorg-X111 X server's log file?
+	(b) /var/log/Xorg.0.log
+
+22. what can you expect to find in the /etc/profile.d directory?
+	(c) scripts to supplement the main global login bash script
+
+23. how is the login process handled on text-mode virtual terminals on a computer that uses the SysV initialization system?
+	(c) lines in /etc/inittab associate getty programs with each virtual terminal, and these getty processes launch the login program.
+
+24. you're adding a samba server to an existing windows (netbios) domain called picture. what smb.conf line will you use to inform samba of the name of the windows domain?
+	(a) workgroup = PICTURE
+
+25. what is a consequence of the following configuration, found in /etc/exports, assuming that an NFS server is running on the computer?
+	(b) the root user on the computer called helpman will be able to read and write every file in the server's /home directory tree.
+
+26. an individual has an account, samuel, on the computer langhorne.example.com and another account, mark, on the computer tesla.luna.edu. Once logged into langhorne.example.com, how can this user log into his account on tesla.luna.edu using SSH, assuming an SSH server is running on the latter system?
+	(b) ssh mark@tesla.luna.edu
+
+27. what type of computer is least likely to use an unmodified version of grub legacy?
+	(d)
+
+28. what is the difference between the stop and graceful-stop options to apache2ctl?
+	(c) the option terminates apache immediately, whereas the graceful-stop option permit in-progress transfers to complete.
+
+29. you're creating a pam auth stack for authentitcation users using several differente authentication methods (standard unix logins, ldap, and so on). You want each PAM module to use the password collected by the forst module , without attemping to collect its own password by the first module, without attempting to collect its own password under any circumstances. what option can you pass to all but the first module in the stack to accomplish this goal?
+	(a) use_first_pass
+	
+30. which of the following is an advantage of iptables over TCP wrappers as a security tool?
+	(c) you can write iptables rules that restrict the activities of clients'tcp wrappers affects only servers.
+
+#################################################################################
+#
+# Chapter 1: System Startup and Advanced System Management
+#
+#################################################################################
+
+(2161 of 24300)
+
+1. What is the first program the Linux kernel runs once the kernel itself is running, assuming a normal Linux startup procedure?
+	(d) init
+
+2. You have accidentally renamed your system’s kernel file and rebooted the computer, with the result that GRUB won’t start the computer. If you remember the name you used when renaming the kernel file, how can you start the computer in a simple way?
+	(b) select the misbehaving kernel entry in GRUB, press the E key, and edit the kernel's name. 
+
+3. How can you boot Linux directly into single-user mode?
+	(a) in grub, select the kernel image you want to boot, press E, and add 1 or single to the kernel or linux line.
+
+4. In what file is the system’s initial runlevel specified on a SysV system?
+	(c) /etc/inittab
+
+5. How can you enter GRUB's interactive recovery mode?
+	(d) press the C key at the GRUB main menu.
+
+6. what file would you edit to add an unusual operating system to a grub 2 menu?
+	(c) /etc/grub.d/40_custom
+
+7. the following line is present in a linux computer's /etc/inittab file. what can you say about it?
+id:3:initdefault:
+	(a) the computer boots into runlevel 3.
+
+8. what might you find in the /etc/init.d directory?
+	(b) sysv startup scripts
+
+9. where might you find runlevel-specific symbolic links to sysv startup scripts? (choose all that apply.)
+	(c) /etc/init.d/rc?.d
+	(d) /etc/rc?.d
+
+10. you want to check the configuration of a server called waiter on a fedora system, to see in which runlevels it runs. What might you type to do this?
+	(a) chkconfig --list waiter
+
+11. which of the following might you reasonably use as a default runlevel? (choose all that apply)
+	(b) 2
+	(c) 3
+	(d) 5
+
+12. an administrator of a debian system types the following command as root. what will be the effect, assuming that the appropriate software is installed? update-rc.d enable disable 23
+	(d) the enable service will be disabled in runlevels 2 and 3.
+
+13. you've taken over administration of a fedora linux system that's been running for more than a year. you discover that the dostuff program was installed from source code and resides in /sr/local/bin and related directories. you want to uninstall this program and install a newer version from a precompiled binary package. where is the best location for you to look for the original source code directory so you can use its uninstall feature?
+	(c) a subdirectory of /usr/src, probably /usr/src/dostuff or a related name
+
+14. onde you've located the original source code directory for a program (dostuff) that was previously compiled and installed locally, what is a common and effective way to uninstall the software?
+	(d) type make uninstall as root in the original source directory
+
+15. you want to compile and install a program from source code on a debian system. you've located the programs home page, where several files are listed in the download section. which of thse files is most likely to be a source code tarball based on its filename?
+	(c) theprogra-7.2.12.tgz
+
+16. which of the following options describes the most common sequence for installing software from source code?
+	(b) unpack tarball; type ./configure; type make; type make install as root
+
+17. you want to compile software from soruce code and install in the /opt directory tree (an unusual location). the source code includes a configure script. how might you run this script to archive this goal?
+	(a) ./configure --prefix=/opt
+
+18. a source package's Makefile does not include an install target to make. you type make to create a binary file called theprog. how might you install the software, assuming you care only about instalking this one program? (choose all that apply.)
+	(a) cp theprog /usr/local/bin
+	(c) install theprog /usr/local/bin
+
+19. you want to deliver a message to would-be telnet users that your system is for official use by employees of your company. what file would your edit to deliver this message before telnet users see a login: prompt?
+	(c) /etc/issue.net
+
+20. in reviewing files in /etc/, you find that /etc/motd is completely empty. what does this mean?
+	(a) the system won't display a message of the day after users log in.
+
+#################################################################################
+#
+# Chapter 2: Linux Kernel Configuration
+#
+#################################################################################
+(3662 of 24300) 
+
+1. what is the conventional name for a locally compiled, bootable linux kernel on an x86 system?
+	(c)
+
+2. Which of the following statements about /usr/ src/ linux is usually true?
+	(a) It is a symbolic link to a directory holding the system’s current kernel source code, or the version currently being prepared.
+
+3. In what directory might you look for information on options that can be applied to your computer’s Ethernet driver module?
+	(a) /usr/src/linux/Documentation
+
+4. Which type of kernel image has been largely abandoned on x86 computers in favor of the bzImage format?
+	(b) zImage
+
+5. Which of the following commands, when typed in /usr/ src/ linux after configuring the kernel, compile the main Linux kernel file and its modules?
+	(d) make
+
+6. Which two of the following kernel features should you compile into the main kernel file of a regular disk-based x86-64 installation to simplify booting the system? (Select two.)
+	(a) Drivers for your boot disk’s ATA controller or SCSI host adapter 
+	(b) Support for your root (/) filesystem
+
+7. You’ve compiled and installed a new kernel, of version 2.6.35.4. You now want to prepare an initial RAM disk. Which two of the following commands will do so, depending on your distribution? (Select two options.)
+	(b) mkinitrd /boot/initrd-2.6.35.4.2.
+	(d) mkinitramfs -o /boot/initrd-
+
+8. Which of the following commands might you type while in /usr/ src/ linux, after copying the configuration file from an old kernel, to use the old kernel’s options and update the configuration for new options in the new kernel?
+	(c) make mrproper
+
+9. In which of the following circumstances would it make the least sense to patch a kernel?
+	(d) You have kernel source from your distribution maintainer and you want to compile a “generic” kernel for your system.
+
+10. You’ve downloaded the patch-2.6.35.4. bz2 file. What program will you use as part of the patch operation to handle this file’s compression?
+	(a) bunzip2
+
+11. Which of the following commands would you type to configure a Linux kernel using an interactive text-mode tool?
+	(b) 
+
+12. you've configured and compiled your new kernel, version 2.6.35.4. You now type make modules_install. where can you expect to find the module files?
+	(c) /lib/modules/2.6.35.4
+
+13. In what file in the linux kernel source tree are configuration options stored?
+	(c) .config
+
+14. after copying an existing grub legacy configuration entry, what three features are most imoprtant to alter to get the new entry to work with a new kernel?
+	(a) the title, the kernel filename, and the initrd filename.
+
+15. what would you expect to see if you type uname -a?
+	(b) information on the running system, such as the OS, the kernel version, and the cpu type.
+
+16. What is the most important practical difference between insmod and modprobe?
+	(b) insmod loads a single module, whereas modprobe loads a module and all those upon which it depends.
+
+17. You type the command rmmod ide_core, but the system responds with the message ERROR: module ide_core is in use by via82cxxx, ide_cd, ide_disk. What is the meaning of this response?
+	(a) the via82cxxx, ide_cd, and ide_disk modules all rely on ide_core, so ide_core can't be unloaded whitout first unloading these other modules.
+
+18. what file or files might you edit to change the options that are automatically passed to kernel modules? (select all that apply.)
+	(a) files in the modules.d directory
+	(d) /etc/modules.conf
+
+19.You have two computers, both of which have identical motherboards and DVD drives. Both run the 2.6.35.4 kernel, which was configured and compiled independently on each system. On one (computera), typing lsmod produces output that includes the cdrom module. On the other (computerb), typing lsmod does not produce output that includes a module called cdrom, even when the DVD drive is in use. What might account for this difference?
+	(c) the cdrom driver is built as module on computera, but it's built into the main kernel file on computerb. 
+
+20. which of the following files contains the same information can be obtained by typing uname -v? 
+	(d) /proc/sys/kernel/version
+
+#################################################################################
+#
+# Chapter 3: Basic Filesystem Management
+#
+#################################################################################
+
+1. What mount point should you associate with swap partitions?
+	(d) none
+
+2. to access files on a usb pen drive, you type mount /dev/sdc1/media/pen as root. which types of filesystems will this command mount, provided the filesystem support exisstis in the kernel?
+	(d) all of the above
+
+3.  which of the following /etc/fstab entries will mount /dev/sdb2 as the /home directory at boot time?
+	(b) /dev/sdb2 /home reiserfs defaults 0 0
+
+4. what filesystem options might you specify in /etc/fstab to make a removable disk (usb pendrive, zipdisk, floppy disk, and so on) user-mountable?
+	(a) user
+	(b) users
+	(c) owner
+
+5. Your /etc/ fstab file contains the following entry: /dev/ sdc5    /     ext4     defaults     1 1 Unfortunately, the order in which your three hard disks is detected varies randomly from one boot to another, which makes this entry problematic. How might you change the entry to fix this problem?
+	(b) Replace /dev/ sdc5 with a UUID specification, such as UUID = 8b4cdbdd-b9b3-404a-9a54-c1691f1f1483, obtaining the UUID value using blkid.
+
+6. You’ve just repartitioned a non-boot disk, added a swap partition to it (/ dev/ sdb7), created swap space on the partition, and added a suitable entry to /etc/ fstab for the new swap partition. How can you activate the new swap partition? (Select all that apply.)
+	(c) swapon /dev/sdb7
+	(d) swapon -a
+
+7. what is the purpose of the /etc/mtab file?
+	(a) It describes the filesystems that are currently mounted, using syntax similar to that of /etc/ fstab.
+
+8. A network file server has become unavailable while your Linux computer was accessing it at /mnt/ remote. Now you want to unmount that share, but because the server has disappeared, umount complains. Which of the following commands is most likely to successfully unmount this unresponsive mount?
+	(a) umount -f /mnt/remote
+
+9. What does the following command accomplish? # mkfs.ext2 /dev/ sda4
+	(c) It creates a new ext2 filesystem on /dev/ sda4, overwriting any existing filesystem and data.
+
+10. Which of the following options is used with fsck to force it to use a particular filesystem type?
+	(c) -t
+
+11. What is an advantage of a journaling filesystem over a conventional (non-journaling) filesystem?
+	(d) Journaling filesystems require shorter disk checks after a power failure or system crash.
+
+12. Which of the following features can you adjust with tune2fs? (Select all that apply.)
+	(a) the presence of a journal
+	(c) the filesystem's uuid value
+
+13. You have accidentally deleted a file on an ext3fs partition. To recover it, you first enter debugfs, specifying the partition’s device node. How can you recover the file?
+	(b) type undelete inone, where inode is the file's inode number.
+
+14. An ext4 filesystem on /dev/ sda3 is being checked every time you reboot your computer. You suspect it may have an incorrect value set that’s causing the system to check it after every mount operation. How can you test this hypothesis?
+	(a) type dumpe2fs -h /dev//sda3 and examine the maximum mount count and maximum check interval values.
+
+15. What option to mkisofs would you use if you want a computer running Microsoft Windows 7 to be able to read long filenames on a CD-R or DVD created with Linux? (Choose all that apply.)
+	(a) -J
+	(d) -udf
+
+16. You’ve downloaded the latest version of your Linux distribution as a 4 GB DVD image file (distrib.iso). Which of the following commands will burn this file to a blank DVD, assuming your DVD drive can be accessed as /dev/ dvdrw?
+	(c) growisofs -Z /dev/dvdrw=distrib.iso
+
+17. You want to write files to a DVD + RW disc over a period of several days, retaining the ability to read the disc on another computer at a moment’s notice. How can you accomplish this task?
+	(d) 
+
+18. Use mkudffs to create a UDF filesystem on the disc, mount it as if it were a hard disk, and write files to it.
+	(b) /mnt/net/templates/iceflow.txt
+
+19. What is the effect of the following udev rule, when placed in the /etc/ udev/ rules.d/ 99-my.rules file? KERNEL = =" video*", DRIVER = =" saa7134", SYMLINK + =" video-A180"
+	(b) It creates a symbolic link called /dev/ video-A180 that points to the primary device file for a video device that has a driver called saa7134.
+
+20. You’re using a third-party Linux driver that creates device files called /dev/ pd-c0-ain, /dev/ pd-c0-aout, /dev/ pd-c0-din, and several more of this form. You want to give users in the exper group full read/ write access to these devices, while keeping other users from accessing them. What udev rule can accomplish this goal?
+	(a) KERNEL = =" pd-c?-*", GROUP =" exper", MODE =" 0660"
+
+
+#################################################################################
+#
+# Chapter 4: Advanced Disk Management
+#
+#################################################################################
+
+(location 7769 of 24300) Review Questions
+
+1. typing fdisk -lu /dev/hda on a linux computer with an mbr disk produces a listing of four partitions: /dev/hda1, /dev/hda2, /dev/hda5, and /dev/hda6. which of the following is true?
+	(b) either /dev/hda1 or /dev/hda2 is extended partition
+
+2. A new server is arriving at the end of the week. It will have four 1 TiB hard drives installed and configured in a RAID 5 array with no hot standby spare drives. How much data can be stored within this array?
+	(b) 3 TiB
+
+3. You have been told by your manager that the server being moved from the test lab to production must have the two drives within it mirrored. What level of RAID is used for mirroring?
+	(c) raid 1
+
+4. What can you conclude from the following line, which is found in /proc/ mdstat?
+md0 : active raid4 sdd2[ 2] sdc1[ 1] sda8[ 0]
+	(a) the /dev/md0 raid 4 device is built from the /dev/sda8, /dev/sdc1, and /dev/sdd2 partitions.
+
+5. Which of the following commands correctly assembles a RAID 1 array from the component devices /dev/ sda1 and /dev/ hda2?
+	(d) mdadm --create /dev/md0 --level=1 --raid-devices=2 /dev/sda1 /dev/hda2
+
+6. Once Linux is booted, which file can you view to see which IRQs are in use on the Linux computer?
+	(d) /proc/interrupts
+
+7. Why should you be cautious when using hdparm?
+	(a) The hdparm tool can set hardware options that are not supported by some hardware, thus causing data corruption.
+
+8. Which of the following tools is used to initialize a partition so that it may function as a physical volume in an LVM configuration?
+	(b) pvcreate
+
+9.Which of the following device files might you reasonably include in a volume group, assuming they’re properly flagged and prepared? (Select all that apply.)
+	(a) /dev/sdc
+	(b) /dev/md1
+	(c) /dev/sda7
+	(d) /dev/hdb2
+
+10. Your computer has crashed because of filesystem corruption, and you must perform emergency recovery using an emergency boot disc. How can you activate your LVM devices, if they aren’t activated automatically when you boot your emergency disc?
+	(c) vgchange -ay
+
+11. Where you likely to find device nodes for the MyGroup volume group
+	(a) /dev/mapper
+
+12. what is the appropriate procedure for increasing the size of a logical volume containing an ext3 filesystem? (assume sufficiente free space existis in the volume group.)
+	(d) use lvresize to resize a logical volume followed by resize2fs to resize the filesystem
+
+13. You have an old Debian installation on the debian logical volume in the MyLVM volume group. You want to install a new version of Fedora Linux to replace this older Debian installation. The current debian logical volume is the right size for the new installation, but you want to give the logical volume a new name to avoid confusion. How can you do this?
+	(b) lvrename MyLVM debian fedora
+
+14. which of the following commands are commonly used to create archive files?
+	(b) tar
+	(d) cpio
+
+15. Which of the following commands backs up the /home directory to a an ATAPI tape drive?
+	(d) tar cvf /dev/ht0 /home
+
+16. what is wrong wiht the following commands, which are intended to record one incremental backup?
+	# mt -f /dev/st0 fsf 1
+	# tar cvpf /dev/st0 --listed-incremental /root/inc /home
+	(c) the device filename should be a nonrewinding name (such as /dev/nst0), not a rewinding name (/dev/st0)
+
+17. you need to restore some files that were accidentally deleted. which of the following commands can be used to list the contents of an archived storesd on a scsi tape?
+	(d) cpio -itv < /dev/st0
+
+18. You arrive at work on Monday morning to find that the server has crashed. All indications point to the crash as occurring earlier that morning. Scripts automatically do a full backup of the server every Friday night and an incremental backup all other nights. Which tapes do you need to restore the data on a new server? (Choose all that apply.)
+	(b) friday 
+	(c) saturday
+	(d) sunday
+
+19. A 20 GiB partition, /dev/ sda1, holding your main Linux installation, has become damaged by improper use of a low-level disk utility. Before attempting to repair it with fsck, you decide to back it up to a currently unused 25 GiB partition, /dev/ sdc6. How can you do this?
+	(a) dd if=/dev/sda1 of=/dev/sdc6
+
+20. which of the following is a sequencial backup medium?
+	(a) tape
+
+################################################################################
+#
+# Chapter 5: Networking Configuration
+#
+################################################################################
+
+
+1. You try to set up a computer on a local network via a static TCP/ IP configuration, but you lack a gateway address. Which of the following is true?
+	(c) You’ll be able to communicate with machines on your local network segment but not with other systems.
+
+2. Which of the following types of information is returned by typing ifconfig eth0? (Choose all that apply.)
+	(b) The IP address assigned to eth0
+	(c) The hardware address of eth0
+
+3. Under what circumstances might you use the iwconfig utility?
+	(c) You need to connect a Linux system to a new wireless network.
+
+4. Which of the following utilities can bring up a network connection? (Choose all that apply.)
+	(a) ifconfig
+	(c) ifup
+
+5. Which of the following commands should you use to add to host 192.168.0.10 a default gateway to 192.168.0.1?
+	(b) route add default gw 192.168.0.1
+
+6. You type arp -n at a command prompt. What type of output will you see?
+	(d) The mapping of IP addresses to MAC addresses
+
+7. Which of the following commands might bring up an interface on eth1? (Select all that apply.)
+	(a) Type dhclient eth1. 
+	(b) Type ifup eth1.
+
+8. What is the purpose of the -n option to route?
+	(c) It causes machines to be identified by IP address rather than hostname in output.
+
+9. Which of the following programs can monitor the network traffic coming into a computer, enabling you to analyze the packets’ contents?
+	(d) wireshark
+
+10. What does the following command accomplish, when typed as root?
+# nmap -sU router.example.com
+	(b) It watches for UDP network traffic to or from router.example.com, displaying each matching packet.
+
+11. You know that your computer is running a Web server on port 80, but you don’t know what Web server program you’re using. How can you discover this information?
+	(b) Type lsof -i :80 as root.
+
+12. You want to link four branch offices’ private networks to a company’s central office’s private network using OpenVPN. Which of the following conditions should you ensure is met to avoid problems?
+	(a) Each of the offices should use a different IP address range.
+
+13. What files are used to configure TCP Wrappers?
+	(a) /etc/ hosts.allow and /etc/ hosts.deny
+
+14. How can you learn what programs are currently accessing the network on a Linux system?
+	(d) Type netstat -p.
+
+15. The ping utility responds normally when you use it with an IP address but not when you use it with a hostname that you’re positive corresponds to this IP address. What might cause this problem? (Select all that apply.)
+	(b) Your computer’s DNS configuration may be broken.
+	(d) The route between your computer and its DNS server may be incorrect.
+
+16. What is the purpose of /etc/hostname, if it’s present on the system?
+	(a) It holds the computer’s default hostname.
+
+17. Which of the following programs can be used to perform a DNS lookup?
+	(a) host
+
+18. Your computer is in the example.com domain, but you want to be able to contact the neil.tranquility.luna.edu and buzz.tranquility.luna.edu servers by typing neil or buzz as the hostnames, respectively . How can you accomplish this goal? (Choose all that apply.)
+	(b) Add entries for neil and buzz, linking them to their IP addresses, to /etc/hosts.
+	(c) Add the line search tranquility.luna.edu to your /etc/ resolv.conf file.
+
+19. Which of the following entries are found in the /etc/ hosts file?
+	(b) Mappings of IP addresses to hostnames
+
+20. Your computer has an IP address of 192.168.21.102, with a network mask of 255.255.255.0. You’re able to ping 192.168.21.7 and 192.168.21.98, but not 192.168.27.3 or 10.78.21.102. If you know that all of these addresses are valid and the computers are turned on and connected to the network, which of the following is the most probable cause of this problem?
+	(b) The default route is set incorrectly on 192.168.21.102.
+
+
+################################################################################
+#
+# Chapter 6: DNS Server Configuration
+#
+#################################################################################
+
+1. a linux system administrator types rndc flush at a root command prompt on a computer tat's running dns server. what will be the effect?
+	x(d) the dns server computer will restart
+	(c) the dns servers caches will be cleared.
+
+2. in which directory are dns zone files typically stored on a system that runs the popular linux dns server, named?
+	(d) /var/named
+
+3. which of the following is an advantage of a forwarding-only dns server configuration vs. a full recursive lookup configuration?
+	x(b) a forwarding-only configuration can cache dns data for local access
+	(d) a forwarding-only configuration eliminates the need for an ISP
+
+4. what is the effect of the following line, found within the options section of a /etc/named.conf file? /directory "/home/sam/bind";
+	x(d) it locks bind in a chroot jail located at /home/sam/bind
+	(a) it tells bind to look in the /home/sam/bind directory for its zone files.
+
+5. how can you use the kill command to cause bind to reload its configuration files? 
+	(c) kill -s SIGNHUP 2798
+
+6. what is the effect of the following /etc/named.conf line?
+	(a) the server can be accessed only from the computer on which it's running.
+
+7. which of the following is a problem that a caching-only dns server can help solve?
+	(a) yout isp's dns server is reliable but sluggish.
+
+8. what is the purpose of the following lines in /etc/named.conf?
+zone "1.168.192.in-addr.arpa" {
+	type master;
+	file "named.192.168.1:";
+}
+	x(a) it tells the dns server to use the file named.192.168.1 to look up IP addresses for names in the in-addr.arpa domain.
+	(b) it tells the DNS server to use the file named.192.168.1 to look up hostnames when given IP address
+
+9. which of the following tools provides an interactive mode for performing dns lookups?
+	(b) nslookup
+
+10. which of the following are legal record types in a dns zone file? (choose all that apply)
+	(a) MX
+	(d)	CNAME
+
+11. which of the following options is true of the following DNS zone file entry?
+	x(b) the primary dns server entry (dns.pangeea.edu) is invalid; this server must exist withing the main (example.net) domain.
+	(c)
+
+12. You want to enable user to access the computer with the ip address of 192.168.17.198 as linus.example.com. what line would you place in the zone file for example.com to accomplish this task?
+	(a) linux IN A 192.168.17.198
+
+13. what is the effect of the following two dns zone file entries?
+tych.lunaedu.	in A 192.168.23.5
+www				in CNAME tycho
+	x(a) the same computer (192.168.23.5) may be accessd as either tycho.luna.edu or www.tycho.luna.edu.
+	(b) the same computer (192.168.23.5) may be accessed as either tycho.luna.edu or www.luna.edu
+
+14. the zone file for the luna.du domain incluedes the following line:
+	imbrium	IN nsdns1.imbrium.luna.edu
+	what other information must also appear in this zone file to make this line legal?
+	(d) An A record for dns1.imbrium.luna.edu.
+
+15. what is the safest account to use for running BIND?
+	(c) a server-specific system account
+
+16. which of the following security problems does DNSSEC most directly address?
+	x(b) unauthorized zone transfers
+	(c) cache poisoning
+
+17. what is a characteristic of a split dns configuration?
+	x(b)	full recursive lookups occur only if a forwarding lookup fails
+	(a)
+
+18. which of the following is an afvantage of running bind in a chroot jail?
+	x(c) bind can authenticate itself to others servers, reducing the chances of cache poisoning.
+	(b) if bind malfuctions or is compromised, it is less likely to damage other parts of the computer.
+
+19. what program must you run to create a key for DNSSEC purproses?
+	x(c) dnssec-keygen
+	(b) genkey-dnssec
+
+20. assuming it's properly configured, what can you say about a BIND server that has the following line in its /etc/named.conf file?
+allow-transfer { 10.23.98.102; 10.202.79.121; };
+	(b) its a master or slave that allows zone trasfers to two other computers.

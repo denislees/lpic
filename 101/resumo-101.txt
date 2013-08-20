@@ -1,0 +1,522 @@
+Prova 101 Resumo
+
+101: System Architecture
+========================
+
+101 - DETERMINAR E CONFIGURAR OS PARÂMETROS DO HARDWARE
+
+PC BIOS
+- O BIOS é o firmware do computador.
+- BIOS configura a data e o relógio da placa mãe, configuração de armazenamento e etc. Tudo por menus.
+
+Distribuição de Recursos
+- IRQs ou Interrupções permitem os periféricos interromperem o processador.
+- Endereços de I/O são locais onde é o mapeamento de memória do processador.
+- Arquivos importantes para monitoramento: /proc/interrupts, /proc/ioports, /proc/cpuinfo, /proc/devices
+- Comandos importantes para informação do hardware: /sbin/lspci, /sbin/lsusb
+- DMA permite que certos periféricos trabalhem diretamente na memória, deixando o processador livre.
+
+101.2 - BOOT DO SISTEMA 
+
+Ordem do Boot
+-> power on -> BIOS -> Boot Loader -> Kernel -> init -> startup services -> shell
+
+Informação
+- dmesg: usando para verificar as mensagem de saída que ocorreram durante o boot.
+- init: é o processo pai de todos os outros e o seu PID é sempre 1.
+
+101.3 - ALTERAR RUNLEVEL, SHUTDOWN e REBOOT
+
+Runlevel 0: Halt
+Runlevel 1: Single-user mode.
+Runlevel 2: Multiuser, sem NFS.
+Runlevel 3: Full multiuser mode, sem X
+Runlevel 4: Não é usado.
+Runlevel 5: Full multiuser mode, com X
+Runlevel 6: reiniciar/reboot.
+
+- init <runlevel> /telinit <runlevel>: feitos para alterar o runlevel durante a operação do computador.
+- /etc/inittab: é onde ficam todas as informações de runlevel do sistema.
+- o processo init executa todos os scripts dentro de /etc/rc.d/rcX.d (onde X é o número do seu runlevel) na ordem. O parâmetro "stop" no script começa com a letra "K" e o parâmetro "start" começa com a letra "S".
+
+102: Instalação do Linux e Gerenciamento de Pacotes
+===================================================
+
+102.1 - DESIGN DO LAYOUT DO HARD DISK
+
+- /: mantenha pequeno
+- /boot: mantenha pequeno abaixo do cilindro 1024 para os kernels.
+- /var: precisa de uma partição própria para não deixar o / cheio.
+- /tmp: partição própria também.
+- /usr: partição própria e com modo apenas para leitura, se for para compartilhar com outros usuários.
+- swap: entre uma ou duas vezes o tamanho da memória principal.
+- /proc: sistema de arquivos que inclui a informação das
+	/proc/interrupts: interrupções
+	/proc/ioports: I/O ports
+	/proc/dma: DMA
+
+102.2 - INSTALAR O GERENCIADOR DE BOOT
+
+LILO
+- Por muito tempo era o gerenciador de boot padrão do Linux.
+- É constituido pelo comando lilo que instala o gerenciador de boot (boot loader), e o boot loader.
+- /etc/lilo.conf: é onde ficam as suas configurações.
+- Qualquer mudança no /etc/lilo.conf requer que o comando lilo seja reexecutado.
+
+GRUB
+- poder iniciar o Linux e muitos outros sistemas operacionais.
+- /boot/grub: é onde ficam os arquivos de configuração do GRUB
+- /boot/grub/menu.lst (ou /boot/grub/grub.conf) em algumas distribuições.
+- grub possui dois modos de configuração: gráfico e modo texto.
+- para que as mudanças feitas no arquivo de configuração do grub entrem em vigor, não é necessário reiniciar o computador.
+
+102.3 - GERENCIANDO BIBLIOTECAS COMPARTILHADAS (MANAGE SHARED LIBRARIES)
+
+Conceitos
+- Bibliotecas do sistema prove muitas funcionalidades requeridas pelos programas.
+- statically linked
+- A grande importância das bibliotecas compartilhadas é que elas economizam recursos do computador, pois programas que possuem suas próprias bibliotecas ocupam mais espaço e se tornam maiores. Já os que utilizam o recurso de bibliotecas compartilhadas, acaba economizando.
+
+Comandos
+- Programas que contém referências externas, as bibliotecas são dinameicamente ligadas (linked) no tempo de execução pelo dynamic linker, ld.so.
+- LD_LIBRARY_PATH: variável que é possível adicionar diretórios que contém bibliotecas compartilhadas.
+- /etc/ld.so.conf: local alternativo para indicar os diretórios com bibliotecas compartilhadas.
+- /sbin/ldconfig: transforma as referências dos diretórios com as bibliotecas compartilhadas em uma lista com um índice binário para cada um dos arquivos que esses diretórios contém. Facilitando assim a localização dessas bibliotecas.
+- /etc/ld.so.cache: arquivo onde ficam as informações indexadas sobre cada um dos arquivos de bibliotecas compartilhadas do sistema em binário.
+
+102.4 - USANDO O GERENCIADOR DE PACOTES DO DEBIAN (DEBIAN PACKAGE MANAGEMENT)
+
+- dpkg: automatiza a instalação e a manutenção de pacotes de programas e oferece inúmeras opções.
+- dselect: mesma coisa que o dpkg, mas é em forma de textos interativos.
+- alien: converte pacotes RPM para DEB e vice versa.
+- apt-get: ferramenta melhor que o dpkg, pois consegue baixar as dependências dos programas sendo instalados. algo que precisaria ser feito manualmente caso fosse usar o dpkg -i, por exemplo.
+
+102.5 - RED HAT PACKAGE MANAGER (RPM)
+
+Conceitos
+- RPM automatiza a instalação e a manutenção de pacotes de programas.
+- dependências de pacotes estão apontadas nos RPMs, mas não estão automatizadas.
+- -i: install (sim, instala o pacote, como você deve ter percebido no dpkg -i)  
+- -e: erase (apaga o pacote já instalado)
+- -U: upgrade (atualiza o pacote já instalado)
+- -v: verify (verifica se todos os pacotes estão corretamente instalados e se condizem com o banco de dados do rpm)
+- -h: hash (mostra os 50 hashs gerados pelo arquivo)
+- -nodeps: don't do dependency check before installing or upgrading
+- --force: replace files (substitui os arquivos)
+- yum: frontend para o RPM, que é usado de forma interativa. instala as dependências automaticamente (semelhante ao aptitude)
+- update: vai procurar as atualizações de todos os pacotes já instalados e vai baixar e instalar automaticamente (seria o apt-get update && apt-get upgrade)
+
+103: GNU e comandos do UNIX
+===========================
+
+103 - WORK ON THE COMMAND LINE (TRABALHANDO NA LINHA DE COMANDO, DUH)
+
+Shell interativo e variáveis do shell
+- shell dá o prompt de comando e interpreta os seus comandos.
+- shell mantém variáveis que são acessíveis aos programas executados no shell.
+- PATH é a variável do shell que contém a lista de diretórios que contém todas as executáveis.
+- os comandos do shell precisam ser built-in (compilados juntamente com o kernel) e/ou disponíveis dentro de algum diretório especificado pelo PATH
+- export: faz com que a variável seja parte do environment.
+
+History, editando e substituindo
+- shell pode ser visto como uma conversa. history, expansion e editing pode fazer com que a conversa seja mais produtiva.
+expansion: 
+- !!: repete o útimo comando.
+- !n: n - número do comando no history.
+- ^string1^string2
+editing:
+- Ctrl-P: previous line, linha anterior
+- Ctrl-K: kill to end of line, apaga do cursor para frente
+- Ctrl-Y: yank, cola (ao contrário do VI que copia)
+substituition:
+- VAR=$(command) or VAR='comando'
+
+Execução recursiva
+- -r/-R: muitos programas possuem essa opção de recursão que vai em diretórios e subdiretórios.
+- find: é um comando que é automaticamente recursivo, necessitando de um parâmetro para não ser recursivo.
+
+103.2 - PROCESSAMENTO DE FLUXO DE TEXTO E USO DE FILTROS
+
+Os comandos
+- cat <arquivo>: mostra o conteúdo do arquivo na saída padrão.
+- cut <arquivos>: corta as colunas selecionadas do arquivo em muitos arquivos.
+- expand <arquvos>: converte TABs em ESPACOS
+- fmt <arquivo>: formata o texto retirando os caracteres que quebra de linha
+- head <arquivo>: mostra as primeiras linhas do arquivo.
+- join <arquivo1> <arquivo2>: mostra na saída padrão o conteúdo das linhas que os dois tem em comum e que precisam estar na mesma linha
+- nl <arquivo>: number the lines. mostra o conteúdo do arquivo com linhas a sua esquerda
+- od <arquivo>: octal dump. mostra o conteúdo do arquivo na forma octal.
+- paste <arquivos>: mostra o conteúdo dos arquivos um do lado do outro, separado por tab
+- pr <arquivo>: paginated. converte o arquivo em páginas, versão com colunas e cabeçalhos.
+- sort <arquivo>: organiza as linhas em order alfabética, numérica ou em outros modos.
+- split <arquivo> <prefixo_de_saida>: divide um arquivo em muitos outros arquivos, seguindo o número de linhas especificado por você, bem como o prefixo indicado nos parâmetros do programa.
+- tac: contrário de cat (imprime os arquivos na ordem inversa das linhas) 
+- tail: mostra o número específico final de linhas do conteúdo de um arquivo. (se não especificar nada, mostra as 10 últimas linhas)
+- tr: <linha1 <linha2>>: traduz os caracteres mapeados na linha1 para o correspondente na linha2
+- unexpand <arquivo>: converte os espaços em tabs.
+- uniq <arquivos>: mostra apenas as linhas únicas que já estão ordenadas
+- wc: word count, mostra o número de caracteres, palavras ou linhas do arquivo.
+
+SED
+- sed é um programa popular usando para filtrar textos encontrado em todos os sistemas unix.
+- sed <comando> <arquivos>
+- sed -e <comando1> <-e <comando2> <arquivos>
+- sed -f <script> <arquivos>
+
+103.3 - REALIZAR GERENCIAMENTO BÁSICO DE ARQUIVOS
+
+Conceitos
+- o sistema de arquivos prepara o disco ou a partição para o uso. normalmente no linux é utilizado o ext3 (third extended) journaling filesystem. mas pode suportar muitos outros sistemas de arquivo.
+- fdisk -l: mostra os sistemas de arquivo surpotados pelo sistema de arquivo do linux.
+- /: root, o sistema de diretório do linux é gerenciado de forma hierarquica, sendo que no root (/) é o pai de todos os outros diretórios dentro do sistema.
+- inode: é o sistema de identificação de cada um dos arquivos/diretórios dentro do sistema do linux. junto com cada sistema de arquivos do linux é criado um número limitado de inodes.
+
+Comandos de gerenciamento de arquivos e diretórios
+- bzip2 <opções> <padrão>: cria ou descompacta arquivo no algoritmo bzip2
+- cp <arquivo1> <arquivo2>: copia o arquivo1 no arquivo2
+- cpio <opções> <arquivos>: cria ou extrai arquivos que contém um set recursivo. archives
+- dd <opções> <arquivos>: disk dump, copia dados no formato cru, raw ignorando o sistema de arquivos.
+- file <arquivo>: mostra o tipo de arquivo do arquivo utilizando-se de uma série de testes.
+- find <diretório> <opções> <padrão>: procura pelos diretórios objetos com esse padrão.
+- gunzip <opções> <arquivo>: descompacta um archive criado pelo gzip.
+- gzip <opções> <padrão>: cria um arquivo compactado usando o padrão.
+- ls <opções> <padrão>: list structure, lista o conteúdo dentro do diretório, ou apenas os objetos seguindo o padrão.
+- mkdir <diretório>: cria um ou mais diretórios.
+- mv <fonte> <destino>: move ou renomeia arquivos ou diretórios.
+- rm <arquivos>: remove arquivos.
+- rmdir <diretorio>: remove diretório.
+- tar <opções> <arquivos>: cria ou extrai archives.
+- touch <arquivos>: cria ou altera a data de acesso do arquivo.
+
+File-naming wildcards
+
+*: nenhum ou mais caracteres
+?: exatamente um caractere
+[characters]: exatamente um único caractere especificado entre brackets
+[!characters]: exatamente um único caractere não especificado entre os colchetes.
+[a-z]: único caractere entre a a z.
+[!a-z]: único caractere que não esteja entre a a z.
+{fragmento1, fragmento2}: cria linhas. e.g., file_{one, two, tree} 
+
+103.4 - STREAMS, PIPES E REDIRECTS
+
+Conceitos
+- O conceito central do linux é que TUDO é um arquivo.
+- muitos dispositivos são representados no sistema de arquivos como arquivos. por exempo: /dev/ttyS0 para uma porta serial.
+
+Padrão I/O
+- shell possui três tipos.
+Standard Input (STDIN): seu teclado.
+Standard Output (STDOUT): seu monitor.
+Standard Error (STDERR): erros, por padrão, seu monitor.
+
+Pipes e redirection
+- |: é possível fazer com que a saída de um programa seja a entrada para outro programa  
+STDOUT para um arquivo:
+	$ cmd > arquivo
+	$ cmd 1> arquivo
+STDERR para um aruqivo:
+	$ cmd 2> arquivo
+STDOUT e STDERR -> arquivo:
+	$ cmd > arquivo 2>&1
+	$ cmd > arquivo 2> arquivo
+STDIN de um arquivo:
+	$ cmd < arquivo 
+
+> ou 1> é a mesma coisa: STDOUT
+>> ou 1>> é append: adiciona
+2>: STDERR
+
+103.5 CREATE, MONITOR, AND KILL PROCESS
+
+Conceitos
+- Processos possuem
+ - Tempo de vida (lifetime)
+ - PID (process ID)
+ - UID (user ID)
+ - GID (group ID)
+ - processo pai (parent process)
+ - ambiente (environment)
+ - diretório de trabalho (current working directory)
+
+Comandos para Monitoração
+
+ps: tira uma foto dos processos atuais na saída padrão (seu monitor)
+pstree: mostra de forma hierarquica a lista de processos na forma de uma árvore
+top: gera de forma contínua, formatada e em tempo real os processos em execução
+
+Signaling processes
+
+kill -sigspec <pids>: manda o sinal indicado para o ID do processo indicado
+killall <nome do processo>: mata todos os processos com nomes semelhantes ou idênticos
+HUP	1	Hangup, reread configuration.
+INT 2 	Interrupt, stop running.
+KILL 9 	sai imediatamente.
+TERM 15 sai de forma normal.
+TSTO 20 para de executar.
+
+Controle de Trabalhos do Shell
+
+Shells podem executar processos por trás. jobs são manipulados usando comandos jobs:
+bg <número do job>: coloca o job em background
+fg <número do job>: coloca o job em foreground
+jobs: lista os jobs que existem atualmente
+nohup <comando> &: executa o comando, deixa sem a dependência do terminal e deixa ele ser executado mesmo depois que o usuário (que executou o comando) se deslogar
+
+103.6 - MODIFICANDO AS PRIORIDADES DOS PROCESSOS
+
+Conceitos
+- as prioridades dos processos são controlados pelo kernel
+- a prioridade do processo pode variar entre -20 a +19.
+- o padrão de prioridade dos processos é 0.
+- nice: programa para indicar a prioridade do processo que será executado.
+- quanto maior o número do "NICE" menor é a sua prioridade, ou seja, mais legal ele está sendo com os outros processos.
+
+Comandos
+- nice -ajuste <comando>: aplica a prioridade do processo ao ser executado. lembrando que ao usar números negativos precisará usar duas vezes o sinal de menos, i.e., nice --20 <comando>. o que já não acontece em números positivos.
+- renice [+ ou -]ajuste <alvos>: altera a prioridade do processo alvo que já está em execução
+
+103.7 - PROCURAR POR ARQUIVOS USANDO TEXTOS EM EXPRESSÕES REGULARES
+
+Conceitos
+- expressões relugares são usadas para encontrar o próximo texto. São conhecidos como regex ou regexp.
+- backslash (\) indica o escape para a interpretação de ações especiais para cada caractere.
+
+^: Identifica o começo da linha
+$: Identifica o fim da linha
+\< e \>: Identifica os limites das palavras.
+
+Grupos de caracteres
+[abc]: identifica qualquer caractere que seja (abc)
+[^abc] [^a-z]: identifica qualquer caractere que não esteja nessa lista.
+.: qualquer caractere, menos de quebra de linha
+
+Modificadores
+Modifica a maneira que os operadores são interpretados
+
+expressão regular básica : expressão regular extendida : descrição
+*:*: identifica zero ou mais caracteres que precede ele.
+\?:?: Identifica zero ou uma instancia do regex.
+\+:+: Identifica uma ou mais instâncias do regex.
+\{n,m\}:{n,m}: identifica o intervalo, mas apenas para um caractere.
+\|:|: identifica o caractere ou a expressão da esquerda ou da direita do pipe.
+\(regex\):(regex): encontra o regex
+
+Comandos
+Muitos comandos aceitam o uso de regex, mas é bem mais comum usado no comando grep.
+
+grep: trsata os padrões básicos das expressões regulares.
+egrep: extended regular expression (igual ao grep -E)
+fgrep: fixed strings (igual ao grep -F)
+
+103.8 - EXECUTANDO A EDIÇÃO BÁSICA DE ARQUIVOS USANDO O VI
+
+Subcomandos
+- vi <arquivo>: abre o aquivo alvo no vi.
+- esc: entra no modo comando
+- h: esquerda
+- j: baixo
+- k: cima
+- l: direita
+- H: home (topo da tela)
+- L: low (baixo da tela)
+- G: fim da linha
+- W: (word) avança uma palavra
+- B: (back) volta uma palavra
+- 0: início da linha
+- ^: first nonwhitespace character on the current line.
+- $: move para o fim da linha ativa
+- CTRL+B: (back) page up
+- CTRL+F: (forward) page down
+- i: modo insert
+- I: insert no começo da linha
+- a: append depois de onde está o cursor
+- A: append no fim da linha atual
+- o: começa uma nova linha depois da linha atual
+- O: começa uma nova linha antes da linha atual
+- r: (replace) substittui o caractere na posição do cursor
+- R: (replace) modo insert 
+- x: deleta o caractere sobre o cursor
+- X: deleta o caractere antes do cursor
+- s: (substitute) deleta e modo insert
+- S: (substitute) deleta a linha toda e modo insert
+- d: cut
+- dd: cut a linha atual
+- D: cut do cursor até o fim da linha
+- cc: cut a linha atual e modo insert
+- y: copy (yank)
+- p: (paste)
+- .: repete o último comando
+- u: (undo)
+- /regex: procura, depois
+- ?regex: procura, antes
+- n: (next) match
+- N: previous (next) match
+- :n: (next) file
+- :e: abre o arquivo no lugar do que você está editando nesse instante.
+- :r <arquivo>: insere o conteúdo do arquivo no arquivo que você está editando exatamente onde o cursor está
+- :q sai sem salvar
+- :w <arquivo>: salva o arquivo.
+- :wq: salva e sai.
+- :x: salva e sai
+- ZZ: salva e sai
+- :!<comando>: executa um comando no subshell.
+
+104: Devices Linux Filesystems, and the Filesystem Hierarchy Standard
+======================================================================
+
+104.1 - CRIAR PARTIÇÕES E SISTEMAS DE ARQUIVOS
+
+Disk drives and partitions
+- IDE (ATA) são /dev/hda /dev/hdb e etc.
+- SATA ou SCSI são /dev/sda /dev/sdb e etc.
+Primário: Precisa existir pelo menos um e em cada disco só podem existir no máximo 4.
+	/dev/hda1, /dev/hda2, /dev/hda3 e /dev/hda4
+Extendida: variação da partição primária, mas não pode conter sistema de arquivo. Ele é wrapper para as partições lógicas
+Lógicas: dentro da extendida. só podem existir de 1 a 12 partições lógicas.
+	/dev/hda5, e etc.
+Apenas 15 partições com sistemas de arquivos podem existir em um único disco.
+
+Sistema de arquivos
+ext3: terceiro sistema de arquivos extendido.
+ext2: segundo sistema de arquivos extendido.
+xfs: journaling. criado pela Silicon Graphics para o IRIX e agora portado para o linux
+reiserfs: primeiro sistema de arquivo com journaling
+vfat: do windows.
+
+Raiz do Sistema de Arquivos e pontos de montagem (mount points)
+- /etc, /lib, /bin, /sbin e /dev precisam estar na mesma partição do sistema de arquivos.
+
+Partições e comandos para gerenciamento dos sistemas de arquivos.
+- fdisk <device>: manipula ou mostra a tabela de partição de um determinado dispositivo.
+- mkfs <device>: (make filesistem) criar um sistema de arquivo no dispositivo.
+- mkswap <device>: prepara o dispositivos para uso como swap.
+
+104.2 - MANTER A INTEGRIDADE DO SISTEMA DE ARQUIVOS
+
+Comandos do sistema de arquivos
+- df <diretórios>: disk free, mostra o espaço sobrando em cada disco.
+- du <diretórios>: directory u?, mostra a utilização de espaço dos diretórios.
+- fsck <sistema de arquivo>: verifica o sisterma de arquivo para encontrar erros (e opcionalmente consertar eles)
+- dumpe2fs <sistema de arquivo>: mostra informações detalhadas dos sistemas de arquivo ext2 ou ext3.
+- tune2fs <sistema de arquivo>: modifica as variáveis do sistema de arquivo.
+
+104.3 - MOUNTING E UNMOUNTING
+
+Gerenciando a tabela do sistema de arquivo
+- /etc/fstab: fala onde as partições serão montadas no sistema e seus parâmetros.
+- /media: usado para o sistema montar automaticamente usbs entre outros dispositivos.
+- campos do fstab
+device: dispositivo que contém o sistema de arquivos.
+mount point: onde ele será montado no sistema.
+filesystem type: o tipo de sistema de arquivo.
+mount options: lista separada por vírgulas. (e.g., grpquota, usrquota)
+dump frequency: uso para o dump
+pass number for fsck: usado quando o sistema é inicializado.
+
+Mount e Unmount
+- mount <device>: monta o dispositivo consultando o /etc/fstab
+- mount <diretorio>: monta o dispositivo consultando o /etc/fstab
+- mount <device> <diretório>: monta o dispositivo no diretório alvo
+- umount <device>: desmonta o dispositivo
+- umount <diretório>: desmonta o diretório que está montado um dispositivo
+
+Sistemas de Arquvivo
+ext2: padrão dos sistemas linux
+ext3: com journaling e retro compatível com o ext2
+iso9660: padrão para o cd-rom
+vfat: padrão dos sistemas windows antigo
+nfs: network filesystem. servidores remotos
+proc: abstração para o acesso aos parâmetros do kernel
+swap: partição reservada caso a memória ram acabe
+
+104.4 - SET AND VIEW DISK QUOTAS
+
+por usuário (hard): especifica um valor máximo para um usuário
+por usuário (soft): avisa quando chegar no limite (ou ultrapassar)
+por grupo (hard): especifica um valor máximo para um grupo de usuários.
+por grupo (soft): avisa quando chegar no limite (ou ultrapassar)
+grace period: limite de tempo para as restrições soft
+
+Comandos
+- quota <usuário>: mostra a quota do usuário
+- quota -g <grupo>: mostra a quota do grupo
+- quotaon <sistema de arquivo>: ativa o uso de quotas
+- quotaoff <sistema de arquivo>: desativa o uso de quotas
+- quotacheck <sistema de arquivo>: examina o sistema de arquivoe compila a quota no banco de dados. Normalmente é executado pelo cron.
+- edquota <nomes>: edita a quota de usuário ou grupo abrindo um editor de texto 
+- repquota <sistema de arquivo>: report da quota do sistema de arquivo
+
+Lembrando que para ativa o quota, precisa ter os requisitos abaixo:
+- usrquota e/ou grpquota ativados no /etc/fstab
+- criação dos arquivos: quota.user e quota.group
+- quotacheck
+- quotaon
+
+104.5 - GERENCIANDO AS PERMISSOES DOS ARQUIVOS
+
+Controle de acesso
+- controle de acesso é guardado no inode do arquivo.
+- user: usuário que é o dono do arquivo.
+- group: o grupo que é o dono do arquivo.
+- Other: todos os outros usuários do sistema.
+
+Existem três permissões
+READ: permite o acesso ao conteúdo do arquivo e lista o conteúdo dos diretórios
+WRITE: permite a escrita no arquivo e criar arquivos no diretório
+EXECUTE: permite a execução do arquivo e a entrada no diretório
+além das três permissões (rwx) em cada uma das classes (user, grup e other) também existem mais três permissões especiais.
+SUID: o processo tem a permissão daquele usuário que está executando.
+SGID: o processo tem a permissão daquele grupo que está executando.
+Sticky Bit: Não deixa usuários que não são donos do arquivo apagar o mesmo.
+
+Especificando os modos de acesso
+- todo arquivo criado tem como base a umask
+- umask possui o valor padrão de 022 (ou 002)
+- todo arquivo criado tem o acesso como 777, mas sempre é subtraido pela umask.
+- lembrando também que por segurança nenhum arquivo é executável ao ser criado. apenas os diretórios são executáveis, pois é preciso entrar neles.
+- chmod <opcoes> <arquivo/diretorio>: muda a permissão
+- opções simbolico: <ugoa> <-+=> <rwxXst>
+- opções octal: 777, 751
+
+Dono do arquivo
+- apenas o root pode alterar o dono do arquivo
+- chown <usuário>.<grupo> <arquivos>: altera o usuário ou o grupo do arquivo
+- chgrp <grupo>: altera o grupo do arquivo.
+- melhor usar o chown que possui a funcionalidade do chgrp incluído no chown.
+
+104.6 - CRIAR E ALTERAR HARD E SYMBOLIC LINKS
+
+Conceitos
+- Link é um pseudonimo para um outro arquivo
+- Links ocupam muito pouco espaço no sistema
+- Link simbólico (soft link) apenas apontam para outro arquivo, como o atalho no windows (as permissões são diferentes)
+- Link duro (hard link) é o mesmo arquivo com outro nome, pois possui o mesmo inode (as permissões são iguais, tudo é igual)
+
+ln
+- ln <arquivo> <link>: cria um link para um arquivo
+- ln <arquivos> <links>: cria vários links para vários arquivos
+- ln -s <arquivo> <link>: cria um link simbólico para o arquivo
+
+104.7 - ENCONTRAR ARQUIVOS NO SISTEMA E OS LUGARES ONDE ELES ESTÃO CORRETAMENTE
+
+File Hierarchy Standard (FHS)
+- FHS é o padrão que criaram para as distribuições que Linux possam seguir.
+- Data sharing: dados compartilhados dentro de uma rede
+- Data modification: dados que são constantamente modificados ou não.
+
+A hierarquia dos diretórios
+- root filesystem (/) 
+	- deverá conter utilitários e arquivos para realizar o boot e a habilidade para montar outros sistemas de arquivos
+	- deverá conter utilitários para que o administrador possa consertar e realizar manutenções no sistema
+	- precisa ser relativamente pequeno
+- /usr: contem os utilitários do sistema que não aparecem no /. possui bin, lib, local e src.
+- /var: contém arquivos de log e filas de impressão. log, mail e spool
+
+Localizando arquivos
+- which <comando>: mostra o caminho completo do executável
+- find <local> <parâmetros>: procura por arquivos seguindo os parametros e iniciando a busca no local sendo executado recursivamente
+- locate <parâmetros>: procura os nomes em um banco de dados já previamente criada
+- updatedb: atualiza o banco de dados do comando locate
+- whatis <palavras chaves>: procura no banco de dados por palavras chaves com a incidência exata
+- apropos <palavras chaves>: mesma coisa que o whatis, mas não é tão específico como o whatis

@@ -1,0 +1,606 @@
+201.1 Kernel Components
+=======================
+
+Kernel 2.6.x documentation
+Kernel 3.x documentation
+
+/usr/src/linux
+/usr/src/linux/Documentation
+bzImage
+zImage
+	Ambos o bzImage como o zImage sao comprimidos pelo gzip.
+
+
+201.2 Compiling a kernel
+========================
+
+/usr/src/linux
+GRUB configuration files
+Kernel 2.6.x make targets
+Kernel 3.x make targets
+
+mkinitrd
+
+	creates an initial image used by the kernel for preloading the block device modules (such as IDE, SCSI or RAID) which are needed to access the root filesystem.
+
+	automatically loads filesystem modules (such as ext3 and jbd). IDE modules, all scsi_hostadapter entries in /etc/modprobe.conf and raid modules if the system's root partition is on raid, which makes it simple to build and use kernels using modules device drivers
+
+	any module options specified in /etc/modporbe.conf are passed to the modules as they are loaded by the initial ramdisk
+
+the root filesystrem used by the kernel is specified in the boot configuration file. as aways. the traditional root/dev/hda1 sytle device specification is allowed. if a label is used. as in root=LABEL=rootPart the initrd will search all available devices for an ext2 and ext3 filesystem with the appropriate label and mound that divce as the root filesystem.
+
+
+mkinitramfs
+
+	the mkinitramfs script generates an initramfs image. the initramfs is a compressed cpio archive. the archive can be used on a different box of the same arch with the corresponding linux kernel. mkinitramfs is meant for advanced usage. on your local box update-initramfs calls mkinitramfs with the relevant parameters. update-initramfs keeps sha1sum of generated initramfs. it takes care to generate backup and eventually runs the bootloader
+
+	at boot time, the kernel unpack that archive into RAM disk, mounts and uses it as initial root file system. all finding of the root device hapens in this early userspace
+
+
+make
+
+	the purpose of the make utility is to determine automaticlly which pieces of a large program need to be recompiled, and issue the commands to recompile them. 
+	to propare to use make, you mus wirte a file called the makefile that describes the relationships among file sin your program, and the states the commands for updating each file. in a program, typically the executable file is updated from object files, which are in turn made by compiling source files.
+	make execute commands in the makefile to update one or more target names, where name is typically a program. if no -f option is present make will look for the makefiles: GNUmakefile, makefile, and Makefile, in that order.
+	normally you should call your makefile etther makefile or Makefile. (we recommand Makefile because it appears prominently near the begingin of a directory listing, right near other important files such as README.)'
+
+
+make targets
+	config
+		update the current kernel configuration by using a line-orientend program.
+
+	xconfig
+		updates the current kernel configuration by using a QT-based graphical program
+
+	menuconfig
+		updates  the current kernel configuration using a text basesd menu progarm
+
+	oldconfig
+		updated the current kernel by using the current .config file and propting for any new options that have been added to the kernel.
+	
+	mrproper
+		removes all of the generated files by the kernel build system, including the configuration and some various backup files.
+
+	zImage
+
+	bzImage
+		creates a compressed kernel image and places it in the arch/i386/boot/bzImage file. this is the default target for the i386 kernel build
+
+	modules
+		builds all of the loadable kernel modules for this configuration
+	modules_install
+		install all of the modules into the specified location. if no location is specified with the INSTALL_MODULE_PATH environment variable, they are installed in the default root directory of the machine.
+
+201.3 Patching a kernel
+=======================
+
+Customize the current kernel configuration
+Build a new kernel and appropriate kernel modules
+Install a new kernel and anyu modules.
+Ensure that the boot manager can locate the new kernel and associated files.
+/usr/src/linux/
+Module configuration files
+
+patch
+
+	apply a diff file to an original
+
+	patch takes a patch file patchfile containing a difference listing produced by the diff program and applies those differences to one or more original files, producing patched versions. normally the patched versions are put in place of the originals. backups can be make; see the -b or --backup option. the name of the files to be patched are usually taken from the patch file, but if there's just one file to be patched it can be specified on the command line as originalfile.
+
+	first, patch takes an ordered list of candidate file names as follows:
+		- if the header is that of a context diff, patch takes the old and new files names in the header. a name is ignored if it does not have enought slashes to satisfy the -p[num] or --strip=[num] option. the name /dev/null is also ignored.
+		- if there is an index: line in the leading garbage and if either the old and new names are both absent or if patch is conforming to posix, patch take s the name in the index: line.
+	/u/howard/src/blurfl/blurfl.c
+		setting -p0 gives the entire file name unmodified, -p1 gives
+	u/howard/src/blurfl/blurfl.c
+		setting to -p4 gives
+	blurfl/blurfl.c
+		
+make
+
+module tools
+
+/usr/src/linux/*
+
+/usr/src/linux/.config
+
+/lib/modules/kernel-version/*
+
+/boot/*
+
+
+201.5 Manage/Query kernel and kernel modules at runtime
+=======================================================
+
+user command-line utilities to get information about the currently running kernel and kernel modules.
+manually load and unload kernel modules
+determine when modules can be unloaded
+determine what parameters a module accepts
+configure the system to load modules by names other than their file name.
+
+/lib/modules/kernle-version/modules.dep
+	the moduels.dep as generated by module-init-tools depmod. lists the dependencies for every module int he directories under /dliv/modules/version where modules.dep is
+	black lines, and lines starting with a '#' (ignoraing spaces) are ignored. other lines are of the form "filename: [filename]*".
+	for example. if /lib/modules/2.6.29/kernel/a.ko depended on b.ko and c.ko in the same directory, and c.ko depended on b.ko as well, the file mitght look like 
+		/lib/modules/2.6.29/kernel/a.ko: /lib/modules/2.6.29/kernel/c.ko /lib/modules/2.6.29/kernel/b.ko
+		/lib/modules/2.6.29/kernel/b.ko: 
+		/lib/modules/2.6.29/kernel/c.ko: /lib/modules/2.6.29/kernel/b.ko 
+	this file is used by modprobe to know the order in which to load modules (they are loaded right to left, and removed left to right.)
+
+module configuration files in /etc
+
+/proc/sys/kernel/
+
+depmod
+	program to generate modules.dep and map files
+
+	depmod creates a list of modules dependencies by reading earch module under /lib/modules/version and determining what symbols it exports and what symbols it needs. by default, this list is written to modules.dep, and a binary hashed version named modules. dep.bin, in the same directory. if filenames are given on the command line, only those modules are examined (which is rerely useful unless all modules are listed). depmod also creates a list of symbols provided by modules in the file named modules.symbols and its binary hashed version, modules.symbos.bin
+
+
+insmod
+	simple program to insert a module into the linux kernel
+
+	insmod is a trivial program to insert a module into the kernel: if the filename is a hypen, the module is taken from standard input. most users will want to use modprobe instead, which is more cleaver and can handle module dependencies.
+
+	only the most general of error messages are reported: as the work of trying to link the module is now done inside the kernel, the dmesg usually gives more information about errors.
+
+lsmod
+	program to show the status of modules in the linux kernel
+	lsmod is a trivial program which nicely formats the contents of the /proc/modules, showing what kernel modules are currently loaded.
+
+rmmod
+	simple program to remove a module from the linux kernel
+	rmmod is a trivial program to remove a module (when module unloading support is provided) from the kernel. mos users will want to use modprobe with the -r option instead.
+
+modinfo
+	program to show information about a linux kernel module
+	modinfo extracts information from the linux kernel modules given on the command line. if the module name is not a filename, then the /lib/modules/version directory is searched, as is also done by modprobe when loading kernel modules.
+	
+modprobe
+	program to add and remove modules from the linux kernel
+
+	modprobe intelligently adds or removes a module from the linux kernel: note that for convenience, there is no difference between _ and - in modules names (automatic underscore conversion is performed). modprobe looks in the module directory /lib/modules/'uname -r' for all the modules and other files, except for the optional /etc/modprobe.conf configuration file and /etc/modprobe.d directory. modprobe will also use module options specified on the kernel command line in the form of <module>.<option>
+
+uname
+	print system information
+	print certain system information. with no option, same as -s.
+
+
+
+202.1 Customising system startup and boot process
+=================================================
+
+linux standard base specification (lsb)
+
+	the linux standard base is a joint project by serveral linux distributions under the organizational structure of the linux foundation to stadardize the software system structure, including the filesystem hieararchy used in the GNU/Linux operating sstem. the LSB is based on the POSIX specification, the single nix specification, and several other open standards, but extends them in certain areas.
+
+	the goal of the LSB is to develop and promote a set of open stardards that will increase compatibility among linux distributions and enable software applications to run on any compliant system event in binary form. in addition, the lsb will help coordinate efforts to recruit software vendors to port and write products for linux operating systems.
+
+/etc/inittab
+
+	format of the inittab file used by the sysv-compatible init process
+	the init file describe which processes are started at bootup and during normal operation (e.g. /etc/init.d/boot, /etc/init.d/rc, gettys) init distinguishes multiple runleves, earch which can have its own set of processes that are started. valid runlevels are 0-6 plus A, B, and C for ondemand entries. and entry in the inittab ifle has following format:
+		id:runlevels:action:process
+
+
+/etc/init.d
+
+/etc/rc.d
+
+chkconfig
+
+update-rc.d
+	install and remove systev style init script links
+
+	update-rc.d updates the system v style init script links /etc/rc(runlevel).d/(NN)name whose target is the script /etc/init.d/name. these links are run by init when it changes runlevels; they are generally used to start and stop system services such as daemons. runlevel is one of the runveles susported by init, namely, 0123456789S, and (NN) is the two-digit sequence number that determines where in the sequence init will run the scripts.
+
+	update-rc.d firewall start 99 1 2 3 .
+	update-rc.d -f firewall remove
+
+202.2 system recovery
+=====================
+
+inittab
+
+GRUB
+
+grub shell
+
+
+init
+	process control initialization
+	init is the parent of all process. its primary role is to create process from a script stored in the file /etc/inittab. this file usually has entries which cause init to spawn gettys on each line that users can log in. it also controls autonomous processes required by any particular system.
+
+	a runlevel is a software configuration of the ssytem which allows only a selected group of processes to exist. the processes spawned by init for each of theses runlevels are defined in the ;/etc/inittab file. init can be in one of eight runlevels: 0-6 and S. the run level is changet by having a privileged user run telinit, which sends appropriate signal to init, telling it which runlevel to change to.
+
+
+mount
+	mount a filesystem
+
+	all files accessible in a unix system are arrenget in one big tree, the file hieararchy, rooted at /. these files can be spread out over several devices. the mount command serves to attach the filesystem found on some device to the big file tree. conversely, the umount command will detach it again.
+
+	the standard form of the mount command is
+		mount -t type device dir
+
+fsck
+	check and repair a linux file system
+
+	fsck is used to check and optionally repair one or more linux file systems. filesys can be a device name (e.g. /dev/hdc1, /dev/sdb2), a mount pount
+
+telinit
+
+203.1 Operating the linux filesystem
+====================================
+
+the concept of the fstab configuration
+tools and utilities for handling swap partitions anf iles
+use of UUIDs
+
+/etc/fstab
+
+/etc/mtab
+
+/proc/mounts
+
+mount and umount
+
+sync
+	flush file system buffers
+	force changed blocks to disk, update the super block.
+
+swapon
+	enable/disable devices and files for paging and swapping
+	swapon is used to specify devices on which paging and swapping are to take place.
+
+	the device or file used is given by the specialfile parameter. it may be of the form -L label or -U uuid to indicate a device by label or uuid.
+
+	calls to swapon normally occur in the system boot scripts making all swap devices available, so that the paging and swapping activity is interleaved across several devices and files.
+
+	swapoff disables swapping on the specified device and files. when the -a flag is given, swapping is disabled on all known swap devices and files (as found in /proc/swaps or /etc/fstab).
+
+	
+swapoff
+
+203.2 maintaining a linux filesystem
+====================================
+
+tools and utilities to manipulate ext2, ext3 and ext4
+tools and utilities to manipulate reiserfs V3
+tools and utilities to manipulate xfs
+
+fsck (fsck.*)
+badblocks
+	search a device for bad blocks
+
+	badblocks is used to search a bad block on a device (usually a disk partition). device is the special file corresponding to the device (e.g. /etc/hdc1) last-block is the last block to be checked; if it is not specified, the last block on the device is used as a default. first-block is an optinal parameter specifying the starting block number for the test, which allows the testing to start in the middle of the disk. if it is not specified the first block on the disk is used as a default.
+
+	if the output badblocks is going to be fed to the e2fsch or mke2fs programs, it is important that the block size is promperly specified, sinse the block numbers whiich are generated are very dependent on the block size in size by the filesystem. for this reason, it is strongly recommended that users not run badblock directlu, but rather use the -c option of the e2fsck and mke2fs programs.
+
+mkfs (mkfs.*)
+	build a linux file system
+	mkfs is used to build a linux file system on a device, usually a hard disk partition. filesys is either the device name (e.g., /dev/hda1, /dev/sdb2), or a regular file that shall contain the file system. blocks is the number of blocks to be used for the file system.
+
+	the exit code returned by mkfs is 0 on sucess and 1 on failure.
+
+	in actuality, mkfs is simply a front-end for the various file system builds (mkfs.fstype) available under linux. the file system-specific build is searched for in a number of directories like perhaps.
+
+dumpe2fs, xfsdump, xfsrestore
+	dump ext2/ext3/ext4 filesystem information
+
+	dumpe2fs prints the superblock and block groups information for the filesystem present on device.
+	dumpe2fs is similar to beckley dumpfs program for the bsd fast file system.
+
+
+debugfs, debugreiserfs
+	file system debugger
+
+	the debugfs program is an interactive file system debugger. it can be used to examine and change the state of an ext2, ext3, or ext4 file system.
+	device is the special file corresponding to the device containing the file system (e.g. /dev/hdxx)
+
+
+tune2fs, reiserfstune
+	ajust tunable filesystem parameters on ext2/ext3/ext4 filesystems
+	tune2fs allows the system administrator to ajust various tunable filesystem parameters on linux ext2, ext3 and ext4 filesystems. the current values of theses options can be displayed  by using the -l option to tune2fs porgram or by using the dumpe2fs program.
+
+
+mkswap
+	set up a linux swap area
+	mkswap set up a linux swap area on a device or in a file
+
+	 the device argument will usually be a disk partition (something like /dev/sdb7) but can also be file a file. the linux kernel does not look at partition ids, but many installation scripts will assume that partitions of hex type 82 (linux_swap) are meant to be swap partitions.
+
+xfs_info, xfs_check and xfs_repair
+
+203.3 Creating and configuring filesystem options
+=================================================
+
+autofs configuration files
+UDF and ISO9660 tools and utilities
+awareness of CD-ROM filesystems (UDF, ISO9660, HFS)
+awareness of CD-ROM filesystem extensions (Joliet, Rock Ridge, El Torito)
+basic feature knowlodge of encrypted filesystems
+
+/etc/auto.master
+/etc/auto.[dir]
+mkisofs
+dd
+	convert and copy a file
+	copy a file converting and formatting according to the operands.
+
+mke2fs
+	create and ext2/ext3/ext4 filesystem
+	mke2fs is used to create an ext2, ext3, or ext4 filesystem usually in a disk partition. device is the special file corresponding to the device (e.g./dev/ddXX). blocks-count is the number of blocks on the device. if omitted, mke2fs automagically figures the file system size. if called as mkfs.ext3 a journal is created as if the -j option was specified.
+
+	the defaults of the parameters for the newly created filesystem, if not overridden by the option listed below, are controlled by the overridden by the option listed below, are controlled by the /etc/mkefs.conf configuration file.
+
+
+203.4 udev device management
+============================
+
+udev rules
+kernel interface
+
+udevmonitor
+	print the kernel and udev event sequence to the console
+	udevmonitor listens to the kernel uevents and events send out by a udev rule and prints the devpath of the event to the console. it can be used analyze to the event timing by comparing the timestamps of the kernel uevent with the udev event.
+
+/etc/udev
+	linux dynamic device management
+	udev supplies the system software with device events, manages permissions of the device nodes and may create additional symlinks in the /dev directory, or renames network interfaces. the kernel usually just assings unpredictable device names based on the order of discobery. meaningful syslinks or network device names provice a way to realiably identify devices based on their properties or current configuration.
+
+	the udev daemon udevd receives device uevents directly from the kernel whenever a device is addes or removed from the system, or it changes its state. when udev receives a device event, it maches its configured set of rules agains various device attributes to indentify the device. rules that match, may provice additional device information to be stored in the udev database, or information to be used to create meaningful symlink names.
+
+	all device information udev process, is stored in the udev database and sent out to possible event subscribers. access to all stored data and tohe event sources are provided by the library libudev.
+	
+	udev configuration files are placed in /etc/udev and /lib/udev. all empty lines, or lines beginning with '#' will be ignored.
+
+	udev expects its main configuration file at /etc/udev/udev.conf it consists of a set of variables allowing the user to override default udev values. 
+
+
+204.1 configuring RAID
+======================
+
+software raid configuration files and utilities
+
+mdadm.conf
+mdadm
+	manage md (multiple devices) devices aka linux software raid
+
+	raid devices are virtual devices created from two or more real block devices. this allows multiple devices (dipically disk drives or partitions thereof) to be combined into a single device to hold (for example) a single filesystem. some raid levels include redundancy and so can survive some degree of device failure.
+
+/proc/mdstat
+
+	
+fdisk
+	partition table manipulator for linux
+
+	hard disks can be divided into one or more logical disks called partitions. this division is described in the partition table found in sector 0 of the disk.
+
+
+204.2 ajusting storage device access
+====================================
+
+tools and utilities to configure dma for ide devices including ATAPI and SATA
+tools and utilities to manipulate or analyse system resources (e.g. interrupts)
+awareness of sdparm command and its uses
+
+hdparm
+sdparm
+tune2fs
+sysctl
+/dev/hd*
+/dev/sd*
+
+204.3 logical volume manager
+============================
+
+tools in the lvm suite
+resizing, renaming, creating, and removing logical volumes, volume groups and physical volumes
+
+/sbin/pv*
+/sbin/lv*
+/sbin/vg*
+mount
+/dev/mapper
+
+205.1 basic networking configuration
+====================================
+
+utilities to configure and manipulate ehternet network interfaces
+configuring wireless networks
+
+205.1 advanced network configuration and troubleshooting
+
+utilities to manipulate routing tables
+utilities to configure and manipulate ethernet network interfaces
+utilities to analyse the status of the network devices
+utilities to monitor and analyse the TCP/IP traffic
+openvpn
+
+/sbin/route
+/sbin/ifconfig
+/bin/netstat
+/bin/ping
+/usr/sbin/arp
+/usr/sbing/tcpdump
+/usr/sbing/lsof
+/usr/bin/nc
+/sbin/ip
+/etc/openvpn/*
+openvpn
+nmap
+wireshark
+
+205.3 troubleshooting network issues
+====================================
+
+location and content of access restriction files
+utilities to configure and manipulate ethernet network interfaces
+utilities to manage routing tables
+utilities to list network states
+utilities to gain information about the network configuration
+methods of information about the recognised and used hardware devices
+system initialisation files and their contents (sysv init process)
+
+/sbin/ifconfig
+/sbin/route
+/bin/netstat
+/etc/network
+/etc/sysconfig/network-scripts/
+/var/log/syslog
+/var/log/messages
+/bin/ping
+/etc/resolv.conf
+/etc/hosts
+/etc/hosts.allow
+/etc/lhosts.deny
+/etc/hostname
+/etc/HOSTNAME
+/bin/hostname
+/usr/sbin/traceroute
+/usr/bin/dig
+/bin/dmesg
+/usr/bin/host
+
+205.4 notify users on system-related issues
+
+automate communication with users through logon messages
+inform active users of system maintenance
+
+/etc/issue
+/etc/issue.net
+/etc/motd
+wall
+	write a message to users
+
+	walls displays the contentes of file or, by default, its standard input, on the terminals of all currently logged in users.
+
+	only the super user can wirte on the terminals of users who have chosen to deny messages or are using the program which automatically denies messages
+	reading from a file is refused when the invoker is not superuser and the program is suid or sgid.
+
+/sbin/shutdown
+
+206.1 make and install programs from source
+===========================================
+
+unpack source code using common compression and archive utilities
+understand basics of invoking make to compile programs
+apply parameters to a configure script
+know where sources are stored by default
+
+/usr/src/
+gunzip
+gzip
+bzip2
+tar
+configure
+make
+uname
+install
+
+206.2 backup operations
+=======================
+
+knowledge about directories that have to be include in backups
+awareness of network backup solutions such as amanda, bacula and backupPC
+knowledge of the benefits and drawbacks of tapes, CDR, disk or other backup media
+perform partial and manual backs.
+verify the integrity of backup files.
+partially or fully restore backups.
+
+/bin/sh
+cpio
+	copy files to and from archives.
+	support: binary, old ASCII, new ASCII, crc, HPUX binary, HPUX old ASCII, old tar, and POSIX.1 tar.
+	the tar format is provided for compatibility with the tar program. by default, cpio creates binary format archives, for compatibility with older cpio programs. when extrating from archives, cpio automatically recognizes which kind of archives it is reading and can read archive created on machines with a differente byte-order.
+
+dd
+tar
+/dev/st*
+/dev/nst*
+mt
+	control magnetic tape drive operation
+i	the default tape device to operate on is taken from the file /usr/include/sys/mtio.h when mt is compiled. it can be overridden by giveing a device file name in the environment variable TAPE or by a command line option, which also overrides the envrironment variable.
+
+rsync
+
+207.1 basic dns server configuration
+
+bind 9.x configuration files, terms and utilities
+defining the location of the bind zone files in bind configuration files
+reloading modified configuration and zone files
+
+/etc/named.conf
+/var/named/*
+/usr/sbin/rndc
+	name server control utility
+
+	rndc controls the operation of a name server. it supersedes the ndc utility that was provided in old bind releases. if rndc is invoked with no commmand line options or arguments, it prints a short summary of the supported commands and the available options and their arguments.
+
+	rndc communicates with the name server over a TCP connection, sending commands authenticated with digital signatures. in the current versions of rndc and named, the only supported authentication algorithm is HMAC-MD5, which uses a shared secret on each end of the connection. this provides TSIG-style authentication for the command request and the name server's response. all commands sent over the channel must be signed by a key_id know to the server.
+
+	rndc reads a configuration file to determine how to contatct the name server is decide that algorigthm and key it should use.
+
+kill
+
+207.2 create and maintain dns zones
+
+bind 9 configiration files, terms and utilities
+utilities to request information from the dns server
+layout, content and file location of the bind zone files
+various methods to add a new host in the zone files, including reverse zones
+
+/var/named/*
+zone file syntax
+resource record format
+dig
+
+	DNS lookup utility
+
+	dig (domain information grouper) is a flexible tool for interrogating DNS name servers. it performs dns lookups and displays the answers that are returned from the name server(s) that were queried. most DNS administrators use dig to troubleshoot DNS problems because of its flexibility, ease of use and clarity of output. other lookup tools tend to have less functionality that dig.
+	unless it is told to query a specific name server, dig will try each of the servers listed in /etc/resolv.conf
+
+nslookup
+	query interntet name servers interactively
+	
+	nslookup is a program to query internet domain name servers. nslookup has two modes: interactive and non-interactive. interactive mode allows the user to query name servers for information about various hosts and domains or to print a list of hosts in a domain. non-interactive mode is used to print just the name and requestes information for a host or domain
+
+host
+	dns lookup utility
+
+	host is a simple utility for performing dns lookups. it is normally used to convert names to ip addresses and vice versa. when no arguments or options are given, host prints a short summary of its command line arguments and options.
+
+	name is the domain name that is to be looked up. it can use be a dotted-decimal ipv4 addres or a colon-delimited ipv6 address, in which case host will by default perform a reverse lookup for that address server is an optional argument which is eighter the name or ip address of the name server that host should query instead of the server or servers listed in /etc/resolv.conf
+
+207.3 securing a dns server
+
+bind 9 configuration files
+configuring bind to run in a chroot jail
+split configuration of bind using the forwarders statement
+
+/etc/named.conf
+/etc/passwd
+dnssec
+
+	domain name system security extensions
+
+	protect agains DNS cache poisoning. all ansewers from DNSSEC protected zones are digitally signed. by checking the digital signature, a DNS resolver is able to check if the information is identical (i.e., unmodified and complete) to the information published by the zone owner and served on a authoritative DNS server. While protecting ip address is the immediate conrsert for many users, DNSSEC can protect any data publicshed in the DNS , including text records (TXT), mail exchange records (MX), and can be used to bootstrap other security systems that publichs references to cryptographic certificates stored in the DNS such as Certificate Records, SSH firngerprints, IPSec public keys, and TLS.
+
+	DNSSEC does not provite confidentialy of data; in particular, all DNSSEC responses are authenticted but not encrypted. DNSSEC does not protect agains DOS attacks directly. though it indirectly provides some benefit (because signature checking allows the use of potentially untrustworthy parties).
+
+	DNSSEC works by digitally signing records for DNS lookup using public-key cryptography. The correct DNSKEY record is authenticated wia a chain of trust, stating with a set of verified public keys for the DNS root zone which is the trusted third party.	
+	
+
+dnssec-keygen
+	DNSSEC key generation tool
+
+	dnssec-keygen generates keys for DNSSEC (secure dns), as defined in RFC 2535 and RFC 4034. ti can also generate keys for use with TSIG (transaction signatures) as defined in RFC 2845, or TKEY (transaction key) as defined in RFC 2930.
+
+	the name of the key is specified on the command line. for DNSSEC keys, this must match the name of the zone for which the key is being generated.
+i	dnssec-keygen -a DSA -b 768 -n ZONE example.com
+	
+	the command would print a string of the form:
+	
+	Kexample.com.+003+26160.key
+	Kexample.com.+003+26160.private.
+
