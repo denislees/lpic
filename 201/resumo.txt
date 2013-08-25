@@ -127,14 +127,54 @@ configure the system to load modules by names other than their file name.
 		/lib/modules/2.6.29/kernel/c.ko: /lib/modules/2.6.29/kernel/b.ko 
 	this file is used by modprobe to know the order in which to load modules (they are loaded right to left, and removed left to right.)
 
+
 module configuration files in /etc
 
+
 /proc/sys/kernel/
+	bootloader_type:
+	x86 bootloader identification
+	this gives the bootloader type number as indicated by the bootloader shifted left by 4, and OR'd with the low four bits of the bootloader version. the reason for this encoding is that this used to match the type_of_loader field in the kernel header; the encoding is kept for backwards compatibility. that is, the full bootloader type number is 0x15 and the full version number is 0x234.
+
+	domainname & hostname:
+	these files can be used to set NIS/YP domainname and the hostname of your box in exactly the same way as the commands domainname and hostname, i.e.:
+	# echo 'darkstar' > /proc/sys/kernel/hostname
+	# echo 'mydomain' > /proc/sys/kernel/domainname
+
+	osrelease, ostype & version:
+	# cat osrelease
+	2.1.88
+	# cat ostype
+	Linux
+	# cat version
+	#5 Wed Feb 25 21:44 MET 1998
+
+	the files osrelease and ostype should be clear enough. version needs a little more clarification however. the '#5' means that this is the fifth kernel built from this source base and the date behind it indicates the time the kernel was built. the only way to tune these values is to rebuild the kernel.
+
+	panic:
+	the value in this file represents the number of seconds the kernel waits before rebooting on a panic. when you use the software watchdog, the recommended setting is 60.
+
+	panic_on_oops:
+	controls the kernels behaviour when an oops or bug is encountered.
+	0: try to continue operation
+	1: panic imediately. if the 'panic' sysctl is also non-zero then the machine will be rebooted.
+
+	pid_max:
+	PID allocation wrap value. when the kernel's next PID value reaches this value, it wraps back to the minimum PID value. PIDs value pid_max or larger are not allocated.
+
+	shmall:
+	this parameter set the total amount of shared memory pages that can be used system wide. hence, SHMALL should always be at least ceil (shmmax/PAGE_SIZE).
+	
+	shmmax:
+	this value can be used to query and set the run time limit on the maximum shared memory segment size that can be created. Shared memory segments up to 1Gb are now supported in the kernel. this value defaults to SHMMAX.
+
+
 
 depmod
 	program to generate modules.dep and map files
 
 	depmod creates a list of modules dependencies by reading earch module under /lib/modules/version and determining what symbols it exports and what symbols it needs. by default, this list is written to modules.dep, and a binary hashed version named modules. dep.bin, in the same directory. if filenames are given on the command line, only those modules are examined (which is rerely useful unless all modules are listed). depmod also creates a list of symbols provided by modules in the file named modules.symbols and its binary hashed version, modules.symbos.bin
+
 
 
 insmod
@@ -144,13 +184,16 @@ insmod
 
 	only the most general of error messages are reported: as the work of trying to link the module is now done inside the kernel, the dmesg usually gives more information about errors.
 
+
 lsmod
 	program to show the status of modules in the linux kernel
 	lsmod is a trivial program which nicely formats the contents of the /proc/modules, showing what kernel modules are currently loaded.
 
+
 rmmod
 	simple program to remove a module from the linux kernel
 	rmmod is a trivial program to remove a module (when module unloading support is provided) from the kernel. mos users will want to use modprobe with the -r option instead.
+
 
 modinfo
 	program to show information about a linux kernel module
@@ -160,6 +203,7 @@ modprobe
 	program to add and remove modules from the linux kernel
 
 	modprobe intelligently adds or removes a module from the linux kernel: note that for convenience, there is no difference between _ and - in modules names (automatic underscore conversion is performed). modprobe looks in the module directory /lib/modules/'uname -r' for all the modules and other files, except for the optional /etc/modprobe.conf configuration file and /etc/modprobe.d directory. modprobe will also use module options specified on the kernel command line in the form of <module>.<option>
+
 
 uname
 	print system information
@@ -176,6 +220,7 @@ linux standard base specification (lsb)
 
 	the goal of the LSB is to develop and promote a set of open stardards that will increase compatibility among linux distributions and enable software applications to run on any compliant system event in binary form. in addition, the lsb will help coordinate efforts to recruit software vendors to port and write products for linux operating systems.
 
+
 /etc/inittab
 
 	format of the inittab file used by the sysv-compatible init process
@@ -187,7 +232,33 @@ linux standard base specification (lsb)
 
 /etc/rc.d
 
-chkconfig
+chkconfig(redhat)
+	updates and queries runlevel information for system servics
+
+	# chkconfig --list --type <type> <name>
+	# chkconfig --add <name>
+	# chkconfig --del <name>
+	# chkconfig --override <name> 
+	# chkconfig --level <levels> --type <type> <name>
+	# chkconfig --level <levels> --type <type> <name>
+
+	chkconfig provides a simples command-line tool for maintaining the /etc/rc[0-6].d directory hierarchy by relieving system administrators of the task of directly manipulating the numerous symbolic link in those directories
+
+	this implementation of chkconfig was inspired by the chkconfig command present in the IRIX operating system. rather than maintaining configuration information outside of the /etc/rc[0-6].d hierarchy, however, this version directly manages the symlinks in /etc/rc[0-6].d this leaves all of the configuration information regarding that services init starts in a single location.
+
+	chkconfig has five distinct functions: adding new services for management, removing services from management, listing the current setartup information for services, changing the startup information for services, and checking the startup state of a particular service.
+	when chconfig is run with only a service name, it checkgs to see if the service is configured to be started in the current runlevel. if it is, chkconfig returns true; otherwise it returns false. the --level option may be used to have chkconfig query an alternative runlevel rather than the current one.
+
+	when chkconfig is run with the --list argument, or no argument at all, a listing isdisplayed of all services and their current configuration.
+	if one of on, off, reset, or resetpriorities is specified after the service name, chconfig changes the startup information for the specified service. the on and off flags cause the service to be started  or stopped, respectively, in the runlevels being changed. to the reset flag resets the on/off state for all runlevels for the service to whatever is specified in the init script in question, while the resetpriorities flag resets the start/stop priorities for the service to whatever is specified in the init script.
+
+	by default the on and off option affects only runlevels 2, 3, 4 and 5. while reset and resetpriorities affects all of the runlevels. the --level option may be used to specify which runlevels are affected.
+
+	note that for every service, each runlevel has either a start script or a stop script. when switching runvelevels, init will not restart an already started service, and will not re-stop a service that is not running.
+
+	chkconfig also can manage xinetd scripts via the means of xinetd.d configuration files. cnote that only the on, off, and --list commands are supported for xinitd.d services.
+
+	chkconfig supports a --type argument to limit actions to only a specific type of services, in the case where services of either type may share a name. possible values for type are sysv and xinitd.	
 
 update-rc.d
 	install and remove systev style init script links
@@ -213,7 +284,6 @@ init
 
 	a runlevel is a software configuration of the ssytem which allows only a selected group of processes to exist. the processes spawned by init for each of theses runlevels are defined in the ;/etc/inittab file. init can be in one of eight runlevels: 0-6 and S. the run level is changet by having a privileged user run telinit, which sends appropriate signal to init, telling it which runlevel to change to.
 
-
 mount
 	mount a filesystem
 
@@ -228,6 +298,7 @@ fsck
 	fsck is used to check and optionally repair one or more linux file systems. filesys can be a device name (e.g. /dev/hdc1, /dev/sdb2), a mount pount
 
 telinit
+	change linux runlevel.
 
 203.1 Operating the linux filesystem
 ====================================
@@ -237,12 +308,32 @@ tools and utilities for handling swap partitions anf iles
 use of UUIDs
 
 /etc/fstab
+	static information about the filesystems
+
+	the file fstab contains descriptive information about the various file systems. fstab is only read by programs, and not written; it is the duty of the system administrator to properly create and maintain this file. Each filesystem is described on a separete line; fields on each line are separeted by tabs or spaces. lines starting with '#' are comments, blank lines are ignored. the order of reords in fstab is important because fsck, mount, and umount sequentially iterate through fstab doing their thing.
+
+	first field
+		this field describes the block special device or remote filesystem to be mounted.
+		for ordinary mounts it will hold a link to a block special device node (as created by mknod for the device to be mounted, line '/dev/cdrom' or '/dev/sdb6'. for NFS mounts one will have <host>:<dir>.
+	second field (mount point for the filesystem)
+	third field (type of the filesystem)
+	fourth field (mount options associated with the filesystem)
+	fifth field
+		this field is used for these filesystem by the dump command to determine which filesystems need to be dumped. if the fifth field is not present, a value of zero is returned and dump will assume that the filesystem does not neet to be dumped.
+	sixth field
+		this filed is used by the fsck program to determine the order which filesystem checks are done at reboot time. the root filesystem should be specified with a fs_passno of 1, and other filesystems should have a fs_passno of 2. filesystems within a drive will be checked sequentially, but filesystems on a different drives will be checked at the same time to utilize parallelism available in the hardware. if the sixth field is not present or zero, a value of zero is returned and fsck will assume that the filesystem does not need to be checked.
 
 /etc/mtab
+
+	the mtab (contraction of mounted filesystems table) file is a system information file, commonly found on unix-like systems. this file list all currently mounted filesystems along with their initialization options. mtab has a lot in common with fstab, the main distiction being that the latter list all available filesystems whereas the former lists only currently mounted ones. therefore mtab is usually in a format similar to that of fstab. most of the time is possible to directly use lines from mtab in fstab.
 
 /proc/mounts
 
 mount and umount
+	mount a filesystem
+	standard form of the mount command is:
+		mount -t <type> <device> <dir>
+	this tells the kernel to attach the filesystem found on device (which is of type <type>) at the directory <dir>. the previous contents (if any) and owner and mode of <dir> become invisible, and as long as this filesystem remains mounted, the pathname <dir> refers to the root of the filesystem on <device>
 
 sync
 	flush file system buffers
@@ -269,6 +360,13 @@ tools and utilities to manipulate reiserfs V3
 tools and utilities to manipulate xfs
 
 fsck (fsck.*)
+
+	check and repair a Linux filesystem
+
+	fsck is used to check and optionally repair one or more linux filesystems. filesys can be a device name (e.g. /dev/hdc1, /dev/sdb2), a mount point (e.g., /e, /usr, /home), or an ext2 label or UUID specifier (e.g. UUID=8855... etc or LABEL=root). normally, the fsck program will try to handle filesystems on different physical disk drives in parallel to reduce the total amount of time needed to check all of them.
+
+	if no filesystems are specified on the command line, and the -A option is not specified, fsck will default to checking filesystems in /etc/fstab serially. this is equivalent to be the -As options.
+
 badblocks
 	search a device for bad blocks
 
@@ -340,6 +438,26 @@ mke2fs
 udev rules
 kernel interface
 
+(udev)
+	udev is a replacement ofor the device filesystem (devfs) starting with the linux 2.6 kernel series. it allows you to identify devices based on their properties, like vendor ID and device ID, dynamically. udev runs in userspace (as opposed to devfs which was executed in kernel space)
+
+	udev allows for urles that specify what name is given to a device, regardless of which port is plugged into. for example, a rule to always mount a hard drive with manufacturer "iRiver"  and drive code "ABC" as /dev/iriver is possible. this consistent naming of devices guarantees that scripts dependent on a specific device's existence will not be broken
+	
+	the udev system is composed of some kernel services and the udevd daemon. the kernel informs the udevd daemon when certain events happen. the udevd daemon is configured to respond to events with corresponding actions. the event information comes from the kernel - the action happen in userspace. the responses to the events are configurable in "rules".
+
+	the udevd daemon, like other damemons, starts on boot because of an init script: /etc/rcS.d/udev. its config files is in /etc/udev/udev.conf. the rules files (which amount to more configuration for udevd) are taken from /run/udev/rules.d, /etc/udev/rules.d or /lib/udev/rules.d (debian puts most of the rules in /lib/udev/urles.d). if a file with the same name is present in more than one of these directories the latter(s) files will be ignored. files in there are parsed in alpha order, as long as the name ends with ".rules". when the config file or rules files are changed, then the udevd daemon should be restarted (or, as mentioned further down this page, you can use the udevadm program)
+
+	many of the files in /etc/udev/rules.d are links to files elsewhere. i'm guessing that's so that when the rules files are edited, the editor backups aren't left lying around where they might be used in the next restart of the udevd daemon. also since the links can have different names from the original files, then they can be ordered without having to worry about what names they have (as with the init scripts).
+
+	udev was created to respond to hotplug type of events. much documentation refers to creating devices in response to new devices that have appeared. but, udev is more general; it can run arbitrary userspace commands in response to a new device appearing -or to whatever events it receives from the kernel.
+
+	the times when udevd is active are:
+	1. at startup, it parses all the config files and rule files and builds a rules database in memory
+	2. when an event happens, it checks its rule database and performs the appropriate actions.
+
+
+
+
 udevmonitor
 	print the kernel and udev event sequence to the console
 	udevmonitor listens to the kernel uevents and events send out by a udev rule and prints the devpath of the event to the console. it can be used analyze to the event timing by comparing the timestamps of the kernel uevent with the udev event.
@@ -363,6 +481,11 @@ udevmonitor
 software raid configuration files and utilities
 
 mdadm.conf
+	configuration for management of software raid with mdadm
+	mdadm is a tool for creating, managin, and monitoring raid devices using the md driver in linux
+	some common tasks, such as assembling all arrays, can be simplified by describing the deivces and arrays in this configuration file.
+
+
 mdadm
 	manage md (multiple devices) devices aka linux software raid
 
@@ -385,9 +508,82 @@ tools and utilities to manipulate or analyse system resources (e.g. interrupts)
 awareness of sdparm command and its uses
 
 hdparm
+	get/set SATA/IDE device parameters
+
+	hdparm provides a command line interface to various kernel interfaces supported by the linux SATA/PATA/SAS 'libata' subsystem and the older IDE driver subsystem. many newer (2008 and later) USB drive enclosures now also support "SAT" (SCSI-ATA command translation) and therefore may also work with hdparm. e.g. recent WD "passport" models and recent NexStar-3 enclosures. Some options may work correctly only with the lastest kernels.
+
+	when no options are given, -acdgkmur ir assumed. for get/set options, a query without the optional parameter (e.g. -d) will query (get) the device state, and with a parameter (.e.g, -d0) will set the device state.
+
 sdparm
+	access SCSI mode pages; read VPD pages; send simple SCSI commands.
+	this utility fetches and potentially change SCSI device mode pages. Inquiry data including Vital Product Data (VPD) pages can also be displayed. commands associated with starting  and stopping the medium; loading and unloading the medium; and other housekeeping function may also be issued by this utility.
+	of the three invocations shoun in the synopsis, the fisrt is the most general. the second variant that uses --enumarate is for dumping information held in sdparm's internal tables. the variant is for windows only and lists the variable device names; see the options entry for --wscan.
+
+
 tune2fs
+	ajust tunable filesystem parameters on ext2/ext3/ext4 filesystems.
+
+	tune2fs allows the system administrator to ajust various tunable filesystem parameters on Linux ext2, ext3, or ext4 filesystems. the current values of these options can be displayed by using the -L option to tune2fs program, or by using the dumpe2fs program.
+
+	the dievce specifier can either be a filename (i.e., /dev/sda1), or a LABLE or UIDD specififier: "LABEL=volume-name" or "UUID=uidd". 
+
+	-c <max-mount-counts> 
+	ajust the number of mounts after which the file system will be checked by e2fsck. if max-mount-counts is 0 or -1, the number of times the filesystem is mounted will be disregarded by e2fsck and the kernel.
+	
+	staggering the mount-counts at which filesystems are forcibly checked will avoid all filesystems being checked at one time when using jornaled filesystems.
+
+	you should strogly consider the conseguences of disabling mount-count-dependant checking entirely. bad disk drives, cables, memory, and kernel bugs could all corrupt the filesystem without making the filesystem dirty or in error. if you are using journaling on your filesystem, your filesystem will never be marked dirty, so it will not normally be checked. a filesystem error detedted by the kernel will still force an fsck on the next reboot, bot it may already be too late to prvent data loos at that point.
+
+	-C <mount-count>
+	set the number of times the filesystem has been mounted. if set to a greater value than the max-mount-counts parameter se by the -c option, <e2fsck> will check filesystem at the next reboot.
+
+	-f
+	force the tune2fs operation to complete even in the face of errors. this option is useful when removing the <has_journal> filesystem feature from a filesystem which has an external journal (or is corrupted such that it appears to have an external journal), but that external journal is not available.
+
+	-i <interval-between-checks[d|m|w]
+	ajust the maximal time between two filesystems checks. no suffix or d will interpret the number <interval-between-checks> as days, m as months, and w as weeks. a value of zero will disable the time-dependent checking.
+
+	it is strongly recommended that either -c <mount-count-dependent> or -i <time-dependent> checking to be enabled to force periodic full <e2fsck> checking of the filesystem. failure to do so may lead to filesystem corruption (due to bad disks, cables, memory or kernel bugs) going unnoticed, ultimately resulting in data loss or corruption.
+
+	-j
+	add an ext3 journal to the filesystem. if the -J option is not specified, the default journal parameters will be used to create and appropriately sized journal (given the size of the filesystem) storared within the filesystem. note that your must be using a kernel which has ext3 support in order to actually make use of the journal.
+
+	if this option is used to create a journal on a mounted filesystem, an immutable, file .journal, will be created in the top-level directory of the filesystem, as it is the only safe way to create the journal inode while the filesystem is mounted. while the ext3 journal is invisible, it is not save to deleteit, or modify it while the filesystem is mounted; for this reason the file isimmutable. while checking unmounted filesystems, e2fsck will automatically move .journal files to the invisible, reserved journal inode. for all filesystems except for the root filesystem, this should happen automatically and naturally during the next reboot cycle. since the root filesystem is mounted read-only, e2fsck must be run from a rescue floppy in order to effect this transition.
+
+	-J <journal-options.
+	override the default ext3 journal parameters. journal options are comma separeted, and maytake an argument using the equals sign. the following jornal options are supported:
+
+	size=<journal-size>
+	device=<external-journal>
+
+	-l
+	list the contents of the filesystem superblock, including the current values of the parameters that can be set via this program.
+
+	-L <volume-label>
+	set the volume label of the filesystem. ext2 filesystem labels can be at most 16 characters long; if <volume-label> is longer than 16 characters, tune2fs will truncate it and print a warning. the volume label can be used by mount, fsck, and /etc/fstab by specifying LABEL=<volume-label> instead of a block special device name like /dev/hda5
+
+	-u <user>
+	set the user who can use the reserved filesystem blocks. user can be a numerical uid or a username. if a user name is given, it is converted to a numerical uid before it is stored in the superblock.
+
+	-U <UUID>
+	set the universally unique identifier (UUID) of the filesystem to UUID. the format of the UUID is a series of hex digits separeted by hypens.  the <UUID> parameter may also be one of the following: clear, random, time.
+
+	
 sysctl
+	configure kernel parameters at runtime
+
+	sysctl is used to modify kernle parameters at runt avaithose listed under /proc/sys/. procfs is required for sysctl support in linux. you can use sysctl to both read and write sysctl data.
+
+	<variable>
+	the name of a key to read from. an example is kernel.ostype. the '/' separator is also accepted in place of a '.'.
+
+	<variable>=<value>
+	to set a key, use the form <variable>=<value> when <variable> is the key and <value> is the value to set it to. if the value contains quotes or characters which are parsed by the shell, you may need to enclose the value in double quotes. this requires the -w parameter to use.
+
+	-a
+	display all values currently available.
+	
+
 /dev/hd*
 /dev/sd*
 
@@ -447,6 +643,22 @@ system initialisation files and their contents (sysv init process)
 /bin/netstat
 /etc/network
 /etc/sysconfig/network-scripts/
+	(redhat)
+	two lesser used types of interface configuration files found in /etc/sysconfig/network-scripts are <alias> and <clone> files, which include an additional component in the name of the file beyond the interface name.
+
+	alias interface configuration files take names in the format of ifcfg-<ifname>:alias-value>, and they allow an alias to point to an interface. for example, if ifcft-eth0:o file could be configured to specify DEVICE=eth0:0 and a static ip address of 10.0.0.2, serving as an alias of an ethernet interface already configured to receive its IP information via DHCP in ifcfg-eth0. at that point, the eth0 device is bound dto a dynamic iP address, but it can always be referred to on that system via the fixed 10.0.0.2 IP address.
+
+	clone interface configuration file has a name similar to ifcfg-<if-name>-<clone-name>. while an alias file is another way to refer to an existing interface configuration file, a clone file is used to specify additional options when specifying an interface. for example, if you have a standard DHCP Ethernet interface called eth0, it may look similar to this:
+	DEVICE=eth0
+	ONBOOT=yes
+	BOOTPROTO=dhcp
+
+	since userctl is not set to yes, users cannot bring this interface up and down. to give users this ability, create a clone called user from ifcfg-eth0 which allows user to bring up and down the eth0 interface. the resulting name of the clone would be ifcfg-eth0-user and would only need one line:
+	USERCTL=yes
+
+	when a user moves to bring up the eth0 interface with the ifup eth0-user command, the configuration options from ifcfg-eth0 and ifcfg-eth0-user are used together. while this is a very basic example, this method can be used with a variety of options and interfaces.
+
+	the easiest way to create alias and clone interface configuration files is to use a gui-based network configuration (redhat-config-network) tool.
 /var/log/syslog
 /var/log/messages
 /bin/ping
@@ -508,6 +720,18 @@ perform partial and manual backs.
 verify the integrity of backup files.
 partially or fully restore backups.
 
+(Amanda)
+	Amanda, the Advanced Maryland Automatic Network Disk Archiver, is a backup solution that allows the IT administrator to set up a single master backup served to backup multiple hosts over network to tape drives/chargers or disks or optical media. Amanda usees native utilities and formats (e.g., dump and/or GNU tar) and can back up a large number of servers and workstatings running multiple versions of linux or unix. amanda uses a native windows client back up microsoft windows desktops and server.
+
+
+(Bacula)
+	bacula is a set of open source, computer programs that permit you (or the system administrator) to manage backup, recovery, and verification of computer data across a network of computers of different kinds. Bacula is reatively easy to use and efficient, while offering many advanced storage management features that make it easy to find and recover lost or damaged files. in technical terms. it is an open source, network based backup program.
+	according to source forge statistics (rank and downloads). bacula is by far the most popular open source program backup program.
+
+
+(BackupPC)
+	BackupPc is a high-performance, enterprise-grade system for backing up linux, win and macosX Pcs and laptops to a server's disk. backupPC is highly configurable and easy to install and maintain.
+
 /bin/sh
 cpio
 	copy files to and from archives.
@@ -520,9 +744,14 @@ tar
 /dev/nst*
 mt
 	control magnetic tape drive operation
-i	the default tape device to operate on is taken from the file /usr/include/sys/mtio.h when mt is compiled. it can be overridden by giveing a device file name in the environment variable TAPE or by a command line option, which also overrides the envrironment variable.
+	the default tape device to operate on is taken from the file /usr/include/sys/mtio.h when mt is compiled. it can be overridden by giveing a device file name in the environment variable TAPE or by a command line option, which also overrides the envrironment variable.
 
 rsync
+	a fast, versitile, remote (and local) file-copying tool
+	rsync is a fast and extraordinarily versatile file copying tool. it can copy locally, to/from another host over any remote shell, or to/from a remote rsync daemon. it offersa large number of options that control every aspect of its behavior and permit very flexible specification of the set of files to be copied. it is famous for its delta-transfer algorithm, which reduces the amount of data sent over the network by sending only the differences between and mirroring and as an improved copy command for everydate use.
+
+	rsync finds files that need to be transferred using a "quick check" algorithm (by default) that looks for files that have changed in size or in last-modified time. any changes in the other preserved attributes (as requeted by options) are made on the destination file directly when the quick check indicates that the file's data does not need to be updated.
+
 
 207.1 basic dns server configuration
 
