@@ -167,7 +167,50 @@ module configuration files in /etc
 	
 	shmmax:
 	this value can be used to query and set the run time limit on the maximum shared memory segment size that can be created. Shared memory segments up to 1Gb are now supported in the kernel. this value defaults to SHMMAX.
-
+	acct
+	acpi_video_flags
+	auto_msgmni
+	bootloader_type
+	bootloader_version
+	callhome
+	cap_last_cap
+	core_pattern
+	core_pipe_limit
+	core_uses_pid
+	ctrl-alt-del
+	dmesg_restrict
+	domainname & hostname
+	hotplug
+	kptr_restrict
+	kstack_depth_to_print
+	l2cr
+	modules_disabled
+	msg_next_id, sem_next_id and shm_next_id
+	nmi_watchdog
+	osrelease, ostype & version
+	overflowgid & overflowuid
+	panic
+	panic_on_unrecovered_nmi
+	panic_on_oops
+	panic_on_stackoverflow
+	perf_cpu_time_max_percent
+	pid_max
+	ns_last_pid
+	powersave-nap
+	printk
+	printk_delay
+	printk_ratelimit
+	printk_ratelimit_burst
+	randomize_va_space
+	reboot-cmd
+	rtsig-max & rtsig-nr
+	ng-big-buff
+	shmall
+	shmmax
+	shm_rmid_forced
+	tainted
+	unknown_nmi_panic
+	watchdog_thresh
 
 
 depmod
@@ -199,6 +242,7 @@ modinfo
 	program to show information about a linux kernel module
 	modinfo extracts information from the linux kernel modules given on the command line. if the module name is not a filename, then the /lib/modules/version directory is searched, as is also done by modprobe when loading kernel modules.
 	
+
 modprobe
 	program to add and remove modules from the linux kernel
 
@@ -260,6 +304,7 @@ chkconfig(redhat)
 
 	chkconfig supports a --type argument to limit actions to only a specific type of services, in the case where services of either type may share a name. possible values for type are sysv and xinitd.	
 
+
 update-rc.d
 	install and remove systev style init script links
 
@@ -267,6 +312,7 @@ update-rc.d
 
 	update-rc.d firewall start 99 1 2 3 .
 	update-rc.d -f firewall remove
+
 
 202.2 system recovery
 =====================
@@ -284,6 +330,7 @@ init
 
 	a runlevel is a software configuration of the ssytem which allows only a selected group of processes to exist. the processes spawned by init for each of theses runlevels are defined in the ;/etc/inittab file. init can be in one of eight runlevels: 0-6 and S. the run level is changet by having a privileged user run telinit, which sends appropriate signal to init, telling it which runlevel to change to.
 
+
 mount
 	mount a filesystem
 
@@ -292,13 +339,16 @@ mount
 	the standard form of the mount command is
 		mount -t type device dir
 
+
 fsck
 	check and repair a linux file system
 
 	fsck is used to check and optionally repair one or more linux file systems. filesys can be a device name (e.g. /dev/hdc1, /dev/sdb2), a mount pount
 
+
 telinit
 	change linux runlevel.
+
 
 203.1 Operating the linux filesystem
 ====================================
@@ -306,6 +356,7 @@ telinit
 the concept of the fstab configuration
 tools and utilities for handling swap partitions anf iles
 use of UUIDs
+
 
 /etc/fstab
 	static information about the filesystems
@@ -323,11 +374,14 @@ use of UUIDs
 	sixth field
 		this filed is used by the fsck program to determine the order which filesystem checks are done at reboot time. the root filesystem should be specified with a fs_passno of 1, and other filesystems should have a fs_passno of 2. filesystems within a drive will be checked sequentially, but filesystems on a different drives will be checked at the same time to utilize parallelism available in the hardware. if the sixth field is not present or zero, a value of zero is returned and fsck will assume that the filesystem does not need to be checked.
 
+
 /etc/mtab
 
 	the mtab (contraction of mounted filesystems table) file is a system information file, commonly found on unix-like systems. this file list all currently mounted filesystems along with their initialization options. mtab has a lot in common with fstab, the main distiction being that the latter list all available filesystems whereas the former lists only currently mounted ones. therefore mtab is usually in a format similar to that of fstab. most of the time is possible to directly use lines from mtab in fstab.
 
+
 /proc/mounts
+
 
 mount and umount
 	mount a filesystem
@@ -335,9 +389,11 @@ mount and umount
 		mount -t <type> <device> <dir>
 	this tells the kernel to attach the filesystem found on device (which is of type <type>) at the directory <dir>. the previous contents (if any) and owner and mode of <dir> become invisible, and as long as this filesystem remains mounted, the pathname <dir> refers to the root of the filesystem on <device>
 
+
 sync
 	flush file system buffers
 	force changed blocks to disk, update the super block.
+
 
 swapon
 	enable/disable devices and files for paging and swapping
@@ -346,6 +402,7 @@ swapon
 	the device or file used is given by the specialfile parameter. it may be of the form -L label or -U uuid to indicate a device by label or uuid.
 
 	calls to swapon normally occur in the system boot scripts making all swap devices available, so that the paging and swapping activity is interleaved across several devices and files.
+
 
 	swapoff disables swapping on the specified device and files. when the -a flag is given, swapping is disabled on all known swap devices and files (as found in /proc/swaps or /etc/fstab).
 
@@ -359,6 +416,7 @@ tools and utilities to manipulate ext2, ext3 and ext4
 tools and utilities to manipulate reiserfs V3
 tools and utilities to manipulate xfs
 
+
 fsck (fsck.*)
 
 	check and repair a Linux filesystem
@@ -367,12 +425,14 @@ fsck (fsck.*)
 
 	if no filesystems are specified on the command line, and the -A option is not specified, fsck will default to checking filesystems in /etc/fstab serially. this is equivalent to be the -As options.
 
+
 badblocks
 	search a device for bad blocks
 
 	badblocks is used to search a bad block on a device (usually a disk partition). device is the special file corresponding to the device (e.g. /etc/hdc1) last-block is the last block to be checked; if it is not specified, the last block on the device is used as a default. first-block is an optinal parameter specifying the starting block number for the test, which allows the testing to start in the middle of the disk. if it is not specified the first block on the disk is used as a default.
 
 	if the output badblocks is going to be fed to the e2fsch or mke2fs programs, it is important that the block size is promperly specified, sinse the block numbers whiich are generated are very dependent on the block size in size by the filesystem. for this reason, it is strongly recommended that users not run badblock directlu, but rather use the -c option of the e2fsck and mke2fs programs.
+
 
 mkfs (mkfs.*)
 	build a linux file system
@@ -381,6 +441,7 @@ mkfs (mkfs.*)
 	the exit code returned by mkfs is 0 on sucess and 1 on failure.
 
 	in actuality, mkfs is simply a front-end for the various file system builds (mkfs.fstype) available under linux. the file system-specific build is searched for in a number of directories like perhaps.
+
 
 dumpe2fs, xfsdump, xfsrestore
 	dump ext2/ext3/ext4 filesystem information
@@ -407,7 +468,9 @@ mkswap
 
 	 the device argument will usually be a disk partition (something like /dev/sdb7) but can also be file a file. the linux kernel does not look at partition ids, but many installation scripts will assume that partitions of hex type 82 (linux_swap) are meant to be swap partitions.
 
+
 xfs_info, xfs_check and xfs_repair
+
 
 203.3 Creating and configuring filesystem options
 =================================================
@@ -421,9 +484,12 @@ basic feature knowlodge of encrypted filesystems
 /etc/auto.master
 /etc/auto.[dir]
 mkisofs
+
+
 dd
 	convert and copy a file
 	copy a file converting and formatting according to the operands.
+
 
 mke2fs
 	create and ext2/ext3/ext4 filesystem
@@ -437,6 +503,7 @@ mke2fs
 
 udev rules
 kernel interface
+
 
 (udev)
 	udev is a replacement ofor the device filesystem (devfs) starting with the linux 2.6 kernel series. it allows you to identify devices based on their properties, like vendor ID and device ID, dynamically. udev runs in userspace (as opposed to devfs which was executed in kernel space)
@@ -456,11 +523,10 @@ kernel interface
 	2. when an event happens, it checks its rule database and performs the appropriate actions.
 
 
-
-
 udevmonitor
 	print the kernel and udev event sequence to the console
 	udevmonitor listens to the kernel uevents and events send out by a udev rule and prints the devpath of the event to the console. it can be used analyze to the event timing by comparing the timestamps of the kernel uevent with the udev event.
+
 
 /etc/udev
 	linux dynamic device management
@@ -480,6 +546,7 @@ udevmonitor
 
 software raid configuration files and utilities
 
+
 mdadm.conf
 	configuration for management of software raid with mdadm
 	mdadm is a tool for creating, managin, and monitoring raid devices using the md driver in linux
@@ -490,6 +557,7 @@ mdadm
 	manage md (multiple devices) devices aka linux software raid
 
 	raid devices are virtual devices created from two or more real block devices. this allows multiple devices (dipically disk drives or partitions thereof) to be combined into a single device to hold (for example) a single filesystem. some raid levels include redundancy and so can survive some degree of device failure.
+
 
 /proc/mdstat
 
@@ -507,12 +575,14 @@ tools and utilities to configure dma for ide devices including ATAPI and SATA
 tools and utilities to manipulate or analyse system resources (e.g. interrupts)
 awareness of sdparm command and its uses
 
+
 hdparm
 	get/set SATA/IDE device parameters
 
 	hdparm provides a command line interface to various kernel interfaces supported by the linux SATA/PATA/SAS 'libata' subsystem and the older IDE driver subsystem. many newer (2008 and later) USB drive enclosures now also support "SAT" (SCSI-ATA command translation) and therefore may also work with hdparm. e.g. recent WD "passport" models and recent NexStar-3 enclosures. Some options may work correctly only with the lastest kernels.
 
 	when no options are given, -acdgkmur ir assumed. for get/set options, a query without the optional parameter (e.g. -d) will query (get) the device state, and with a parameter (.e.g, -d0) will set the device state.
+
 
 sdparm
 	access SCSI mode pages; read VPD pages; send simple SCSI commands.
@@ -585,6 +655,7 @@ sysctl
 	
 
 /dev/hd*
+
 /dev/sd*
 
 204.3 logical volume manager
@@ -593,11 +664,21 @@ sysctl
 tools in the lvm suite
 resizing, renaming, creating, and removing logical volumes, volume groups and physical volumes
 
+
 /sbin/pv*
+
+
 /sbin/lv*
+
+
 /sbin/vg*
+
+
 mount
+
+
 /dev/mapper
+
 
 205.1 basic networking configuration
 ====================================
@@ -614,18 +695,43 @@ utilities to monitor and analyse the TCP/IP traffic
 openvpn
 
 /sbin/route
+
+
 /sbin/ifconfig
+
+
 /bin/netstat
+
+
 /bin/ping
+
+
 /usr/sbin/arp
+
+
 /usr/sbing/tcpdump
+
+
 /usr/sbing/lsof
+
+
 /usr/bin/nc
+
+
 /sbin/ip
+
+
 /etc/openvpn/*
+
+
 openvpn
+
+
 nmap
+
+
 wireshark
+
 
 205.3 troubleshooting network issues
 ====================================
@@ -638,11 +744,21 @@ utilities to gain information about the network configuration
 methods of information about the recognised and used hardware devices
 system initialisation files and their contents (sysv init process)
 
+
 /sbin/ifconfig
+
+
 /sbin/route
+
+
 /bin/netstat
+
+
 /etc/network
+
+
 /etc/sysconfig/network-scripts/
+
 	(redhat)
 	two lesser used types of interface configuration files found in /etc/sysconfig/network-scripts are <alias> and <clone> files, which include an additional component in the name of the file beyond the interface name.
 
@@ -659,20 +775,48 @@ system initialisation files and their contents (sysv init process)
 	when a user moves to bring up the eth0 interface with the ifup eth0-user command, the configuration options from ifcfg-eth0 and ifcfg-eth0-user are used together. while this is a very basic example, this method can be used with a variety of options and interfaces.
 
 	the easiest way to create alias and clone interface configuration files is to use a gui-based network configuration (redhat-config-network) tool.
+
 /var/log/syslog
+
+
 /var/log/messages
+
+
 /bin/ping
+
+
 /etc/resolv.conf
+
+
 /etc/hosts
+
+
 /etc/hosts.allow
+
+
 /etc/lhosts.deny
+
+
 /etc/hostname
+
+
 /etc/HOSTNAME
+
+
 /bin/hostname
+
+
 /usr/sbin/traceroute
+
+
 /usr/bin/dig
+
+
 /bin/dmesg
+
+
 /usr/bin/host
+
 
 205.4 notify users on system-related issues
 
@@ -680,8 +824,14 @@ automate communication with users through logon messages
 inform active users of system maintenance
 
 /etc/issue
+
+
 /etc/issue.net
+
+
 /etc/motd
+
+
 wall
 	write a message to users
 
@@ -754,13 +904,18 @@ rsync
 
 
 207.1 basic dns server configuration
+====================================
 
 bind 9.x configuration files, terms and utilities
 defining the location of the bind zone files in bind configuration files
 reloading modified configuration and zone files
 
 /etc/named.conf
+
+
 /var/named/*
+
+
 /usr/sbin/rndc
 	name server control utility
 
@@ -773,6 +928,7 @@ reloading modified configuration and zone files
 kill
 
 207.2 create and maintain dns zones
+===================================
 
 bind 9 configiration files, terms and utilities
 utilities to request information from the dns server
@@ -802,6 +958,7 @@ host
 	name is the domain name that is to be looked up. it can use be a dotted-decimal ipv4 addres or a colon-delimited ipv6 address, in which case host will by default perform a reverse lookup for that address server is an optional argument which is eighter the name or ip address of the name server that host should query instead of the server or servers listed in /etc/resolv.conf
 
 207.3 securing a dns server
+===========================
 
 bind 9 configuration files
 configuring bind to run in a chroot jail
