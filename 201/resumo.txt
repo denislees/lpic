@@ -576,7 +576,7 @@ El Torito
 		according to the el torito specification, a 32-bit CPU PC BIOS will search for boot code on a ISO 9660 CD-ROM. the standard allow for booting in two different modes. Either the boot information can be accessed directly from the CD media, or in floppy emulation mode where the boot information is stored in an image file of a floppy disk, which is loaded from the CD and then behaves as a virtual floppy disk. This is useful for computers built before about 1999, which were designed to boot only from the floppy drive. For modern computers the "no emulation" mode is generally the more reliable method.
 
 		The BIOS will assign a BIOS drive number to the CD drive. The drive number for INT 13h assigned is either 80 (hard disk emulation), 00 (floppy disk emulation) or an arbitrary number if the BIOS should not provide emulation. emulation allows older operating systems to be booted from a CD, by making it appears to them as if they were booted from a hard or floppy disk.
-		The BIOS will assign a BIOS drive number to the CD
+
 
 
 /etc/auto.master
@@ -659,6 +659,17 @@ udevmonitor
 
 software raid configuration files and utilities
 
+
+RAID 0 (striping)
+	combines multple disks to present the illusion of a single storage area as large as all the combined disks. the disks are combined in an interleaved manner so that a single large accesss to the RAID device (for instance, when reading or writing a large file) results in access to all the component devices. This configuration can improve overall disk performance; if any one disk fails, data on the ramaining disks will become useless.
+
+RAID 1 (mirroring)
+
+RAID 4 (0 + 1)
+	in raid 4, data are striped in a manner similar to RAID 0; but one drive is dedicated to holding checksum data.
+
+RAID 5 (0 + 1)
+	checksum data is striped on all the disks in the array.
 
 mdadm.conf
 
@@ -867,7 +878,7 @@ resizing, renaming, creating, and removing logical volumes, volume groups and ph
 /sbin/vg*
 
 	vgcfgbackup
-	
+
 		backs up volume group metadata, by defaoults to files in /etc/lvm/backup
 
 	vgcfgrestore
@@ -1064,6 +1075,10 @@ mount
 
 /dev/mapper
 
+	in the linux kernel, the device mapper serves a generic framework to map one block device onto another. it forms the foundation of lvm2, software RAIDs, dm-crypt disk encryption, and offers additional features such as file-system snapshots.
+
+	device mapper works by passing data from a virtual block device.
+
 
 205.1 basic networking configuration
 ====================================
@@ -1072,6 +1087,7 @@ utilities to configure and manipulate ehternet network interfaces
 configuring wireless networks
 
 205.1 advanced network configuration and troubleshooting
+========================================================
 
 utilities to manipulate routing tables
 utilities to configure and manipulate ethernet network interfaces
@@ -1114,6 +1130,7 @@ openvpn
 
 /bin/ping
 
+	ping uses the ICMP protocol's mandatory ECHO_REQUEST datagram to elicit an ICMP ECHO_RESPONSE from a host or gateway. ECHO_REQUEST datagrams ("pings") have an IP and ICMP header, followed by a struct timeval and then an arbitrary number of pad bytes used to fill out the packet.
 
 /usr/sbin/arp
 
@@ -1136,24 +1153,91 @@ openvpn
 
 /usr/sbing/lsof
 
+	lists on its standard output file information about files opened by process for the following UNIX dialects:
+
+		AIX, Apple Darwin, FreeBSD, Linux, Solaris
+
+	an open file may be a regular file, a directory, a block special file, a character special file, an executing text reference, a library, a stream or network file (internet socket, NFS file or UNIX domain socket.) a specific file or all the files in a file system may be selected by path. 
+
+	instead of a formated display, lsof will produce output that can be parsed by other programs. See the -F, option dscription, and the OUTPUT FOR OTHER PROGRAMS section for more information.
+
+	in addition to producing a single output list, lsof will return in repeat mode. in repeat mode it will produce output, delay, then repeat the output operation until stopped with an interrupt or quite signal. 
+
+	in the absence of any options, lsof lists all open files belonging to all active processes.
+
+	if any list request option is specified, other list requests must be specifically requested.
 
 /usr/bin/nc
 
+	the nc (or netcat) utility is used for just about anything under the sun involving TCP or UDP. it can open TCP connecitons, send UDP packets, listen on arbitrary TCP and UDP ports, do port scanning, and deal with both IPv4 and IPv6. unlike telnet, nc scripts nicely, and separetes error messages onto standard error instead of sending then to standard output as telnet does with some.
 
 /sbin/ip
 
+	-V
+		print the version of the ip utility and exit.
+
+	-s
+		output more information. if the option appers twice and more, the amount of information increases. as a rule, the information is statistics or some time values.
+
+	-f
+		followed by protocol family identifier: inet, inet6 or link, enforce the protocol family to use. if the option is not presente, the protocol family is guessed from other arguments. if the rest of the command line does not give enough information to guess the family, ip falls back to the default one, usually inet or any. link is a special family identifier meaning that no networking protocol is involed
+
+	-o
+		output each record on a single line, replacing line feeds with the \ character. this is convenient when you wanto to count records with wc or to grep the output		
+
+	-r 
+		use the systems name resolver to print DNS names intead of host addresses.
 
 /etc/openvpn/*
 
 
 openvpn
 
+	openvpn is an open source vpn daemon by james yonan. because openvpn tries to be a universal vpn tool offering a great deal of flexibility, there are a lot of options on this manual page. if you're new to openvpn, you might want to skip ahead to the examples section where you will see how to construct simple vpns on the command line without even needing a configuration file.
+
+	also note that there's more documentation and examples on the openvpn web site: http://openvpn.net/
+
+	and if you would like to see a shorter version of this manual, see the openvpn usage message which can be obtained by running openvpn without any parameters.
+
+
+	openvpn is a robuts and highly flexible vpn daemon. openvpn supports SSL/TLS security, ethernet bridging, TCP or UDP tunnel transport through proxies or NAT, support for dynamic IP addresses and DHCP, scalability to hundreds of thousands of users, and portability to most major OS plataforms.
+
+	openvpn is tightly bound to the openSSL library, and derives much of its crypto capatibilities from it.
+
+	openvpn supports conventional encryption using a pre-shared secret key (static key mode) or public key security (SSL/TLS mode) using client ^& service certificates. openVPN also supports non-encrypted TCP/UDP tunnels.
 
 nmap
 
+	nmap "netowork mapper" is an open source tool for network exploration and security auditing. it was designed to rapidly scan large networks, although it works fine aagainst single hosts. nmap uses raw ip packets in novel ways to determine what hosts are available on the network, what services (applications name and version those hosts are offering, what operating systems (and OS versions) they are running, what type of packet filters/firewalls are in use, and dozens of other characteristics.). while nmap is commonly used for security audits, many systems and network administrators find it useful for routine tasks such as network inventory, managing service upgrade scheludes, and monitoring host or service uptime.
+
+	the output from nmap is a list of scanned targets, with supplemental information on each depending on the options used. key among that information is the "interesting ports table"... that table lits the port number and protocol, service name, and state. the state is either open, filtered , closed, or unfiltered. open. means that a firewall, filter, or other network obstable is blocking the port so that nmap cannot tell whether it is open or closed. closed. ports have no application listening on then, though they could open up at any time. ports are classified as unfiltered. when they are responsive to nmap's probes, but nmap cannot determine whether they are open or closed. nmap reports the state combinations open/filtered and closed/filtered when it cannot determine which of the two states describe a port. the port table mayh also include software version details when version detection has been requested. when an IP protocol scan is requests (-sO) namp provides information on supported IP protocols rather than a listeing ports.
+
+	in addition o the interesting ports table, nmpa can profive further inforation on targets, including reverse dns names, operating system guesses, device types, and MAC addresses.
+
+	A typical nmap scan is shown in example 1. the only namp argument is used in this example are -A, to enable OS and version detection, script scanning, and traceroute; -T4 for faster execution; and then the two target hostnames.
+
+	# nmap -A -T4 scanme.nmap.org
 
 wireshark
 
+	wireshard is a gui network protocol analyzer. it lets you interactively browse packet data from a live network or from a previously saved capture file. wireshark's native capture file format is libpcap format, which is also the format used by tcpdump and various other tools.
+
+	wireshark can read/ import the following file formats:
+
+	- libpcap, tcpdump and various other tools using tcpdump's capture format.
+	- snoop and atmsnoop
+
+	there is no need to tell wireshark what type of file you are reading; it will determine the file type by itself. wireshark is also capable of reading any of these file formats if they are compressed using gzip. wireshark recognizes this directly from the file; the '.gz' extensions is not required for this purpose.
+
+	like other protocol analyzers, wireshark's main window shows 3 views of a packet. it shows a summary line, briefly describing what the packet is. A packet details display is shown, allowing you to drill down to exact protocol or field that you interested in. finally, a hex dump shows you exactly what the packet looks like when is goes over the wire.
+
+	in addition, wireshark has some features that make it unique. it can assemble all the packets in a TCP conversation and show you the ASCII data in that conversation. display filters in wireshark are very powerful; more fields are filterable in wireshark than in other protocol analyzers, and the syntax you can use to create your filters is richer. as wireshark progresses, expect more and more protocol fileds to be allowed in display filters.
+
+	packet capturing is performed with the pcap library. the capture filter syntax follows the rules of the pcap library. this syntax is different from the display filter syntax.
+
+	compressed file support uses (and therefore requires) the zlib library. if the zlib library is not present, wireshart will compile, but will be unable to read compressed files.
+
+	the pathname of a capture file to be read can be specified with the -r option or can be specified as a command-line argument.
 
 205.3 troubleshooting network issues
 ====================================
@@ -1168,13 +1252,45 @@ system initialisation files and their contents (sysv init process)
 
 
 /sbin/ifconfig
+	is used to configure the kernel-resitent netowork interfaces. it is used at boot time to set up interfaces as necessary. after that, it is usually only needed when debugging or when system tuning is needed.
+
+	if no arguments are given, ifconfig displays the status of the currently active interfaces. if a single interface argument is given, it displays the status of the given interface only; if a single -a argument is given, it display the status of all interfaces, even those that are down. otherwise, it configures an interface.
+
+	options
+
+	interface
+		the name of the interface. this is usally a driver name followed by a unit number, for example eth0 for the first ethernet interface.
+
+	up
+		this flag causes the interface to be activated. it is implicity specified if an address is assigned to the interface
+
+	down
+		this flag causes the driver for this interface to be shut down.
+
+	-arp
+		enagle or disable the use of the arp protocol on this interface.
+
+	promisc
+		enable or disable the promiscuous mode of the interface. if selected, all packets on the network will be received by the interface.
+
+	add address
+		add an ipv6 address to an interface
+	del add
+		remove an IPv6 address from an interface
 
 
 /sbin/route
 
+	route manipulates the kernels IP routing tables. it is primary use is to set up static routes to specific hosts or networks via an interface after it has been configured with the ifconfig program.
+
+	when the add or del options are used, route modifies the routing tables. without these options, route displays the current contents of the routing tables.
+
 
 /bin/netstat
 
+	netstatis prints information about the linux network subsystem. the type of information printed is controlled by the first argument, as follows:
+
+	by default, netstat displays a list of open sockets. if you don't specify any address families, then the active sockets of all configured address families will be printed.
 
 /etc/network
 
@@ -1201,6 +1317,9 @@ system initialisation files and their contents (sysv init process)
 
 /var/log/syslog
 
+	sysklogd provides two system utilities which provide support for system logging and kernel message trapping. support of both internet and unix domain sockets enables this utility package to support both local and remote logging.
+
+	system logging is porvided by a version of syslogd derived from the stock BSD sources. support for kernel logging is provided by the klogd utility which allows kernel logging to be conducted in either a standalone fashion or as a client of syuslogd
 
 /var/log/messages
 
@@ -1210,23 +1329,78 @@ system initialisation files and their contents (sysv init process)
 
 /etc/resolv.conf
 
+	the resolver is a set of routines in the C library that provide access to the internet domain name server (DNS). the resolver configuration file contain information that is read by the resolver routines the first time they are invoked by a process. the file is designed to be human readable and containts a list of keyworkds with values that provide various types of resolver information.
+
+	if this file does not exist, only the name server on the local machine will be queried; the domain name is determined from the hostname and the domain search path is contructed from the domain name.
+
+	the different configuraiton options are:
+
+	nameserver (name server IP addres)
+
+		internet address of a name server that the resolver should query.
+
+	domain (local domain name)
+
+		most queries for names withing this domain can use short names relative to the local domain. if no domain entry is present, the domain is determined from the local hostname returnned by gethostname; the domain part is taken to be everything after the first '.' finally, if the hostname does not contain a domain part, the root domain is assumed.
+
+	search (search list for host-name lookup)
+
+		the search list is normally determined fromt he local domain name; by default, it contains only the local domain name. this may be changed by listing the desired domain search path following the search keyword with spaces or tabs separating the names. resolver queiries having fewer than ndots dots (default is 1 ) in them will be attempted using each component of the search path in turn until match is found. for evnironments with multiple subdomains please read options ndots:n below to avoid man-in-the-middle attacks and unnecessary traffic for the root-dns-servers. note that this procress may be slow and will generate a lot of network traffic if the servers for the listed domains are not local, and that queries will time out if no server is available for one of the domains. the search list is currently limited to six domains with a total of 256 characters.
+
 
 /etc/hosts
 
 
 /etc/hosts.allow
 
+	this manual page describes a simples accesss control language that is based on client (host name/address, username), and server (process name, host name/address) patterns. examples are given at the end.
 
-/etc/lhosts.deny
+	an extened version of the access control language is described in the hosts options document. the extensions are turned on at program build time by building with -DPROCESS_OPTIONS.
+
+	in the following text, daemon is the process name of a network daemon process, and client is the name and/or address of a host requesting service. network daemon process names are specified in the inetd configuration file.
+
+	access control files
+
+	the access control software consults two files. the seach stops at the first match:
+
+	1. /etc/hosts.allow
+	2. /etc/hosts.deny
+	3. will be granted.
+
+	wildcards
+
+	ALL
+		the universal wildcard, always matches.
+
+	LOCAL
+		matches any host whose name does not contain a dot character
+
+	UNKNOWN
+		matches any user whose name is unknown, and matches any host whose name or address are unkown. this pattern should be used with care: hostnames may be unavailable due to temporary name server problems.
+
+	KNOWN
+		matches any user whose name is known, and matches any host whose name and address are known. this pattern should be used with care.
+
+	PARANOID
+		matches any host whose name does not match its address. when tcpd is built with -DPARANOID (default mode), it drops requests from such clients even before looking at the access control tables. build without -DPARANOID when you want more contro over such requests.
+
+/etc/hosts.deny
+
+	/etc/hosts.deny
+		ALL:ALL
+		block everything
 
 
 /etc/hostname
 
+	Your default hostname
 
 /etc/HOSTNAME
 
 
 /bin/hostname
+
+	hostname is the program that is used to either set or display the current host, domain or naode name of the system. these names are used by many of the networking programs to identify the machine. the domain name is also used by NIS/YP.
 
 
 /usr/sbin/traceroute
@@ -1378,6 +1552,13 @@ reloading modified configuration and zone files
 	rndc reads a configuration file to determine how to contatct the name server is decide that algorigthm and key it should use.
 
 kill
+
+	the command kill sends the specified signal to the specified process or process group. if no signal is specified, the TERM signal is sent. The TERM signal will kill processes which do not catch this signal. for other processes, it may be necessary to use the KILL (9) signal, since this signal cannot be caught.
+
+	most modern shells have a builtin kill function, with a usage rather similar to that of the command described here. the '-a' and '-p' options, and the possibility to specify PIDs by command name is a local extension.
+
+	if sig is 0, then no signal is sent, but error checking is still performed
+
 
 207.2 create and maintain dns zones
 ===================================
