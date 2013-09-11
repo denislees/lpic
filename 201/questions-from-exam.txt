@@ -1,33 +1,53 @@
 
 parameters on kernel boot to use a single core
 
+
 most used tools to backup linux
+	Amanda
+	BackupPC
+	Bacula
 
 what directory is UUID?
-/dev/
+	/dev/disk/by-uuid
 
 what is the single letter to edit menu on grub
 
+
 what is the startup scripts for runlevel 3?
+	/etc/rc3.d/
 
 where you may search to change the default runlevel of your kernel?
+	/etc/inittab
 
 Makefile
 configure
 
 two archive programs to make initd image
+	mkinitrd
+	mkinitramfs
 
 what program you use to send a message to a remote kernel?
+	wall
 
 what program uses port 21?
+	ftp-data	20/tcp
+	ftp			21/tcp
+	fsp			21/udp		fspd
+	ssh			22/tcp				
+	ssh			22/udp			
+	telnet		23/tcp
 
-oprogram to monitor packets with ip and mac addresss
+program to monitor packets with ip and mac addresss
+	wireshark
+	tcpdump
 
 how can i add journal without destroing data?
-
+	tune2fs -j
+	
 what vgextend does?
 
 what program is used to verify wifi quality?
+# iwconfig
 
 how to record a cd that windows can read?
 

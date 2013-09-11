@@ -1,0 +1,2049 @@
+Exam 202: Detailed Objectives
+
+This is a required exam for LPI certification Level 2. It covers advanced skills for the Linux professional that are common across all distributions of Linux.
+
+Please Note: These objectives will change as of October 2013. See this link for details.
+
+Each objective is assigned a weighting value. The weights range roughly from 1 to 10 and indicate the relative importance of each objective. Objectives with higher weights will be covered in the exam with more questions.
+
+Web Services
+File Sharing
+Network Client Management
+E-Mail Services
+System Security
+Troubleshooting
+
+There are no updates to the LPI-202 exam in 2012.
+
+Topic 208: Web Services
+=======================
+
+208.1 Implementing a web server
+===============================
+
+Weight: 3
+
+Description: Candidates should be able to install and configure a web server. This objective includes monitoring the server's load and performance, restricting client user access, configuring support for scripting languages as modules and setting up client user authentication. Also included is configuring server options to restrict usage of resources.
+Key Knowledge Areas
+
+Apache 2.x configuration files, terms and utilities
+Apache log files configuration and content
+Access restriction methods and files
+mod_perl and PHP configuration
+Client user authentication files and utilities
+Configuration of maximum requests, minimum and maximim servers and clients
+Terms and Utilities
+
+
+access logs 
+	
+	the server access log records all requets processed by the server. the location and content of the access logs are controlled by the CustomLog directive. the LogFormat directive can be used to simplify the selection of the contents of the logs. this section describes how to configure the server to record information in the access log.
+
+	of course, storing the information in the eaccess log is only the start of log management. the next step is to analyze this ifnormation to produce useful statistics. log analysis in general is beyong the scope of this document, and not really part of the job of the web server itself. for more information about this topic, and for applicaitons which perform log analysis, check the open directory or yahoo.
+
+	various versions of apache httpd have used other modules and directives to control access logging, including mod_log_referer. mod_log_agent, and the TransferLog directive. the CustomLog directive now subsumes the functionality of all the older directives.
+
+	the format of the access log is highly configurable. the format is specified using a format stirng thsat look much like a C-style printf format string. some examples are presented in the next sections. for a complete of the possible contents of the format string, see the mod_log_config format strings.
+
+	http://httpd.apache.org/docs/2.2/logs.html
+
+error logs 
+
+
+.htaccess 
+
+	apache allows for decentralized management of configuration via special files placed inside the web tree. the special files are usually called .htaccess, but any name can be specified in the AccessFileNAme directive. directives placed in .htaccess files apply to the directory where you place the file, and all sub-directories. the .htaccess files follow the same syntax as the main configuration files. Since .htaccess files are read on every request, changes made in these files take immediate effect.
+
+	to find which directives can be placed in .htaccess files, check the Context of the directive. the server administrator further controls what directives may be placed in .htaccess files by configuring the AllowOverride directive in the main configuration files.
+
+	--
+
+	.htaccess files (or distributed configuration files) provide a way to make configuration changes on a per-directory basis. a file, containing one or more configuration directives, is placed in a particular document directory, and the directives apply to that directory and all subdiretories thereof.
+
+	if you want call your .htaccess file something else, you can change the name of the file using the AccessFileName directive. for example if you would rather call the file .config then you can put the following in your server configuration file:
+
+		AccessFileName .config
+
+	in general .taccess files are the same syntax as the main confuguration files. what you can put in these files is determined by the AllowOrverride directive. this directive specifies, in categories, what directives will be honored if they are found in a .htaccess file. if a directive is permitted in a .htaccess file, the documentation for that directive will contain an Override serction, specifying what value must be in AllowOverride in order for that directive to be permitted.
+
+	For example, if you look at the documantation for the AddDefaultCharset directive, you will find that it is permitted in .htaccess files. The override line reads FileInfo. Thus, you must have at least AllowOverride FileInfo in order for this directive to be honored in .htaccess files.
+
+	if you are unsure whether a particular directive is permitted in a .htaccess file, look at the documentation for that directive, and check the context line for ".htaccess"
+
+	--
+
+	you should avoid using .htaccess files completely if you have access to httpd main server config file. using .htaccess files slows down your apache http server. any directive that you can include in a .htaccess file is better set in a directory block, as it will have the same effect with better perfomarnace.
+
+	.htaccess files (or "distributed configuration files") provide a way to make configuration changes on a per-directory basis. a file, containing one or more configuration directives, is placed in a particular document directory, and the directives apply to that direcotry, and all subdirectories thereof.
+
+	if you want to call your .htaccess file something else, you can change the name of the file using the AcccessFileName directive. for example if you wold rather call the file .config then you can put the following in your server configuration file.
+
+
+AccessFileName .config
+
+	in general .htaccess files use the same syntax as the main configuration files. what you put in these files is determined by the AllowOverride directive. this directive specifies, in categories, what directives will be honored if they are found in a .htaccess file. if a directive is permited in a .htaccess file, the documentation for that directive will contain an overrite section, specifying what value must be in AllowOverride in order for that directive to be permitted.
+
+	further note that httpd must look for .htaccess files in all higher-level directories, in order to have a full complement of directives that it must apply. (see section on how directives are applied.) thus, if a file is requesteste out of a directory /www/htdocs/example, httpd must look for the following files:
+
+	/.htaccess
+	/www/.htaccess
+	/www/htdocs/.htaccess
+	/www/htdocs/example/.htaccess
+
+
+httpd.conf 
+
+	apache is configured by placing directive4s in plain text configuraion files. the main configuraiton file is usally called httpd.conf. the location of this file is set at compile-time, but may be overridden with the -f command line flag. in addition, other configuration files may be added using the include directive, and wildcards can be used to inlcude manyu configuration files. any directive may be placed in nayu of these configuration files. changest o the main configuraiton files are only recognized by Apache when it is started or restarted.
+
+	the server also reads a file containing mime document types; the filename is set by typesconfig directive and is mime.types by default.
+
+
+	Syntax of the configuration files.
+
+	apache configuraiton files contains one directive per line. the backslash '\' may be used as the last character on a line to indicate that the idrective continues onto the next line. thwere must be no other characters or white space between the backslash and the  end of the line.
+
+	directiver in the configuration files are case-insensitive but arguments to directives are often case sensitive. lines that begins with the hash character "#" are considered comments, and are ignored. comments may not be included on a line after a configuration directive. blank lines and white space occurring before a directive are ingored, so you may indent directive for clarity.
+
+	the values of shell environment variables can be used in configuration file lines using the syntax ${ENVVAR}. if "ENVVAR" is the name of a valid environment variable, the value of that variable is substituted into that spot in the configuration file line. and processing continues as if that text were found directly in the configuration file. (if the ENVVAR variable is not found, the characters "${ENVVAR"} are left unchenged for use by later stages in the config file processing.)
+
+	the maximum length of a line is the configuration file, after environment-variable substitution, joining any continued lines and removing leading and trailing white space, is 8192 characters
+
+	you can check your configuration files for syntax erros wichout starting the server by using apachectl configtest or the -t command line option.
+
+	Modules
+
+	apache is a modular server. this implies that only the most basic functionality is included in the core server. extened features are avilalble through modules which can be loaded into apache. by default, a base set of modules is included in the server at compile-time. if the server is compiled to use dynamically loaded modules, then modules can be compiled separetely and added at any time using the loadmodule directive. otherwise, apache must be recompiled to add or remove modules. configuration directives may be included conditional on a presence of a particular module by enclosing them in a n <IfModule> block.
+
+	to see which modules are currently compiled into the server, you can use the -l command line option.
+
+
+mod_auth 
+
+	this module allows the use of HTTP basic authentication to restrict access by looking up users in plain text password and group files. similar functionality and greater scalability is provided by mod_auth_dbm. HTTP digest authentication is provided by mod_auth_digest.
+
+	AuthAuthorative Directive
+
+	sets whether authorization and authentication are passed to lower level modules.
+
+	AuthAuthoritative On|Off.
+	AuthAuthoritative On
+
+
+
+htpasswd 
+
+	create and update user authentication files
+
+	htpaswd is used to create and update the flat-files used to store usernames and password for basic authentication of HTTP users. resources available from the httpd apache web server can be restricted to just the users listed in the files created by htpasswd. this program can only be used when the usernames are stored in a flat-file. to use a DBM database see dbmanage.
+
+	this manual page only lists the command line arguments. for details of the directives necessary to configure user authentication in httpd see the apache manual, which is part of the apache distribution or can be found at http://www.apache.org
+
+	-c
+		create the passwdfile. if passwdfile already exists, it is deteld first.
+
+	-m
+		use MD5 encryption for passwords. on windows, this is the only format supported.
+
+	passwdfile
+		name of the file to contain the user name and passowrd. if -c is given, this file is created if it does not already exist, or deleted and recreated if it does exist.
+
+	username
+
+		the username to create or update in passwdfile. if username does not exists in this file, an entry is added. if it does exist, the password is changed.
+
+htgroup 
+	
+
+apache2ctl 
+
+	apache HTTP server control interface
+
+	when acting in sysv init mode, apache2ctl takes simple; one word commands, defined below.
+
+	apachectl command
+	apache2ctl command
+
+	when acting in pass-through mode, apache2ctl can take all the arguments available for the httpd binary.
+
+	apachectl [httpd-argument]
+	apache2ctl [httpd-argument]
+
+	apache2ctl is a front end to the apache hypertext transfer protocol (http) server. it is designed to help the administrator controle the functioning of the apache apache2 daemon.
+
+	note: the default debian configuration requires the environment variables APACHE_RUN_USER, APACHE_RUN_GROUP, and APACHE_PID_FILE to be set in /etc/apache2/envvars.
+
+	the apache2ctl script returns a 0 exist values on success, and >0 if an error occurs. for more details, view the coments in the script
+
+	start
+		start the apache daemon. give an error if it is already running.
+
+	stop
+		stops the apache daemon.
+
+	restart
+		restarts the apache daemon by sending it a SIGHUP if the daemon is not running, it is started. this command automatically checks the configuration files via configtest before initiating the restart to cach the most obvious errors. however, it is still possible for the daemon to die because of problems with the configuration.
+
+	fullstatus
+		displays a full status report from mod_status. for this to work, you need to have mod_status enabled on your server and a text-based browser such as lynx available on your system. the url based to access the status report can be set by setting the APACHE_STATUSURL variable in /etc/apache2/envvar
+
+	status
+		displays a brief status report. similar to the fullstatus option, except that the list of requests currently being served is omitted.
+
+	graceful
+		gracefully restarts the apache daemon by sending it a SIGUSR1. if the daemon is not running, it is started. this differs from a normal restart in that currently open connections are not aborted. a side effect is that old connections are not aborted. a side effect is that old log files will not be closed immediately. this means that if used in a log rotation script, a substantial delay may be necessary to ensure that the old log files are closed before processing them. this command automatically checks the configuration files via apache2ctl configtest before initiating the restart to catch the most obvious errors. however, it is still possible for the daemon to die because of problems with the configuration.
+
+	graceful-stop
+		gracefully stops the apache httpd daemon. this difference from a normal stop in that currently open connections are not aborted. a side effect is that old log files will not be closed immediately.
+
+	configtest
+		run a confugration file systax test. it parses the configuration files and eigher reports syntax ok or information about the particular syntax error. this test does not catch all errors.
+
+	help
+		displays a short help message
+
+	startssl
+		to start httpd with SSL support, you should edit your configuration file to include the relevant directive and then use the normal apache2ctl start.
+
+
+httpd
+
+	httpd is the apache hypertext transfer protocol (http) server program. it is designed to be run as a standalone daemon process. when used like this it will create a pool of child processes or threads to handle requests.
+
+	in general, httpd should not be invoked directly, but rather should be invoked via apachectl on Unix-based system or as a service on windows nt, 2000 and xp and as a console application on windows 9x and ME.
+
+	-d <serverroot>
+		set the initial value for the serverroot directive to serverroot. this can be overridden by the serverroot directive in the configuration file. the default is /etc/httpd
+
+	-f <config>
+		uses the directives in the file config on startup. if config does not begin with a /, then it is taken to be a path relative to the serverroot. the default is conf/httpd.conf
+
+	-k <start|restart|graceful|stop|graceful-stop>
+		signals httpd to start, restart, or stop. see stopping apache for more information.
+
+	-C <directive>
+		process the configuration directive before reading config files.
+
+	-c <directive>
+		process the configuration directive after reading config files.
+
+	-D <parameter>
+		sets a configuration parameter which can be used with <ifdefine> sections in the configuration files to conditionally skip or process commands at server startup and restart. also can be used to set certain less-common startup parameters including -DNO_DETACH (prevent the parent from forking) and -DFOREGROUND (prevent the parent from calling setsid() et al)
+
+	-e <level>
+		sets the loglevel to level during server startup. this is useful for temporarily increasing the verbosity of the error messages to find problems during startup.
+
+	-E <file>
+		send error messages during server startup to file.
+
+	-R <directory>
+		when the server is compiled using the SHARED_CORE rule, this specifies the directory for the shared object files.
+
+	-h
+		output a short summary of available command line options.
+
+	-l
+		output a list of modules compiled into the server. this will not list dynamically loaded modules included using the LoadModule directive
+
+	-L 
+		output a list of directives together with expected arguments and places where the directive is valid.
+
+	-M
+		dump a list of loaded static and shared modules
+
+	-S
+		show the settings aas parsed from the config file (currently only shows the virtualhost settings)
+
+	-t
+		run syntax tests for configuration files only. the program immediately exits after these syntax parsing tets with either a return code of 0 (sintax OK) or return code not equal to 0 (syntax error). if -D DUMP_VHOSTS is also set, details of the virtual host configuration will be printed if -D DUMP_MODULES is set, all loaded modules will be printed.
+
+	-v 
+		print the version of httpd, and then exit
+
+	-V
+		print the version and build parameters of httpd, and then exit
+
+	-X
+		run httpd in debug mode. only one worker will be started and the server will not detach from the console
+
+
+208.2 Maintaining a web server
+==============================
+
+Weight: 2
+
+Description: Candidates should be able to configure a web server to use virtual hosts, Secure Sockets Layer (SSL) and customise file access.
+
+Key Knowledge Areas
+
+SSL configuration files, tools and utilities
+SSL certificate handling
+Apache 2.x virtual host implementation (with and without dedicated IP addresses)
+Using redirect statements in Apache's configuration files to customise file access
+Terms and Utilities
+
+
+Apache2 configuration files 
+
+
+/etc/ssl/* 
+
+
+openssl
+
+	openssl is a crytography toolkit implementing the secure sockets layer (ssl v2/v3) and transport layer security (TLS v1) network protocols and related cryptography standars required by them.
+
+	the openssl program is a command line tool for using the various cryptography functions of openssl's crypto library from the shell. it can be used for
+
+		- creating and management of private keys, public keys and parameters
+		- public key cryptographic operations
+		- creating of X.509 certificates, CSRs and CRLs
+		- calculation of message digests
+		- encryption and decryption with cyphers
+		- SSL/TLS client and server tests
+		- handling of s/mime signed or encrypted mail
+		- time stemp requests, generation and verification
+
+	the openssl program provides a rich variety of commands (command in the synopsis above), each of which often has a wealph of options and arguments (command_opts and command_args in the sysnopsis.)
+
+	the pseudo-commands list-standard-commands, list-message-digest-commands, and list-cipher-commands output a list (one entry per line) of the names of all standard commands, message digest commands, or cipher commands, respectively, tha are available in the present openssl utility.
+
+	the speudo-commands list-cipher-algorithms and list-message-digest-algorithms list all cipher and message digest names, one entry per line. aliases are listed as:
+
+	from -> to
+
+	the pseudo-command list-public-key-algorithms lists all suported public key algorithms.
+
+	the pseudo-command no-XXX tests whether a command of the specified name is available if no command named XXX exists, it returns 0 (success) and prints no-xxx; otherwise it returns 1 and prints xxx. in both cases, the output goes to stdout and nothing is printed to stderr. additional ocmmand line arguments are always ignored. since for each cipher there is a command of the same name, this provides an easy way for shell scripts to test for the availability of ciphers in the openssl program. (no-xxx is not able to detect pseudo-commands such as quit, list-...-commands, or no-xxx itself.)
+
+
+208.3 Implementing a proxy server
+=================================
+
+Weight: 2
+
+Description: Candidates should be able to install and configure a proxy server, including access policies, authentication and resource usage.
+Key Knowledge Areas
+
+Squid 2.x configuration files, terms and utilities
+Access restriction methods
+Client user authentication methods
+Layout and content of ACL in the Squid configuration files
+Terms and Utilities
+
+
+(squid)
+
+	squid is a high-performance proxy caching server for web clients, supporting FTP, gopher, ICAP, ICP, HTCP and HTTP data object. unlike traditional caching software, squid handles all rquests in a single, non-blocking process.
+
+	squid keeps meta data and specially hot objects cached in RAM, caches DNS lookups, supports non-blocking DNS lookups, and implements negative caching of failed requests.
+
+	squid supports SSL, extensive access controls, and full request logging. by using the lightweight internet cache protocols icp, htcp or carp, squid caches can be arranged in a hierarchy or mesh for additional bandwidth savings.
+
+	squid consists iof a main server program squid, some optional programs for custom processing and authentication, and some management and client tools. when squid starts up, it spawns a configurable number of helper processes, each of wich can perform parallel lookups. this reduces the amount of time the caches waits for results
+
+	-a <port>
+		specify http port number where squid should listen for requests, in addition to any http_port specifications in squid.conf
+
+	-d <level>
+		write debugging to stderr also.
+
+	-f <file>
+		use the given config-file instead of @DEFAULT_CONFIG_FILE@ if the file name starts with a ! or | then it is assumed to be an external command or command line. can for example be used to pre-process the configuration before it is being read by squid. to facilitate this squid also understands the commn @line notion to indicate the real source file.
+
+	-h
+		print help message.
+
+	-i 
+		install as a windows service
+	-k <reconfigure|rotate|shutdown|interrupt|kill|debug|check|parse>
+		parse configuration file, then send signal to running copy (except -k parse) and exit.
+
+	-n <name>
+		specify windows service name to use for service oprations, default is: squid
+
+	-r
+		remove a windows service (see -n option)
+
+	-s
+		enable loggin to syslog. also configurable in @default_config_file@
+
+	-l <facility>
+		use specified syslog facility. implies -s
+
+	-u port
+		specify ICP port number (default:3130), disable with 0.
+
+	-v
+		print version and build details.
+
+	-z
+		create swap directories
+
+	-C
+		do not catch fatal signals
+
+	-F
+		don't serve any requests until store is rebuilt.
+
+	-N
+		no daemon mode.
+
+	-O <options>
+		set windwos service command line options in registry
+	-R
+		do not set REUSEADDR on port
+	-S
+		double-check swap during rebuild.
+	-X
+		force full debugging.
+	-Y
+		only return UDP_HIT or UDP_MISS_NOFETCH during fast reload.
+
+
+squid.conf 
+
+	all squid proxy server settings are made in the /etc/squid/squid.conf file. to start squid for the first time, no changes are necessary in this file, but external clients are initially denied access. the proxy is available for localhost. the default port is 3128. the preinstalled configuration file /etc/squid/squid.conf provides detailed information about the options and many examples. nearly all entries begin with # (the lines are commented) and the relevet specifications can be found at the end of the line. the given values almost always correlate with the default values, so removing the comments signs without changing any of the parameters actually has little effect in most cases. if possible, leave the sample as it is and insert the options along with the modified parameters in the line below. this way, the default values may easily be recovered and compared with the changes.
+
+
+	adapting the configuration file after an update
+
+		if you have updated from and earlier squid version, it is recommended to edit the new /etc/squid/squid.conf and then apply the changes made in the previous file. if you try to use the old squid.conf, risk that the configurtion no longer works, because options are sometimes modified and new changes added. 
+
+
+acl 
+
+	access control lists
+
+
+http_access
+
+	#
+	# Recommended minimum Access Permission configuration:
+	#
+	# Deny requests to certain unsafe ports
+	http_access deny !Safe_ports
+
+	# Deny CONNECT to other than secure SSL ports
+	http_access deny CONNECT !SSL_ports
+
+	# Only allow cachemgr access from localhost
+	http_access allow localhost manager
+	http_access deny manager
+
+	# We strongly recommend the following be uncommented to protect innocent
+	# web applications running on the proxy server who think the only
+	# one who can access services on "localhost" is a local user
+	#http_access deny to_localhost
+
+	#
+	# INSERT YOUR OWN RULE(S) HERE TO ALLOW ACCESS FROM YOUR CLIENTS
+	#
+
+	# Example rule allowing access from your local networks.
+	# Adapt localnet in the ACL section to list your (internal) IP networks
+	# from where browsing should be allowed
+	http_access allow localnet
+	http_access allow localhost
+
+	# And finally deny all other access to this proxy
+	http_access deny all
+
+
+	allowing or denying access based on defined access lists
+
+	access to the HTTP port:
+	http_access allow|deny [!]aclname ...
+
+	! if there are no "access" lines present, the default is to deny the request.
+
+	! if none of the "access" lines cause a match, de default is the oposite of the last line in the list. if the last line was deny, the default is allow. conversely, if the last line is allow, the default will be deny. for these reasons, it is a good idea to have an "deny all" entry at the end of your access lists to avoid potential confusion.
+	
+	http://wiki.squid-cache.org/SquidFaq/SquidAcl	
+
+
+Topic 209: File Sharing
+=======================
+
+209.1 SAMBA Server Configuration
+================================
+
+Weight: 4
+
+Description: Candidates should be able to set up a SAMBA server for various clients. This objective includes setting up Samba for login clients and setting up the workgroup in which a server participates and defining shared directories and printers. Also covered is a configuring a Linux client to use a Samba server. Troubleshooting installations is also tested.
+
+Key Knowledge Areas
+
+Samba 3 documentation
+Samba configuration files
+Samba tools and utilities
+Mounting Samba shares on Linux
+Samba daemons
+Mapping Windows usernames to Linux usernames
+User-Level and Share-Level security
+Terms and Utilities
+
+smbd 
+
+	this program is part of the samba
+
+	smbd is the server daemon that provides filesharing and printing services to windows clients. the server provides filespace and printer services to clients using the SMB (or CIFS) protocol. this is compatible with the lanmanager protocol, and can service lanmanager clients. these include msnclient 3.0 for DOS, windows for workgroups, Windows 95/98/ME, windows NT, windows 2000, OS/2, DAVE for macintosh, and \smbfs for Linux.
+
+	an extensive description of the services that the server can provide is given in the man mage for the configuration file controlling the attributes of those services.
+
+	the configuration file, and any files that it includes, are automatically reloaded every minute, if they change. you can force a reload by sending a SIGHUP to the server. reloading the configuraiton file will not affect connections to any service that is already established. either the user will have no disconnect from the service,  or smbd killed and restarted.
+
+
+nmbd 
+
+	this program is part of the samba suite.
+
+	nmdb is a server that understatnds and can reply to netbios over IP name service requests, like those produced by SMB/CIFS clients such as Windows 95/98/ME, Windows NT, windows 2000, Windows XP and lan manager clients. it alse participates in the browsing protocols which make up the windows "network neighborhood" view.
+
+	SMB/CIFS clients, when they start up, may wish to locate an SMB/CIFS server. that is wish to known what IP number is specified host is using.
+
+	amongst other services, nmdb will listem for such requests, and if its own netbios name is specified it will responde with the IP number of the host it is running on. its "own netbios name" is by default the primary DNS name of the host it is running on, but this can be overridden by the netbios name in smb.conf. thus nmdb will reply to broadcast queries for its won name. additional names for nmdb to respond on can be set via parameters in the smb.conf configuration file.
+
+	nmbd can also be used as a wins (windows internet name server) server. what this basically means is that it will act as a wins database server, creating a dabase from name registration requests that it receives and replying to quries from clients for these names.
+
+	in addition, nmbd can act as a wins proxy, relaying broadcast queries from clients that do not understand how to talk the wins protocol to a wins server.
+
+
+smbstatus 
+
+	report on current Samba connections
+
+	this tools is part of the samba suite.
+	smbstatus is a very simple program to list the current samba connections.
+
+
+testparm 
+
+	check an smb.conf configuration file for internal correctness
+
+	this tool is part of the samba suite
+
+	testparm is a very simple test program to check an smbd configuration file for internal correctness. if this programs reports no problems, you can use the configuration file with confidence that smbd will successfully load the configuration file.
+
+	note that this is not a guarantee that the services specified in the configuration file will be available or will operate as expected.
+
+	if the optional host name and host IP address are specified on the command line, this test program will run through the service entries reporting whether the specified host has access to each service.
+	
+	if testparm finds an eror in the smb.conf file it returns an exist code of 1 to the calling program, else it returns an exit code of 0. this allows shell scripts to test the output from testparm	
+
+
+smbpasswd 
+
+	change a users smb password in the smbpasswd file
+
+	this program is a part of samba suite. 
+
+	smbpasswd allows a user to change their encrypted smb password which is stored in the smbpasswd file (usually kept in the private directory under the samba directory hierarchy. ordinary users can only run the command with no options. it will prompt them for their old smb password and then ask them for their new password twice, to ensure that the new password was typed correctly. no passwords will be echoed on the screen whilst being typed. if you have a blank smb password (specified by the string "NO PASSWORD" in the smbpasswd file) then just press the <enter> key when asked for your old password.
+
+	the -add and username options can only be used by a user running as root.
+
+
+nmblookup 
+
+	netBIOS over TCP/IP client used to lookup netBIOS names
+
+	this tools is part of the samba suite
+
+	nmblookup is used to query netbios names and map them to IP addresses in a network using netbios over TCP/IP queries. the options allow the name queries to be directed at a particular IP broadcast area or to a particular machine. all queries are done over UDP.
+
+
+smbclient 
+
+	smbclient - ftp-like man manager client program
+
+	this program is part of the samba suite.
+
+	smbclient is a client that can talk to a lan manager server. it offers an interface similar to that of the ftp program (see ftp). operation include things like getting files from the server to the local machine, putting files from the local machine to the server, retrieving directory information from the server and so on.
+
+	servicename <servicename> is the name of the service you want to use on the server. a service name takes the form \\server\service where server is the netbios name of the lan manager server offering the desired service and service is the name of the service offered. thus to connect to the service "printer" on the lan manager server "lanman", you would use the servicename
+
+	\\lanman\printer
+
+	note that the server name required is not necessarily the host name of the server! the name required is a lan mananger server name, which may or may not be the same as the hostname of the machine running the server.
+
+	password <password> is the passowrd required to access the specified service on the specified server. if supplied, the -N option (suppress password prompt) is assumed.
+
+	there is no default password. if no passowrd is supplied on the command line (either here or using the -U option (see below)) and -N is not specified, the client will prompt for a password, even if the desired service does not require one. (if no password is required, simply press ENTER to provice a null password.)
+
+
+net 
+/etc/smb/* 
+/var/log/samba/
+
+209.2 NFS Server Configuration
+==============================
+
+Weight: 4
+
+Description: Candidates should be able to export filesystems using NFS. This objective includes access restrictions, mounting an NFS filesystem on a client and securing NFS.
+Key Knowledge Areas
+
+NFS configuration files
+NFS tools and utilities
+Access restrictions to certain hosts and/or subnets
+Mount options on server and client
+tcpwrappers
+Terms and Utilities
+
+
+/etc/exports 
+
+	NFS server export table
+
+	the file /etc/exports contains a table of logical physical file systems on an NFS server that are accessible to NFS clients. the contents of the file are maintained by the server's system administrator
+
+	each file system in this table has a list of options and an access control list. the table is used by exportfs to give information to mountd.
+
+	the file format is similar to the SunOS exports file. each line contains an export point and a whitespace-separated list of clients allowed to mount the file system at that point. each listed client may be immediately followed by a parenthesized, comma-separeted list of exports options for that client. no whitespace is permitted between a client and its option list.
+
+	also, each line may have one or more specifications for default options after the path name, in the form os a dash ('-') followed by an option list. the option list is used for all subsequent exports on that line only.
+
+	blank lines are ignored. a pound sign ('#') introduces a comment to the end of the line. entries may be continued across newlines using a blackslash. if an export name contains spaces it should be quoted using double quotes. you can also specify spaces or other unusual character in the export name using a backslash followed by the character code as three octals digits.
+	to apply changes to this file, run exports-ra or restart the NFS server.
+
+
+exportfs 
+
+	an NFS server maintains a table of local physical file systems that are accessible to NFS clients. Each file system in this table is referred to as an exported filesystem, or export, for short.
+
+	the exportfs command maintains the current table of exports for the NFS server. the master export table is kept in a file named /var/lib/nfs/etab. this file is read by rpc.mountd when a client sends an NFS MOUNT request
+
+	normally the master export table is initialized with the contents of /etc/exports by invoking exportfs -a. however, a system administrator can choose to add or delete exports without modifying /etc/exports by using the exportfs command.
+
+	exportfs and its partner program rpc.mountd work in one of two modes: a legacy mode which applies to 2.4 and earlier version of the linux kernel, and a new mode which applies to 2.6 and later versions, providing the nfsd virtual filesystem has been mounted at /proc/fs/nfsd or /proc/fs/nfs. on 2.6 kernels, if this filesystem is not mounted, the legacy mode is used.
+
+	in the new mode, exportfs does not give any information to the kernel, but provides it only to rpc.mountd through the /var/lib/nfs/etab file. rpc.mountd then manages kernel requests for information about exports, as needed.
+
+	in the legacy mode, exports which identifly a specific host, rather than a subnet or netgroup, are entered directly into the kernle's export table, as well as being written to /var/lib/nfs/etab. further, exports listed in /var/lib/nfs/rmtab which match a nono host-specific export request will cause an appropriate export entry for the host given in rmtab to be added to the kernels export table.
+
+
+showmount 
+
+	queries the mount daemon on a remote host for information about the state of the NFS server on that machine. With no option showmount lists the set of clients who are mounting from that host. the output from showmount is designed to appear as though it were processed through "sort -u"
+
+	-a or --all
+		list both the client hostname or IP address and mounted directory in host:dir format. this info should not be considered reliable. see the notes on rmtab in rpc.mountd
+
+	-d or --directories
+		list only the directories mounted by some client.
+
+	-e or --exports
+		show the NFS server's export list.
+
+	-h or --help
+		provide a short help summary
+
+	-v or --version
+		report the current version number of the program.
+
+	--no-headers
+		suppress the descriptive headings from the output.
+
+
+nfsstat 
+
+	displays statistics kept about NFS client and server activity.
+
+	-s, --server
+		print only server-side statistics. The default is to print both server and client statistics
+
+	-c, --client
+		print only client-side statistics
+
+	-n, --nfs
+		print only NFS statistics. the default is to print both NFS and RPC information
+
+	-2
+		print only NFS v2 statistics. the default is to print only information about versions of NFS that have non-zero counts.
+	-3
+		print only NFS v3 statistics.
+
+	-4 
+		print only NFS v4 statistics.
+
+	-m, --mounts
+		print information about each of the mounted NFS file systems.
+
+		if this options is used, all other options are ignored.
+
+	-r, --rpc
+		print only RPC statistics
+
+	-o <facility>
+		display statistics for the specified facility, which must be one of:
+
+		nfs 
+			NFS protocol information, split up by RPC call.
+		rpc 
+			general RPC information
+		net 
+			network layers statistics, such as the number of received packets, number of TCP connections, etc.
+		fh
+			usage information on the server's file handle cache, including the total number of lookups, and the number of hits and misses.
+
+		rc
+			usage information on the servers request reply cache, including the total number of lookups, and the number of hits and misses.
+
+		all
+			diplay all of the above facilities.
+
+	-v, --verbose
+		this is equivalent to -o all
+
+	-l, --list
+		print information in list form.
+
+	-S, --since <file>
+		intead of printing current statistics, nfsstat imports statistics from file and displays the difference between those and the current statitics. valid input files may be in the form of /pro/net/rpc/nfs (raw client stats), /proc/net/rpc/nfsd (raw server stats), or saved output from nfsstat itself (client and/or server stats). any statistics missing from a saved nfsstat output file are treated as zeroes
+
+	# nfsstat -o all -234
+		show all information about all versions of NFS
+
+	# nfsstat --verbose -234
+		same as above
+
+	# nfsstat -o all
+		show all information about active versions of NFS
+
+	# nfsstat --nfs --server -3
+		show statistics for NFS version 3 server.
+
+	# nfsstat -m
+		show information about mounted NFS filesystems.
+
+	/proc/net/rpc/nfsd
+		procfs-based interface to kernel NFS server statistics
+	/proc/net/rpc/nfs
+		procfs-based interface to kernel NFS client statistics
+	/proc/mounts
+		procfs-based interface to the mounted filesystems.
+
+
+/proc/mounts 
+
+	before kernel 2.4.19 this file was a list of all the file systems currently mounted on the system. with the introduction of per-process mount namespaces in linux 2.4.19, this file became a link to /prc/self/mounts, which lists the mount points of the process' own mount namespace. the format of this file is documented in fstab
+
+	(from mount)
+
+	when the proc filesystem is mounted (say at /proc), the /etc/mtab and /proc/mounts have very similar contents. former has somewhat more information, such as the mount options used, but is not necessarily up-to-date (cf. the -n option beloww). it is possible to replace /etc/mtab by a synbolic link to /proc/mounts, and especially when you have a very lager numbers of mounts things will be much faster with that symlink, but some information is lost that way, and in particular using the 'user' option will fail.
+
+/etc/fstab 
+
+	static information about the fielsystems
+
+	the file fstab contains descriptive information about the various file systems. fstab is only read by programs, and not written; it is the duty of the system administrator to properly create and maintain this file. each filesystem is described on a separate line; fields on each line are separeted by tabs or spaces. lines starting with '#' are comments. blank lines are ignored. the order of records in fstab is important because fsck, mount, and umount sequentially iterate through fstab doing their thing.
+
+
+rpcinfo 
+
+	report RPC information
+
+	rpcinfo makes an RPC call to an RPC server and reports what it finds.
+
+	in the first synopsis, rpcinfo lists all the registered RPC services with rpcbind on host. if host is not specified, the local host is the default. if -s is used, the information is displayed in a concise format.
+
+	in the second synopsis, rpcinfo lists all the RPC services registered with rpcbind, version 2. also note that the format of the information is different in the first and the second synopsis. this is because the second synopsis is an older protocl used to collect the information displayed (version 2 of the rpcbind protocol).
+
+	the third synopsis makes an RPC call to procedure 0 of progmun and versum on the specified host and reports whether a response was received. transport is the transport which has to be used for contacting the given service. the remote address of the service is obtained by making a call to the remote rpcbind.
+
+	the prognum argument is a number that represents an RPC program number. if a versnum is specified, ppcinfo attempts to call that version of the specified prognum. toherwise rpcinfo attemps to find all the registered version numbers for the specified prognum by calling version 0, which is presumed not to exist; if it does exist, rpcinfo attempts to obtain this information by calling an extremely high version number instead, and attempts to call each registered version. note: the version number is required for -b and -d options.
+
+
+mountd 
+
+	the mountd daemon was formely the server for NFS mount requests from NFS clients. this functionality has been moved into the NFS server daemon nfsd.
+
+	then the NFS server is started, it loads the export host addresses and options into the kernel using the nfssvc system call. after changing the list of exports (eithger directly or indirectily iva a change int net-group membership), the administrator shoud send a hangup signal to the nfsd daemon to get it to reload the export information:
+
+		kill -s HUP 'cat /var/run/nfsd.pid'
+
+	for backwards compatibility, the following should also work:
+
+		kill -s HUP 'cat /var/run/mountd.pid'
+
+	any errors encountered while processing the export entries will be logged via syslog.	
+
+		/etc/exports
+			list of the exported filesystems
+		/var/run/mountd.pid
+			the pid of the currently running mountd
+		/var/run/mountdtab
+			the current list of autstanding mounts served
+		/var/run/mountexptab
+			information about exported file systems and directories (UUIDs, handles, ...)
+
+
+portmapper
+
+	DARPA port to RPC program number mapper
+
+	portmap [-d] [-l] [-v]
+
+	portmap is a server that converts RPC program numbers into DARPA protocol port numbers. it must be running in order to make RPC calls.
+
+	when an RPC server is started. it will tell portmap what port number it is listening to, and what RPC program numbers it is prepared to serve. when a client wishes to make an RPC call to a given program number, it will first contact portmap on the server machine to determine the port number where RPC packets should be sent.
+
+	portmap must be started before any RPC servers are invoked.
+
+	normally portmap forks and dissaciates itself from the terminal like any other daemon. portmap then logs errors using syslog
+
+	-d
+		(debug) prevents portmap from running as a daemon, and causeserrors and debugging information to be printed to the standarderror output.
+
+	-l 
+		(localhost only) causes portmap to only bind to the loopback interface (i.e. INADDR_LOOPBACK).
+
+	-v
+		verbose run portmap in verbose mode.
+
+	This portmap version is protected by the tcp_wrapper library. You have to give the clients access to portmap if they should be allowed to use it. To allow connects from clients of the .bar.com domain you could use the following line in /etc/hosts.allow:
+
+	portmap: .bar.com
+
+	You have to use the daemon name portmap for the daemon name (even if the binary has a different name). For the client names you can use the keyword ALL, IP addresses, hostnames or domain names.
+
+
+
+Topic 210: Network Client Management
+====================================
+
+210.1 DHCP configuration
+========================
+
+Weight: 2
+
+Description: Candidates should be able to configure a DHCP server. This objective includes setting default and per client options, adding static hosts and BOOTP hosts. Also included is configuring a DHCP relay agent and maintaining the DHCP server.
+Key Knowledge Areas
+
+DHCP configuration files, terms and utilities
+Subnet and dynamically-allocated range setup
+Terms and Utilities
+
+
+dhcpd.conf 
+
+	dhcpd configuration file
+
+	the dhcpd.conf file contains configuration information for dhcpd, the internet systems consortium dhcp server.
+
+	the dhcpd.conf file is a free-from ASCII text file. it is parsed by the recursive-descent parser build into dhcpd. the file may contain extra tabs and newlines for formatting purposes. keywords in the file are case-insensitive. comments may be placed anywhere within the file (except within quotes). comments begin with the # character and end at the end of the line.
+
+	the file essentially consists of a list of statements. statements fall into two broad categories - parameters and declarations.
+
+	parameter statement either say how to do something (e.g., how long a lease to offer), whether to do something (e.g., should dhcpd provide addresses to unknown clients), or what parameters to provide to the client (e.g., use gateway 220.177.244.7).
+
+	declarations are used to describe the topology of the network, to describe clients on the network, to provide addresses that can be assigned to clients, or to apply a group of parameters to a group of declarations. in any group of parameters and declarations, all parameters must be specified before any declarations which depend on those parameters may be specified.
+
+	declarations about network topology include the shared-network and the subnet declarations. if clients on a subnet are to be assigned addresses dynamically, a range declaration must appear within the subnet declaration. for clients with statically assigned addresses, or for installations where only known clients will be served, each such client must have a host declaration. if parameters are to be applied to a group of declarations which are not related strictly on a per-subnet basis, the group declaration can be used.
+
+	for every subnet which will be served, and for every subnet to which the dhcp server is connected, there nmust be one subnet declaration, which tells dhcpd how to recognize that an address is on that subnet. a subnet declaration is required for each subnet even if no addresses will be dynamically allocated on that subnet.
+
+
+dhcpd.leases 
+
+	DHCP client lease database
+
+	the internet systems consortium DHCP server keeps a persistent database of leases that it has assigned. this database is a free-form ASCII file containing a series of lease declarations. every time a lease is acquired, renewed or released, its new value is recorded at the end of the lease file. so if more than one declaration appears for a given lease, the last one in the file is the current one.
+
+	when dhcpd is first intalled, there is no lease database. however, dhcpd requires that a lease database be present before it will start. to make the initial lease database, just create an empty file called /var/lib/dhcpd/dhcpd.leases. you can do this with
+
+	# thouch /var/lib/dhcpd/dhcpd.leases
+
+	in order to prevent the lease database from growing without bound, the file is rewritten from time to time. first, a temporary lease database is created and all known leases are dumped to it. then, the old lease database is renamed /var/lib/dhcpd/dhcpd.leases finally, the newly written lease database is moved into place.
+
+
+/var/log/daemon.log 
+
+	a daemon is a program that runs in the background, generally without human intervention, performing some operation important to the proper running of your system. the daemon log at /var/log/daemon.log and contains information about running system and application daemons such as the Gnome Display Manager daemon gdm, the bluetooth HCI daemon hcid, or the MySQL database daemon mysqld. this can help you trouble-shoot problems with a particular daemon.
+
+	again, use grep to find specific information, plugging in the name of the daemon you're interested in.
+
+
+/var/log/messages 
+
+
+arp 
+
+	manipulate the system ARP cache
+
+	arp manipulates the kernel's arp cache in various ways. the primary options are clearing an address mapping entry and manually setting up one. for debugging purposes, the arp program alse allows a complete dump of the arp cache.
+
+	/proc/net/arp
+	/etc/networks
+	/etc/hosts
+	/etc/ethers
+
+
+dhcpd
+
+	the internet systems consourtium dhcp server, dhcpd, implements the dynamic host configuration protocol (DHCP) and the internet bootstrap protocol (BOOTP). DHCP allows hosts on a TCP/IP network to request and be assigned IP addresses, and also to discover information about the network on which they are attached. BOOTP provides similar functionality, with certain restrictions.
+
+
+210.2 PAM authentication
+========================
+
+Weight: 3
+
+Description: The candidate should be able to configure PAM to support authentication using various available methods.
+Key Knowledge Areas
+
+PAM configuration files, terms and utilities
+passwd and shadow passwords
+Terms and Utilities
+
+
+/etc/pam.d 
+
+
+pam.conf 
+	
+	when a PAM aware privilege granting application is started, it activates its attachment to the PAM-API. this activation performs a number of tasks, the most important being the reading of the configuraiton files: /etc/pam.conf
+
+	alternatively, this may be the contents of the /etc/pam.d/ directory. the presence of this directory will cause linux-PAM to ignore /etc/pam.conf
+
+	these files list the APMs that will do the authentication tasks required by this server, and the appropriate behavior of the APM-API in the event that individual PAMs fail.
+
+	the syntax of the /etc/pam.conf configuration file is as follows. the file is made up of a list of rules, each rule is typically placed on a single line, but may be extended with an escaped end of line: '\<LF>'. comments are preceded with '#' marks and extend to the next end of line.
+
+	the format of each rule is a space separeted collection of tokens, the first three being case-insensitive:
+
+
+nsswitch.conf 
+
+	the name service switch configuration file
+
+	/etc/nsswitch.conf is used by the GNU C library to determine the sources from wich to obtain name-service information in a range of categories, and in what order. each category of information is identified by a database name.
+
+	the file is plain ASCII text, with columns separeted by spaces or tab characters. the first column specifies the database name. the remaing columns describe the order of sources to query and limited set of actions that can be performed by lookup result.
+
+	the following database are understood by the GNU C library
+
+
+pam_unix 
+
+	module for traditional password authentication
+
+	this is the standard unix authentication module. it uses standard calls from the system's libraries to retrive and set account information as well as authentication. usually this is obtainend from the /etc/passwd and the /etc/shadow file as well if shadow is enabled.
+
+	the account component peroforms the task of establishing the status of the user's account and the passowrd based on the following shadow elements: expire, last_change, max_gente, min_change, warn_change. tin the case of the latter, it may offer advice to the user on changing their password or, through the PAM_AUTHTOKEN_REQD  return, delay giving service to the user until they have established a new password. the entries listed above are documented in the shadow manual page. should the user's record not contain one or more of these entries, the corresponding shadow check is not performed.
+
+	the authentication component performs the task for checking the users credentials (password). the default action of this module is to not permit the user access to a service if their official password is blank.
+
+	a helper binary, unix_chkpwd, is provided to check the user's password when it is stored in a read protedted database. this binary is very simple and will only check the password of the user invoking it. it is called transparently on behalf of the user by the authenticating component of this module. in this way it is possible for applications like xlock to work without being setuid-root. the module, by default will temporarily turn off SIGCHLD handling for the duration of execution of the helper binary. this is generally the right thing to do, as many applications are not prepared to handle this signal from a child they didn't know was fork()d. the noreap module argument can be used to suppress this temporary shielding and may be needed for use with certain applications.
+
+	the password component of this module performs the task of updating the user's passoword.
+
+	the sessing ocmponent of this module logs when a user logins or leave the system.
+
+	remaining arguments, supported by others functions of this module, are silently ignored. other arguments are logged as errors through syslog.
+
+
+pam_cracklib 
+
+	pam module to check the passowrd agains dictionary words
+
+	this module can be plugged into the password stack of a given application to provide some plug-in strenght-checking for passwords.
+
+	the action of this module is to prompt the user for a password and check its strenght agains a system dictionary and a set of rules for identifying poor choices.
+
+	the first action is to prompt for a single password, check its strength and then, if it is considered strong, prompt for the password a second time (to verify that it was typed correctly on the first occasion). all being well, the password is passed on to subsequent modules to be installed as the new authentication token.
+
+	the strength checks works in the following manner: at first the Cracklib routine is called to check if the password is part of a dictionary; if this is not the case an additional set of strength checks is done. these checks are:
+
+	palidrome
+		is the new password a palidrome?
+
+	case change only
+		is the new password the old one with only a change of case?
+
+	similar
+		is the new password too much like th old one? this is primarily controlled by one argument, difok which is a number of character changes (inserts, removals, or replacements) between the old and new password that are enough to accept the new password. this defaults to 5 changes.
+
+	simple
+		is the new password too small? this is controlled by 6 arguments minien, maxclassrepeat, dcredit, ucredit, lcredit, and ocredit.
+
+	rotated
+		is the new password a rotated version of the old password
+
+	same consecutive characters
+		optional check for the same consecutive characters
+
+	too long monotonic character sequence
+		optional check for too long monotonic character sequence
+
+	contains user name	
+		optional check whether the password contains the user's name in some form. this module with no arguments will work well for standard unix password encryption. with md5 encryption, passwords can be longer than 8 characters and the default settings for this module can make it hard for the user to choose a satisfactory new password. notably , the requirement that the new password contain no more thant 1/2 of the characters in the old password becomes a non-trivial constraint. for example, an old password of the form "the quick brown fox jumped over th elazy dogs" would be difficult to change... in addition, the default action is to allow passowrds as small as 5 characters in length. for a md5 systems it can be a good idea to increase the required minimum size of a password. one can then allow more credit for different kinds of characters but accept that the new password may share most of these characters with the old password.
+
+
+pam_limits 
+	
+	PAM module to limit resources
+
+	the pam_limits PAM module sets limits on the system resources that can be obtained in a user-session. users of uid=0 are affected by this limits, too.
+
+	by default limits are taken from the /etc/security/limits.conf config file. the individual *.conf files from the /etc/security/limits.d/ directory are read.the files are parsed one after another in the order of "C" locale. the effect of the individual files is the same as if all the files were concatenated together in the order of parsing. if a config file is explicity specified with a module option then the files in the above directory are not parsed.
+
+	the module must not be called by a multithreaded application.
+
+	if linux pam is compiled with audit support the modules will report when it denies access based on limit of maximum number of concurrent login sessions.
+
+
+pam_listfile
+
+	deny or allow services based on an arbitrary file
+
+	pam_listfile is a PAM module which provides a way to deny or allow services based on an arbitrary file.
+
+	the module gets the item of the type specified -- user specifies the username, PAM_USER; tty specifies the name of the terminal over which the request has been made, PAM_TTY; rhost specifies the name of the remote host (if any) from which the request was made, PAM_RHOST; and ruser specifies the name of the remote user (if available) who made the request, PAM_RUSER -- and looks for an instance of that item in the file=filename. filename contains one line per item listed. if the item is found, then if sense=allow, PAM_SUCCESS is returned, causing the authorization request to succeed; else if sense=deny, PAM_AUTH_ERR is returned, causing the authorization request to fail
+
+	if an error is encountered (for instance, if filename does not exists, or a pooly-constructed argument is encountered), then if onerr=succeed, PAM_SUCCESS is returned, otherwise if onerr=fail, PAM_AUTH_ERR or PAM_SERVICE_ERR (as appropriate) will be returned.
+
+	an additional argument, apply=, can be used to restrict the application of the above to a specific user (apply=username) or a given group (apply=@groupname). this added restriction is only meaningful when used with the tty, rhost and shell items.
+
+	besides this last one, all arguments should be specified; do not count on any default behavior.
+
+	no credentials are awarded by this module.
+
+
+
+210.3 LDAP client usage
+=======================
+
+Weight: 2
+
+Description: Candidates should be able to perform queries and updates to an LDAP server. Also included is importing and adding items, as well as adding and managing users.
+Key Knowledge Areas
+
+LDAP utilities for data management and queries
+Change user passwords
+Querying the LDAP directory
+Terms and Utilities
+
+(ldap)
+
+	openLDAP lightweight directory access protocol API
+
+	the lightweight directory access protocol (LDAP) provides access to X.500 directory services. these services may be standalone or part of a distributed directory service. this client API supports LDAP over TCP, LDAP over TLS/SSL, and LDAP over IPC (UNIX Domain sockets). this API supports SASL and start TLS as well as number of protocol extensions. this API is loosely based upon IETF/LDAPEXT C LDAP API draft specification, a (orphaned) work in progress.
+
+	the openLDAP software package includes a stand-alone server in slapd various LDAP clients, and an LDAP client library used to provide programmatic access to the LDAP protocol. this man page gives an overview of the LDAP library routines.
+
+	both synchronous and asynchronous APIs are provided. also included are various routines to parse the results returned from these routines. these routines are found in the lldap library.
+
+	the basic interaction is as follows. a session handle is created using ldap_initialize and se the protocol version  to 3 by calling ldap_set_option. the underlying session is estabilished first operation is issued. this would generally be a start TLS or bind operation, or a search operation to read attributes of the root DSE. a start TLS operation is performed by calling ldap_start_tls_s ldap bind operation is performed by calling ldap_sasl_bind or one of its friends. a seach operation is performed by calling ldap_seach_ext_s or other of its friends.
+
+	subsequently additional operations are perfomed by calling one of the synchronous or asynchronous routins (e.g., ldap_compare_ext_s, or ldap_compare_ext followed by ldap_result). result returned form these routines are interpreted by calling the LDAP parsing routines such as ldap_parse_result. the LDAP association and underlying connection is terminated by calling ldap_unbind_ext errors can be interpreted by calling ldap_err2string
+
+
+ldapsearch 
+
+	LDAP seach tool
+
+	ldapseach is a shell-accessible interface to the ldap_search_ext(3) library call.
+
+	ldapseach opens a connection to an LDAP server, binds, and performs a seach using specified parameters. the filter should conform to the string representation for seach filters as defined in RFP 4515. if not provided, the default filter, (objectClass=*), is used.
+
+	if ldapseach finds one or more entries, the attributes specified by attrs are returned. if * is listed, all users attributes are returned. if + is listed, all operational attributes are returned. if no attrs are listed, all user attributes are returned. if only 1.1 is listed, no sttributes will be returned.
+
+	the seach results are displayed using an extended version of LDIF. option -L controls the format of the output.
+
+
+ldappasswd 
+
+	change the password of an LDAP entry
+
+	ldappasswd is a tool to set the pasword of an LDAP user.
+	ldappasswd uses the LDAPv3 password modify exntended operation.
+
+	ldappasswd sets the password of associated with the user. if the new password is not specified on the command line and the user doesn't enable prompting, the server will be asked to generate a password for the user.
+
+	ldappasswd is neither designed nor intended to be a replacement for passwd and should not be installed as such.
+
+
+ldapadd 
+
+	ldapmodify, ldapadd - LDAP modify entry and LDAP add entry tools
+
+	ldapmodify is a shell-accessible interface to the ldap_add_ext, ldap_modify_ext, ldap_delete_ext and ldap_rename. library calls. ldapadd is implemented as a hard link to the ldapmodify tool. when invoked as ldapadd the -a (add new entry) flag is turned on automatically.
+
+	ldapmodify opens a connection to an LDAP server, binds, and modifies or adds entries. the entry information is read from standard input or from file through the use of the -f option.
+
+
+ldapdelete
+
+	LDAP delete entry tool
+
+	ldapdelete is a shell-accessible interface to the ldap_delete_ext library call
+
+	ldapdelete opens a connection to an LDAP server, binds and deletes one or more entries. if one or more DN arguments are provided, entries with those Distinguished NAmes are deleted. Each DN should be provided using the LDAPv3 string representation as defined in RFC 4514. if no DN arguments are provided, a list of DNs is read from standard input (or from file if the -f flag is used).
+
+
+Topic 211: E-Mail Services
+==========================
+
+211.1 Using e-mail servers
+==========================
+
+Weight: 3
+Description: Candidates should be able to manage an e-mail server, including the configuration of e-mail aliases, e-mail quotas and virtual e-mail domains. This objective includes configuring internal e-mail relays and monitoring e-mail servers.
+Key Knowledge Areas
+
+Configuration files for postfix
+Basic knowledge of the SMTP protocol, sendmail, and exim
+Terms and Utilities
+
+postfix 
+
+	by default, postfix configuration files are in /etc/postfix. the two most important files are main.cf and master.cf; these files must be owned by root. giving someone else write permission to main.cf or master.cf (or to their parent directories) means giving root privileges to that person
+
+	in /etc/postfix/main.cf you will have to set up a minimal number of configuration parameters. postfix configuration resemble shell variables, with two important differences: the first one is that postfix does not know about quotes like the Unix shell does.
+
+	you specify a configuration parameter as:
+
+	/etc/postfix/main.cf
+		parameter = value
+
+	and you use it by putting a "$" character in front of its name
+
+	/etc/postfix/main.cf:
+		other_parameter = $parameter
+
+	you can use $parameter before it is given a value (that is the second main difference with UNIX shell variables). the postfix configuration language uses lazy evaluation, and does not look at a parameter value until it is needed at runtime.
+
+	postfix uses database files for access control, address rewriting and other purposes. the database readme file gives an introduction to how postfix works with berkeley db. ldap or sql or other types. here is a common example of how postfix invokes a database:
+
+	/etc/postfix/main.cf:
+		virtual_alias_maps = hash:/etc/postfix/virtual
+
+	whenever you make a change to the main.cf or master.cf file, execute the following command as root in order to refresh a running mail system:
+
+	# postfix reload	
+
+	http://www.postfix.org/BASIC_CONFIGURATION_README.html
+
+sendmail 
+
+	an eletronic mail transport agent
+
+	sendmail sends a message to one or more recipients, routing the message over whatever networks are necessary. sendmail does internetwork forwarding as necessary to deliver the message to the correct place.
+
+	sendmail is not intended as a user interface routine; other programs provide user-friendly front ends; sendmail is used only to deliver pre-formatted messages.
+
+	with no flags, sendmail reads its standard input up to an end-of-file or a line consisting only of a single dot and sends a copy of the message found there to all of the addresses listed. it determines the network(s) to use based on the syntax and contents of the addresses.
+
+	local addresses are looked up in a file and aliased appropriately. aliasing can be prevented by preceding the address with a backslash. normally the sender is not included in any alias expansions, e.g., if 'john' sends to 'group', and 'group', and 'group' includes 'john' in the expansion, then the letter will not be delivered to 'john'.
+
+/etc/aliases 
+/etc/mail/* 
+/etc/postfix/* 
+/var/spool/mail 
+/var/log/ 
+sendmail emulation 
+layer commands
+
+211.2 Managing Local E-Mail Delivery
+====================================
+
+Weight: 2
+
+Description: Candidates should be able to implement client e-mail management software to filter, sort and monitor incoming user e-mail.
+Key Knowledge Areas
+
+procmail configuration files, tools and utilities
+Usage of procmail on both server and client side
+Terms and Utilities
+
+(procmail)
+
+	procmail should be invoked automatically over the .forward file mechanism as soon as mail arrives. alternatively, when installed by a system administrator, it can be invoked from within the mailer immediately. when invoked, it first sets some environment variables to default values, reads the mail message from stdin util and EOF, separates the body from the header, and then, if no command line arguments are present, it starts to look for a file named $HOME/.procmailrc. according to the processing recipies in this file, the mail message that just arrived gets distributed into the right folder (and more). if no rcfile is found, or processing of the rcfile falls off the end, procmail will store the mail in the default system mailbox.
+
+	if no rcfiles and no -p have been specified on the command line, proc-mail will, prior to reading $HOME/.procmailrc, interpret commands from /etc/procmailrc (if present). care must be taken when creating /etc/procmailrc, because, if circumstances permit, it will be executed with root privileges (contrary to the $HOME/.procmailrc file of course).
+
+	if running suid root or with root privileges, procmail will be able to perform as a functionally enhanced, backwards compatible mail delivery agent.
+
+	procmail can also be used as a general purpose mail filter, i.e., provisions have been made to enable procmail to be invoked in a special sendmail rule.
+
+	the rcfile format is described in detail in the procmailrc man page
+
+	the weighted scoring technique is described in detail in the promailsc man page
+
+	examples for rcfile recipes can be looked up in the promailex man page.
+
+
+	signals
+
+	TERMINATE
+		terminate prematurely and requeue the mail.
+
+	HANGUP
+		terminate prematurely and bounce the mail.
+
+	INTERRUPT
+		terminate prematurely and bounce the mail.
+
+	QUIT
+		terminate prematurely and silently lose the mail.
+
+	ALARM
+		force a timeout (see TIMEOUT)
+
+	USR1
+		equivalent to a VERBOSE=off.
+
+	USR2
+		equivalent to a VERBOSE=on.
+
+
+
+~/.procmail 
+
+
+/etc/procmailrc 
+
+
+procmail mbox and Maildir formats
+
+
+211.3 Managing Remote E-Mail Delivery
+=====================================
+
+Weight: 2
+Description: Candidates should be able to install and configure POP and IMAP daemons.
+Key Knowledge Areas
+
+Courier IMAP and Courier POP configuration
+Dovecot configuration
+Terms and Utilities
+
+
+(imapd - the courier imap server)
+
+	imapd is the courier imap server that provides imap access to maildir mailboxes. normally don't have to worry about it as imapd runs automatically after receiving a network connection accompanied by the appropriate userid and password
+
+	couriertcpd opens network ports that receive incoming imap connections. after an incoming network connections is established, curiertcpd runs the command specified by its first arguments which is imaplogin passing the remaining arguments to imaplogin, imaplogin reads the imap login userid and password, then runs the modules specified by its remaining options which are courier server authentication modules described in the authlib manual page.
+
+	imapd may also be invoked from the shell prompt, in which case it issues a preauth response, then changes the current directory to either its argument, or the contents of the maildir environment variable, then attemps to talk imap on standard input and output.
+
+/etc/courier/* 
+
+
+(dovecot)
+
+	a secure and highly configurable IMAP and POP3 server
+
+	dovecot is an open source IMAP and POP3 server for linux/unix-like systems, written with security primarily in mind. dovecot is an execellent choice for both small and large installations. it's fast, simple to set up, requires no special administration and it uses very little memory.
+
+dovecot.conf
+
+	the configuration file for dovecot imap and pop3 server
+
+	dthe dovecot.conf file is a configuration file for the dovecot imap and pop3 server. contains description to all available options. some of these options are described also in offline wiki documentation placed in /usr/share/doc/dovecot/wiki
+
+
+
+
+Topic 212: System Security
+==========================
+
+212.1 Configuring a router
+==========================
+
+Weight: 3
+
+Description: Candidates should be able to configure a system to perform network address translation (NAT, IP masquerading) and state its significance in protecting a network. This objective includes configuring port redirection, managing filter rules and averting attacks.
+Key Knowledge Areas
+
+iptables configuration files, tools and utilities
+Tools, commands and utilities to manage routing tables.
+Private address ranges
+Port redirection and IP forwarding
+List and write filtering and rules that accept or block datagrams based on source or destination protocol, port and address
+Save and reload filtering configurations
+Terms and Utilities
+
+/proc/sys/net/ipv4 
+
+	ip_forward - boolean
+
+		forward packets between interfaces
+
+		this variable is special, its change resets all configuration parameters to their default state.
+
+
+	ip_default_ttl - integer
+
+		default value of TTL field (time to live) for outgoing (but not forwarded) ip packets. should be between 1 and 255 inclusive. default 64
+
+	route/max_size - integer
+
+		maximun number of routes allowed in the kernel. increase this when using large numbers of interfaces and/or routes.
+
+	somaxconn - integer
+
+		limit of sockets liste() backlog, known in userspace as SOMAXCONN. defaults to 128. see also tcp_max_syn_backlog for additional tuning for TCP sockets.
+
+
+	https://www.kernel.org/doc/Documentation/networking/ip-sysctl.txt
+
+
+/etc/services 
+
+	the configuration file /etc/services maps port numbers to named services. key point: its role in life is so that programs can do a getportbyname() sockets call in their code in order to get what port they should use. for example, a pop3 email daemon would do a get portbyname('pop3') in order to retrive the number 110 that pop3 runs at. the idea is that if all pop3 daemons use getportbyname(), then no matter what pop3 daemon you run, you can always reconfigure its port number by editing /etc/services. misunderstanding: this file is bad in order to figure out what port numbers mean. if you want to find out what ports programs are using, you should intested use the program lsof to find out exactly which ports are bound to which process. if running lsof is not appropriate, then you should lookup the ports in a more generic reference.
+
+
+iptables 
+
+	administration tool for IPv4 packet filtering and NAT
+
+	iptables is used to set up, maintain, and inspect the tables of IP packet filter rules in the linux kernel. several different tables may be defined. each table contains a number of built-in chains and may also contain user-defined chains.
+
+	each chain is a list of rules which can match a set of packets. each rule specifies waht to do with a packet that matches. this is called a 'target', which may be a jump to a user-defined chain in the same table.
+
+	targets
+
+	a firewll rule specifies criteria for a packet, and a target. if the packet does not match, the next rule in the chain is the examined; if it does match, then the next rule is specified by the valeu of the target, which can be a name of a user-defined chain or one of the special values ACCEPT, DROP, QUEUE, or RETURN.
+
+	ACCEPT means to let the packet through.
+
+	DROP means to drop the packet on the floor.
+
+	QUEUE means to pass the packet to userspace.
+
+	RETURN means stop traversing this chain and resume at the next rule in the previous (calling) chain. if the end of a built-in chain is reached or a rule in a built-in chain with target
+
+	RETURN is matched, the target specified by the chain policy determines the fate of the packet.
+
+
+routed
+
+	network RIP and router discovery routing dameon.
+
+	routed is a daemon invoked at boot time to manage the network routing, tables, it uses Routing Information Protocol, RIPv1, RIPv2, and internet router discovery protocol to maintain the kernel routing table. the RIPv1 protocol is based on the reference 4.3BSD daemon
+
+	it listens on the UDB socket for the route service for RIP packets. it also sends and receives multicast Router Discovery ICMP messages. if the host is a router, routed periodically supplies copies of its routing tables to any directly connected hosts and networks. it also advertise or solicits default routes using router discovery ICMP messages.
+
+	when started (or when a network interface is later turned on), routed uses an AF_ROUTE address family facility to find those directly connected interfaces configured into the system and marked 'up'. it adds necessary routes for the interfaces to the kernel routing table. soon after being first started, adn provided there is at least one interface on which RIP has not been disabled, routed deletes all pre-existing non-static routes in kernel table. static routes in the kernel table are preserved and included in RIP responses if they have a valid RIP metric.
+
+	if more than one interface is present (not counting the loopback interface), it is assumed that the host should forward packets among the connected networks. after transmitting a RIP request and Router Discovery Advertisements or Solicitations on a new interface, the daemon enters a loop, listening for RIP request and response for Router Discovery packets from other hosts.
+
+	when a request packet is received, routed formulates a reply based on the information maintained in its internal tables. the response packet generated contains a list of known routes, each marked with a 'hop count'metring (a count of 
+	16 or greater is considered 'infinite'). advertised so setting the metric on an interface is an effective way to steer traffic.
+
+	reponses do not contain routes with a first hop on the requesting network to implement in part split-horizon.
+
+	the rounting table maintened by a dameon includes space for several gateways for each destination to speed recovery from a failing router. RIP response packets received are used to update the routing tables provided they are from one of the several currently recognized gateways or advertise a better metric that at least one of the existing gateways.
+
+	when an update is applied, routed records the change in its own tables and updates the kernel routing table if the best route to the destication changes. the change in the kernelrouting table is reflected in the next batch of resopnse packets sent. if the next response is not scheduled for a while, a flash update response containing only recently changed routes is sent.
+
+	in addition to processing incoming packets, routed also periodically checks the routing table entries. if an entry has not been updated for 3 minutes, the entry's metric is set to infinity and marked for deleteion. deletions are delayed until the route has been advertised with an infinite metric to insure the invalidation is propagated throught the local internet. this is a form of poison reverse.
+
+	routes in the kernel table that are added or changed as a result of ICMP redirect messages are deleted after a while to minimize black-holes. when a TCP connection suffers a timeout, the kernel tells routed, which deletes all redirected routes throiugh the gateway involed, advances the age of all RIP routes through the gateway to allow an alternate to be chosen, and advances of the age of any relevant router discovery protocol. default routes.
+
+
+212.2 Securing FTP servers
+==========================
+
+Weight: 2
+
+Description: Candidates should be able to configure an FTP server for anonymous downloads and uploads. This objective includes precautions to be taken if anonymous uploads are permitted and configuring user access.
+Key Knowledge Areas
+
+Configuration files, tools and utilities for Pure-FTPd and vsftpd
+Awareness of ProFTPd
+Understanding of passive vs. active FTP connections
+Terms and Utilities
+
+
+vsftpd.conf 
+
+	config file for vsftpd
+
+	may be used to control various aspects of vsftpd's behaviour. by default, vsftpd looks for this file at the location /etc/vsftpd/vsftpd.conf however, you may override this by specifying a command line argument to vsftpd. the command line argument is the pathname of the configuration file for vsftpd. this behaviour is useful because you may wish to use an advanced inetd such as xinetd to launch vsftpd with different configuration files on a per virtual host basis.
+
+	the format of vsftpd.conf is very simple. each line is either a comment or a directive. comment line start with a # and are ignored. a directive line has the format:
+
+	option=value.
+
+	it is importanto to note that it is an error to put any space between the option, = and value.
+
+	each seatting has a compiled in default which may be modified in the configuration file.
+
+	http://linux.die.net/man/5/vsftpd.conf
+
+(vsftpd)	
+
+	very secure FTP daemon
+
+	vsftpd is the very secure file transfer protocl daemon. the server can be launched via a "super-server" such as inetd or xinetd. alternatively, vsftpd can be launched in standalone mode, in which case vsftpd itself will listen on the network. this latter mode is easier to use, and recommended. it is activated by setting listen=YES in /etc/vsftpd/vsftpd.conf. direct execution of the vsftpd binary will then launch the FTP service ready for immediate client connections.
+
+	an optional configuration file or files may be given on the command line. these files must be owned as root that will be loaded. note that config files are loaded in the strict order that they are encountered on the command line. if no config file are specified, the default configuration file of /etc/vsftpd/vsftpd.conf will be loaded, after all other command line options are processed.
+
+	supported options are:
+	-v
+		print the version information an exit, even if other options are encountered.
+
+	-ooption=value
+
+		set a single option, value pair as per the format in the config file. multiple -o options are supported, and they are applied in strict order relative to their apperance on the command line, including intermingling with loading of config files.
+
+	# vsftpd -olisten=NO /etc/vsftpd/vsftpd.conf -oftpd_banner=blah
+
+	the example overrides vsftpd's built-in default for the "listen"  option to be NO, but then loads /etc/vsftpd/vsftpd.conf which may override that setting. finally, the "ftpd_banner" setting is set to "blah", which overrides any default vsftpd setting and any identical setting that was in the config file.
+
+	/etc/vsftpd/vsftpd.conf
+
+Pure-FTPd command line
+
+	http://download.pureftpd.org/pure-ftpd/doc/README
+
+
+212.3 Secure shell (SSH)
+========================
+
+Weight: 2
+
+Description: Candidates should be able to configure and secure an SSH daemon. This objective includes managing keys and configuring SSH for users. Candidates should also be able to forward an application protocol over SSH and manage the SSH login.
+Key Knowledge Areas
+
+OpenSSH configuration files, tools and utilities
+Login restrictions for the superuser and the normal users
+Managing and using server and client keys to login with and without password
+Usage of XWindow and other application protocols through SSH tunnels
+Configuration of ssh-agent
+Usage of multiple connections from multiple hosts to guard against loss of connection to remote host following configuration changes
+Terms and Utilities
+
+
+ssh 
+
+	openssh ssh client
+
+	ssh (ssh client) is a program for loggin into a remote machine and for executing commands on a remote machine. it is intened to replace rlogin and rsh, and provide secure encrypted communications between two untrusted hosts over an insecure network. X11 connection and arbitraty TCP ports can also be fowarded over the secure channel.
+
+	ssh connects and logs into the specified hostname (with optional user name). the user must prove his/her identity to the remote machine using one of several methods depending on the protocol version is used (sse below).
+
+	if command is specified, it is executed on the remote host instead of a login shell
+
+
+sshd 
+
+	openssh daemon
+
+	sshd (openssh daemon) is the daemon program for ssh. together these programs replace rlogin and rsh, and provide secure encrypted communications between two untrusted hosts over an insecure network.
+
+	sshd listens for connections from clients. it is normally started at boot from /etc/rc. it forks a new daemon for each incoming connection. the forked daemons handle key exchange, encryption, authentication, command execution, and data exchange.
+
+	sshd can be configured using command-line options or a configuration file (by default sshd_config); command line options override values specified in the configuration file. sshd rereads its configuration file when it receives a hangup signal, sighup, by executing itself with the name and options it was started with, e.g. usr/sbin/sshd
+
+
+/etc/ssh/sshd_config 
+	
+	openssh ssh daemon configuration file
+
+	sshd reads configuration data from /private/etc/sshd_config (or the file specified with -f on the command line). the file contains keyword arguments pais, one per line. lines starting with "#" and empty lines are interpreted as comments. arguments may optionally be enclosed in double quotes in order to represent arguments containing spaces.
+
+	the possible keywords and their meaning are as follows (note that key-words are clase-insensitive and arguments are case-sensitive):
+
+
+Private and public key files 
+
+
+~/.ssh/authorized_keys 
+
+	lists the public keys (RSA/DSA) that cna be used for logging in as this user. the format of this file is described above. the content of the file is not highly sensitive, but the recommended content of the file is not highly sensitive, but the recommended permissions are read/write for user , and not accessible by others. 
+
+	anyone else. envriroment processing is disabled by default and is controlled via the PermitUserEnvironment option.
+
+
+PermitRootLogin 
+
+	specifies whether root can login using ssh. the argument must be 'yes', 'without-password', 'forced-commands-only' or 'no'. the default is 'yes'
+
+	if this option is set to 'without-password', password authentication is disabled for root
+
+	if this option is set to 'forced-commands-only', root login with public key authentication will be allowed, but only if the command option has been specified (which may be useful for taking remote backups even if root login is normally not allowed). all other authentication methods are disabled for root.
+
+
+PubKeyAuthentication 
+
+	specifies whether public key authentication is allowed. the default is 'yes'. note that this option applies to protocol version 2 only.
+
+
+AllowUsers 
+
+	this keyword can be followed by a list of user name patters, separeted by spaces. if specified, login is allowed only for user names that match one of the patterns. only user names are valid; a numerical user id is not recognized. by default, login is allowed for all users. if the pattern takes the form USER@HOST then USER and HOST are separately checked, restricting logins to particular users from particular hosts. the allow/deny directives are precessed in the following order: DenyUsers, AllowUsers, DenyGroups, and finally AllowGroups.
+
+
+PasswordAuthentication 
+
+	specifies whether password authentication is allowed. the default is 'yes'.
+
+
+Protocol
+
+	specifies the protocol versions sshd supports. the possible values are '1' and '2'. multiple versions must be comman-separeted. the default is '2'. note that the order of the protocol list does not indicate preference, because the client selects among multiple protocols versions offered by the server. specifying '2,1' is identical to '1,2'
+
+
+
+212.4 TCP Wrapper
+=================
+
+Weight: 1
+
+Description: Candidates should be able to configure TCP Wrapper to allow connections to specified servers only from certain hosts or subnets.
+Key Knowledge Areas
+
+TCP Wrapper configuration files, tools and utilities
+inetd configuration files, tools and utilities
+Terms and Utilities
+
+
+(inetd)
+
+	internet "super server"
+
+	the inetd utility should be run at boot time by /etc/rc it then listens for connections on certain internet sockets. when a connection is found on one of its sockets, it decides what service the socket corresponds to, and invokes a program to service the request. the server program is invoked with the service socket as its standard input, output and error descriptos. after the program is finished, inetd continues to listen on the socket (except in some cases which will be described below). essentially, inetd allows running one daemon to invoke several others, reduucing load on the system.
+	
+	/etc/inetd.conf
+		configuration file
+
+	/etc/rpc
+		translation of service names to RPC program numbers
+
+	/etc/services
+		translation of service names to portnumbers
+
+	/var/run/inetd.pid
+		the pid of the currently running inetd.	
+
+/etc/inetd.conf 
+
+	the inetd utility should be run at boot time by /etc/rc. it then listens for connections on certain internet sockets. when a connection is found on one of its sockets, it decides what service the socket corresponds to, and invokes a program to service the request. the server program is invoked with the service socket as its standard input, output and error descriptors. after the program is finished, inetd continues to listen on the socket (except in some cases which will be described below). essentially, inetd allows running one dameon to invoke several others, reducing load on the system.
+
+
+/etc/hosts.allow 
+
+/etc/hosts.deny 
+
+
+libwrap 
+	
+	a component of the TCP wrappers software bundle was a standalone library called libwrap that non inetd TACP based network services could leverage to provide access control functionality if linked into the program.
+
+
+tcpd
+
+	access control facility for internet services
+
+	the tcpd program can be set up to monitor incoming requests for telnet, finger, ftp, exec, rsh, rlogin, tftp, talk, comsat and other services that have a one-to-one mapping onto executable files.
+
+	the program supports both 4.3BSD-style sockets and system V.4 style TLI functionality may be limited when the protocol underneath TLI is not an internet protocol.
+
+	operation is as follows: whenever a request for service arrives, the inetd daemon is tricked into running the tcpd program instead of the desired server. tcpd logs the request and does some additional checks. when all is well, tcpd runs the appropriate server program and goes away.
+
+	optional features are: pattern-based access control, client username lookups with the RFC 931 etc. protocol, protection agains hosts that pretend to have someone elses host name, and protection agains hosts that pretend to have someone elses network address.
+
+
+212.5 Security tasks
+====================
+
+Weight: 3
+
+Description: Candidates should be able to receive security alerts from various sources, install, configure and run intrusion detection systems and apply security patches and bugfixes.
+Key Knowledge Areas
+
+Tools and utilities to scan and test ports on a server
+Locations and organisations that report security alerts as Bugtraq, CERT, CIAC or other sources
+Tools and utilities to implement an intrusion detection system (IDS)
+Awareness of OpenVAS
+Terms and Utilities
+
+
+telnet 
+
+	user interface to the telnet protocol
+
+	the telnet command is used to communicate with another host using the telnet protocol. if telnet is invoked wihout the host argument, it enters command mode, indicated by its prompt (telnet). in this mode, it accpets and executes the commands listed below. if it is invoked with arguments, it performs an open command with those arguments
+
+
+nmap 
+
+	network exploration tool and security / port scanner
+
+	nmap (network mapper) is an open source tool for network exploration and security auditing. it was designed to rapidly scan large networks, although it works fine against single hosts. nmpa uses raw ip packets in novel ways to determine what hosts are available on the network, what services (application name and version) those hosts are offering, what operating systems (and OS versions) they are running, what type of packet filters/firewalls are in use, and dozens of other characteristics. while nmap is commonly used for security audits, many systems and network administrations find it useful for routine tasks such as network inventory, managing service upgrade schedules, and monitoring hosts or service uptime.
+
+	the output from nmap is a list of scanned targets, with supplemental information on each depending ont he options used. key among that information is the "interesting ports table"... that table lists the port number and protocol, service name, and state. the state is either open, filtered, closed, or unfiltered. open. means that an application on the target machine is listening filtered, closed or unfiltered. open. means that an application on the target machine is listening for connections/packets on that port. filtered. means that a firewall, filter, or other network obstacle is blocking the port so that nmap cannot tell whether it is open or closed. closed. ports have no application listening on them, through they could open up at any time. ports are classified as unfiltered when they are responsive to Nmap reports the state combinations open/filtered and closed/filtered. when it cannot determine which of the two states describes a port. the port table may also include software version details when version detection has been requested. when an IP protocol scan is requestes (-sO), Nmap provides information on supported IP protocols rather than listening ports.
+
+	in addition to the interesting ports table, nmpa can provide further information on targets, including reverse DNS names, operating system guesses, device types, and MAC addresses.
+
+	a typical nmap scans is shown in example 1. the only nmap arguments used in this example are -A, to enable OS and version detection, script scanning, and traceroute; -T4 for faster execution; and then the two target hostnames.
+
+	# nmap -A -T4 scanme.nmap.org
+
+
+snort 
+
+	open source network instrusion detection system
+
+	snort is an open source network intrusion detection system, capable of performing real-time traffic analysis and packet logging on IP networks. it can perform protocol analysis, content seaching/maching buffer overflows, stealth port scans, CGI attacks, SMB probes, OS fingerprinting attempts, and much more. snort uses a flexible rules language to describe traffic that it should collect or pass, as well as a detection engine that utilizes a modular plugin architecture. snort also has a modular real-time alerting capability, incorporating alerting and loggin plugins for syslog, a ASCII text files, UNIX sockets or XML.
+
+	snort has three primary uses. it can be used as a straight packet sniffer like tcpdump, a packet logger (useful for network traffic debugging, etc), or as a full blown network intrusion detection system.
+
+	snort logs packets in tcpdump binary format or in snort's decoded ASCII format to a hierarchy of loggin directories that are named based on the IP address of the "foreign" host.
+
+
+fail2ban 
+
+	log files contain interesting information, especially about failed logins. this information can be used to ban an offensive host. this is exactly what fail2ban does. it scans log files and detects patterns which correspond to possible breaking attempts and then performs actions. most of the time, it consists of adding a new rule in a firewall chain and sending an e-mail notification to the system administrator.
+
+	here is a list of the most important features available in fail2ban:
+
+	- client/server
+	- multithreaded
+	- garmin support
+	- autodetection of the date/time format
+	- wildcard support in logpath option
+	support for a lot of services (sshd, apache, qmail, proftpd, sasl, asterisk, etc)
+	- support for several actions (iptables, tcp-wrapper, shorewall, mail notifications, etc)
+
+
+nc 
+
+	arbitrary TCP and UDP connections and listens
+
+	the nc (or netcat) utility is used for just about anything under the sun involving TCP or UDP. it can open TCP connections, send UDP packets, listen on arbritrary TCP and UDP ports, do port scanning, and deal with both IPv4 and IPv6. unlike telnet, nc scripts nicely, and separates error messages onto standard error instead of sending them to standard output, as telnet does with some.
+
+
+iptables
+
+	administration tool for IPv4 packet filtering and NAT
+
+	iptables is used to setup, maintain, and inspect the tables of IP packet filter rules in the linux kernel. several different tables may be defined. each table contains a number of built-in chains and may also contain user-defined chains.
+
+	each chain is a list of rules which can match a set of packets. each rule specifies what to do with a packet that maches. this is called 'target', which may be a jump to a user-defined chain in the sabe table.
+
+
+
+Topic 213: Troubleshooting
+==========================
+
+213.1 Identifying boot stages and troubleshooting bootloaders
+=============================================================
+
+Weight: 4
+
+Description: Candidates should be able to determine the cause of errors in loading and usage of bootloaders. GRUB and LILO are the bootloaders of interest.
+Key Knowledge Areas
+
+boot loader start and hand off to kernel
+kernel loading
+hardware initialisation and setup
+daemon/service initialisation and setup
+Know the different bootloader install locations on a hard disk or removable device
+Overwriting standard bootloader options and using bootloader shells
+Terms and Utilities
+
+/boot/ 
+
+
+/boot/grub/ 
+
+
+GRUB 
+
+
+grub-install 
+
+	install GRUB on your drive
+
+	-h, --help
+		print this message and exit
+	-v, --version
+		print the version information
+	--root-directory=<dir>
+		install GRUB image under the directory DIR instead of the root directory
+	--grub-shell=file
+		use FILE as the grub shell
+	--no-flopply
+		do not probe any floppy drive
+	--force-lba
+		force GRUB to use LBA mode even for a buggy BIOS
+	--recheck
+		probe a device map even if it already exists
+
+initrd, initramfs 
+
+
+Master boot record 
+
+	a master boot record (MBR) is a special type of boot sector at the very beginning of partitioned computer mass storage devices like fixed disks or removable drives inteded for use with IBM PC-compatible systems and beyong. the MBR holds the inforamtion on how the logical partitions, containing file systems, are organized on that medium. besides that, the MBR contains executable code to function as an operating system-independent chain boot loader in conjunction with each partition's volume boot record (VBR).
+
+	MBRs are not present on non-partitioned media like floppies, superfloppies or the orther storage devices configured to behave as such.
+
+	the first MBR is written in june 1982 by David Litton of IBM and was introduced in 1983 with IBM PC DOS 2.0
+
+	because MBR holds organization information, it has a direct impact how a disc is laid out. MBR's architecture limits that maximum size of a disk to 2 TB (512*2^32 bytes) of addressable storage. The MBR-based partitioning scheme is therefore in the process of being superseded by the GUID partition table (GPT) scheme in new computers. A CPT can coexist with an MBR in order to provide some limited form of backward compatibility for older systems.
+
+
+/etc/init.d 
+
+
+lilo 
+
+	install boot loader
+
+	lilo installs a boot loader that will be activated the next time you boot your system. the default configuration file /etc/lilo.conf will contain most options, but many, including those which override the configuration file, may be specified on the command line.
+
+
+/etc/lilo.conf
+
+	configuration file for lilo
+
+	this file, by default /etc/lilo.conf, is read by the boot loader installer 'lilo'
+
+	when booting, the boot loader will issue its boot: prompt and wait for you to enter the label of the kernel (and any options) which you wish to boot. at any time you may hit [tab] to see a list of kernle/other labels. alternatly, if the menu boot loader is installed, a menu of boot options will be presented for your selection. the title of this menu is overridden with the menu title specification in this configuration file. if you enter nothing, then the default kernel image, the first mentioned, (/boot/zImage-1.5.99) will be booted after a timeout of 15 seconds (150 deciseconds). there may be at least 16 imag 
+
+
+213.2 General troubleshooting
+=============================
+
+Weight: 5
+
+Description: Candidates should be able to identify and correct common boot and run time issues.
+Key Knowledge Areas
+
+/proc filesystem
+Various system and daemon log files
+Content of /, /boot , and /lib/modules
+Screen output during bootup
+Kernel syslog entries in system logs (if entry is able to be gained)
+Tools and utilities to analyse information about the used hardware
+Tools and utilities to trace software and their system and library calls
+Terms and Utilities
+
+
+dmesg 
+
+	print or control the kernel ring buffer
+
+	dmesg is used to examine or control the kernel ring buffer.
+
+	the program helps users to print out their bootup messages. instead of copying the messages by hand, the user need only:
+
+	# dmesg >boot.messages
+
+	and mail the boot.messages file to whoever can debug their problem.
+
+
+	-c
+		clear the ring buffer contents after printing.
+
+	-sbufsize
+		use a buffer of size bufsize to query the kernel ring buffer. this is 16392 by default. (the default kernel syslog buffer size was 4096 at first, 8192 since 1.3.54, 16384 since 2.1.113.) if you have a set the kernel buffer to be larger than the default then this option can be used to view the entire buffer.
+
+	-nlevel
+		set the level at which loggin of messages is tone to the console. for example, -in 1 prevents all messages, expect paninc messages, from appearing on the console. all levels of messages are still written to /proc/kmsg, so syslogd can still be used to control exactly where kernel messages appear. when the -n option is used, dmesg will not print or clear the kernel ring buffer.
+
+		when both options are used, only the last option on the command line will have an effect.
+
+
+/sbin/lspci 
+
+	list all PCI devices
+
+	lspci is a utility for displaying information about PCI buses in the system and devices connected to them.
+
+	by default, it shows a brief list of devices. use the options described below to request either a more verbose output or output intended for parsing by other programs.
+
+	if you are going to report bugs in PCI device drivers or in lspci itself, please include output of "lspci -vvx" or even better "lspci -vvxxx" (however, see below for possible caveats).
+
+	some parts of the output, especially in the higly verbose modes, are probably intelligible onlye to experienced PCI hackers, for exact definitions of the fields, please consult either the PCI specifications or the header.h and /usr/include/linux/pci.h include files.
+
+	access to some parts of the pci configuration space is restricted to root on many operating systems, so the features of lspci available to normal users are limited. however, lspci tries its best to display as much as available and mark all other information with <access denied> text.
+
+
+/usr/bin/lsdev 
+
+	list deivce drivers in the system
+
+	the command lists, one pair per line, the major device numbers and driver names of device drivers configured into the system and available for invocation via special files. A either the block of character column means that a major number does not exist for that type.
+
+	if no arguments are specified, lists all drivers configured into the system
+
+	if the option specified, will not print a heading this otions may be useful when the output of will be used by another program.
+
+	the and options are used to select specific device drivers for output. if more than one option is specified, all drivers that match the criteria specified by thos options will be listed. these seach options are divided into two types: name seach keys (the and options) and major number seach keys (the and options). if bowth types of options are present, only entries that match both types are pritned. the same type of option may appear more than once on the command line with each occurrence providing an ORing effect of that seach type. the and options may not be specified at the same time.
+
+	the ability to process major arguments is provided for compatibility and functions like the option.
+
+
+/sbin/lsmod 
+
+	lsmod is a trivial program which nicely formats the contents of the /proc/modules, showing what kernel modules are currently loaded.
+
+
+/sbin/modprobe 
+
+	program to add and remove modules from the linux kernel
+
+
+/sbin/insmod 
+	
+	simple program to insert a module into the Linux Kernel
+
+	insmod is a trivial program to insert a module into the kernel: if the filename is a hyphen, the module is taken from standard input. most users will to use modprobe instead, which is more cleaver.
+
+	onlye the most general of error messages are reported: as the work of trying to link the module is now done inside the kernel, the dmesg usally gives more information about errors.
+
+
+/bin/uname 
+
+	print system information
+
+	print certain system information. with no option, same as -s
+
+
+strace 
+
+	trace system calls and signals
+
+	in the simplest case strace runs the specified command utils it exists. it intercepts and records the system calls which are called by a process and the signals which are received by a process. the name of each system call, its arguments and its return value are printed on standard error or to the file specified with the -o option.
+
+	strace is a useful diagnostic, instructional, and debugging tool. system administrators, diagnosticians and troubhle-shooters will find it invaluable for solving problems with programs to trace them. students, hackers and the overly-curious will find that a great deal can be learned about a system and its system calls by tracing even ordinary programs. and programmers will find that since system calls and signals are events that happen at the user/kernel interface, a close examination of this boundary is very useful for bug isolation, sanity checking and attempting to capture race conditions.
+
+	each line in the trace contains the system call name, followed by its arguments in parentheses and its return value. an example from stracing the comand 'cat /dev/null' is:
+
+	open('/dev/null', ORDONLY) = 3
+
+	errors (typically a return value of -1) have the ermo symbol and error string appended.
+
+	open('/foo/bar', O_RDONLY) = -1 ENOENT (no such file or directory)
+
+
+strings 
+
+
+ltrace 
+
+	a library call tracer
+
+	ltrace is a program that simply runs the specified command until it exists. it intercepts and records the dynamic library calls which are called by the executed process and the signals which are received by that process. it can also intercept and print the system calls executed by the program.
+
+	its use is very similar to strace.
+
+
+lsof 
+
+	list open files
+
+	lsof lists on its standard output file information about files opened by processes for the following UNIX dialects.
+
+	an open file may be a regular file, a directory, a block special file, a character special file, a n executing text reference, a library, a stream or a network file (internet socket, NFS file or UNIX domain socket.) a specific file or all the files in a file system may be selected by path
+
+	intead of a formatted display, lsof will produce output that can be parsed by other programs. see the -F, option descrioption and the OUTPUT FOR OTHER PROGRAMS section for more information.
+
+	in addition to producing a single output list, lsof will run in repeat mode. in repeat mode it will produce output, delay, then repeat the output operation until stopped with an interrupt or quit signal.
+
+
+lsusb
+
+	list USB devices
+
+	lsusb is a utility for displaying information about USB buses in the system and the devices connected to them.
+
+
+213.3 Troubleshooting system resources
+======================================
+
+Weight: 5
+Description: Candidates should be able to identify, diagnose and repair local system issues when using software from the command line.
+Key Knowledge Areas
+
+/etc/profile && /etc/profile.d/
+/etc/init.d/
+/etc/rc.*
+/etc/sysctl.conf
+/etc/bashrc
+
+	actually, it's bash specifically that reads .bashrc (and /etc/bash.bashrc). there are lots of different shells.
+
+	when an interactive shell that is not a login shell is started, bash reads and executes commands from /.bashrc, if that file exists. this may be inhibed by using the --norc option. the --rcfile file option will force bash to read and execute commands from file instead of /.bashrc
+
+	PATH variable is not used to seach for the file name
+
+	the file is just shell commands. it is typically used to change prompts, set environment variables, and define shell procedures. traditionally, the file .profile is used for this purpose, but bash has so many extensions that it needs its own startup file for users that want to put bashisms in startup files.
+
+
+
+/etc/ld.so.conf
+
+
+or other appropriate global shell configuration files
+Terms and Utilities
+
+/bin/ln 
+
+	make links between files
+
+	in the 1st form, create a link to TAGET with the name LINK_NAME. in the 2nd form, create a link to TARGET in the current directory. in the 3rd and 4th forms, create links to each TARGET in DIRECTORY. create hard links by default, symbolic links with --symbolic. when creating hard links, each TARGET must exist.
+
+	mandatory arguments to long options are mandatory for short options too.
+
+/bin/rm 
+	
+	remove files or directories
+
+	by default, it does not remove directories.
+
+	if a file is unwritable, the standard input is a tty, and the -f or --force option is not given, rm prompts the user for whether to remove the file. if the response is not affirmative, the file is skipped.
+
+
+/sbin/ldconfig 
+
+	configure dynamic linker run-time bindings
+
+	ldconfig creates the necessary links and cache to the most recent shared libraries found in the directories specified on the command line, in the file /etc/ld.so.conf, and in the trusted directories (/lib and /usr/lib). the cache is used by the run-time linker, ld.so or ld-linux.so. ldconfig checks the header and filenames of the libraries it encounters when determining which versions should have their links updated.
+
+	ldconfig will attempt to deduce the type of ELF libs based on what C libs, if any, the library was liked against.
+
+	some existing libs do not contain enough information to allow the deduction of their type. therefore, the /etc/ld.so.conf file format allows the specification of an exptected type. this is only used for those ELF libs which we can not work out. the format is "dirname=TYPE", where TYPE can be libc4, libc5, or libc6. (this syntax also works on the command line.) spaces are not allowed also see the -p option. ldconfig should normally be run by the superuser as it maiy require write permission on some root owned directories and files.
+
+/sbin/sysctl
+
+	configure kernel parameters at runtime.
+
+	sysctl is used to modify kernel parameters at runtime. the parameters available are those listed under /porc/sys/ procfs is required for sysctl support in linux. you can use sysctl to both read and write sysctl data.
+
+
+213.4 Troubleshooting environment configurations
+================================================
+
+Weight: 5
+
+Description: Candidates should be able to identify common local system and user environment configuration issues and common repair techniques.
+Key Knowledge Areas
+
+Core system variables
+init configuration files
+init start process
+cron configuration files
+Login process
+User-password storage files
+Determine user group associations
+SHELL configuration files of bash
+Analysing which processes or daemons are running
+Terms and Utilities
+
+/etc/ 
+/etc/inittab 
+
+	format of the inittab file used by the sysv-compatible init process
+
+	the inittab file descibes which processes are started at bootup and during normal operation (e.g., /etc/init.d/boot, /etc/init.d/rc, gettys...). init distinguishes multiple runlevels, each of which can have its own set of processes that are started. valid runlevels are 0-6 plus A, B, and C for ondemand entries. an entry in the inittab file has the following format:
+
+		id:runlevels:action:process
+
+/etc/rc.local 
+
+	the rc utility is the command script which controls the automatic boot process after being called by init. the rc.local script contains comands which are pertinetnt only to a specific site. typically, the /usr/local/etc/rc.d/ mechanism is used instead of rc.local these days but if you want to use rc.local, it is still supported. in this case, it sould source /etc/rc.conf and contain additional custom startup code for you system. the best waay to handle rc.local, however, is to separate it out into rc.d/ style scripts and place them under /usr/local/etc/rc.d/. the rc.conf file contains the global system configuration information referenced by the startup scripts, while rc.conf.local contains the local system configuration. see rc.conf for more information.
+
+	the rc.d/ directories contain scripts which will be automatically executed at boot time and shutdown time.
+
+
+/etc/rc.boot 
+
+	directory for local or per-package boot scripts
+
+	the /etc/rc.boot directory is obsolete. it has been superseded by the /etc/rcS.d directory. at boot time, first the /etc/rcS.d directory is scanned and then, for backwards compatibility, the /etc/rc.boot directory
+
+	the directory /etc/rc.boot is scanned by the program run-parts. the scripts found that have valid filenames for the run-parts program will be run in lexical sort order of the filenames.
+
+
+/var/spool/cron/crontabs/ 
+
+	a crontab file contains instructions fto the cron daemon of the general form: "run this command at this time on this date". each user has their own crontab, and commands in any given crontab will be executed as the user who owns the crontab. uucp and news will usually have their own crontabs, eliminating the need for explicity running su as part of a cron command.
+
+	blank lines and leading spaces and tabs are ignored. lines whose first non-space character is a pound-sign are comments, and are ignored. note that comments are not allowed  on the same line as cron commands, since they will be taken to be part of the command. similarly, comments are not allowed on the same line as envrironment variable settings.
+
+	an active line in a crontab will be either an environment setting or a cron command. an environment setting is of the form, name = value
+
+
+/etc/login.defs 
+
+	shadow password suite configuration
+
+	the /etc/login.defs file defines the site-specific configuration for the shadow password suite. this file is required. absence of this file will not prevent system operation, but will probably result in undesirable operation.
+
+	this file is readable text file, each line of the file describing one configuration parameter. the lines consist of a configuration name and value, separeted by whitespace. blank lines and comment lines are ignored. comments are introduces with a # pound sign and the pound sign must be the first non-white character of the line.
+
+	parameters values may be of four types:
+		+ strings
+			a string is comprised of any printable characters
+
+		+ booleans
+			a boolean shoud be either the value yes or no.
+
+		+ numbers
+			may be either decimal values, octal values or hexadecimal values
+
+		+ long numbers
+
+
+/etc/syslog.conf 
+/etc/passwd 
+
+	/etc/passwd file stores essential informatio, which is required during login i.e., user account information. /etc/passwd is a text file, that contains a list of the system's accounts, givin for each account some useful information like user ID, group ID, home directory, shell, etc. it should have general read permission as many utilities, like is use it to map user IDs to user names, but write access only for the superuser (root).
+
+	understanding fields in /etc/passwd
+
+	the /etc/passwd contains one entry per line for each user (or user account) of the system. all fields are separeted by a colon: symbol. total seven fields as follows.
+
+	generally, passwd file entry looks as follows (click to enlarge image):
+
+	oracle:x:1021:1020:Oracle user:/data/network/oracle:/bin/bash
+
+	1 username
+	2 password
+	3 user id (uid)
+	4 group id (gid)
+	5 user id info
+	6 home directory
+	7 command/shell
+
+/etc/shadow 
+
+	your encrypted password is not stored in /etc/passwrd file. it is stored in /etc/shadow file. in the good old days there was no great problem with this general read permission. everybody could read the encrypted passwords, but the hardware was too slow to crack a well-chosen password, and moreover, the basic assumption used to be that of a friendly user-community.
+
+	almost, all modern linux /unix line operating systems use some sort of the shadow password suite, where /etc/passwd has asterisks (*) intead of encrypted passwords, and the encrypted passwords are in /etc/shadow which is readable by the superuser only.
+
+/etc/group 
+
+	user group file
+
+	is an ASCII file which defines the groups to which users belong. there is one entry per line, and each line has the format:
+
+		group_name:passwd:GID:user_list
+
+	the field descriptions are:
+
+	group_name
+		the name of the group
+
+	password
+
+		the (encrypted) group password. if this field is empty, no password is needed.
+
+	GID
+		the numerical group ID.
+
+	user_list
+		all the group member's user names, separated by commas.
+
+
+/sbin/init 
+/usr/sbin/cron 
+/usr/bin/crontab
+

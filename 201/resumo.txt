@@ -14,6 +14,14 @@ zImage
 
 	Ambos o bzImage como o zImage sao comprimidos pelo gzip.
 
+	/lib/modules/<kernel version>
+
+	# depmod -a
+		generates a new dependencies list @ modules.dep
+
+		/lib/modules/<kernel-version>/modules.dep
+
+	/etc/modules.conf
 
 201.2 Compiling a kernel
 ========================
@@ -22,6 +30,11 @@ zImage
 GRUB configuration files
 Kernel 2.6.x make targets
 Kernel 3.x make targets
+
+
+/boot/initrd
+
+	initial ramdisk is a scheme for loading a temporary root file system into memory in the boot process of the linux kernel. initrd and initramfs refer to two different methods of archieving this. Both are commonly used to make preparations before the real root file system can be mounted.
 
 
 mkinitrd
@@ -88,6 +101,24 @@ make targets
 
 		install all of the modules into the specified location. if no location is specified with the INSTALL_MODULE_PATH environment variable, they are installed in the default root directory of the machine.
 
+	# make bzImage
+	# make modules
+	# make modules_install
+
+		(or # make all)
+
+GRUB configuration files
+
+	/boot/grub/menu.lst
+		title
+		root
+		kernel
+		initrd
+		safedefault
+		boot
+
+	# update-grub
+
 201.3 Patching a kernel
 =======================
 
@@ -125,6 +156,24 @@ module tools
 
 /boot/*
 
+	/boot/vmlinuz-<kernel-version>
+	/boot/initrd.img-<kernel-version>
+
+201.4
+=====
+
+patch
+make
+/usr/src/linux/*
+/usr/src/linux/.config
+/lib/modules/kernel-version/
+/boot/*
+
+	/proc/sys/kernel
+
+	/lib/modules/kernel-version/kernel
+	
+		where is all the kernel modules, organized by subdirectories.
 
 201.5 Manage/Query kernel and kernel modules at runtime
 =======================================================
@@ -364,6 +413,21 @@ GRUB
 
 grub shell
 
+/boot/grub/menu.lst
+	grub configuration file
+
+/boot/grub
+
+options
+	default=0
+		first to be listed
+	timeout=
+		timeout in seconds
+	splashimage=
+		image background	
+
+	e:
+		edit entry
 
 init
 
@@ -671,6 +735,7 @@ RAID 4 (0 + 1)
 RAID 5 (0 + 1)
 	checksum data is striped on all the disks in the array.
 
+
 mdadm.conf
 
 	configuration for management of software raid with mdadm
@@ -709,6 +774,8 @@ fdisk
 	partition table manipulator for linux
 
 	hard disks can be divided into one or more logical disks called partitions. this division is described in the partition table found in sector 0 of the disk.
+
+(/etc/raidtab)
 
 
 204.2 ajusting storage device access
@@ -766,7 +833,7 @@ tune2fs
 
 	if this option is used to create a journal on a mounted filesystem, an immutable, file .journal, will be created in the top-level directory of the filesystem, as it is the only safe way to create the journal inode while the filesystem is mounted. while the ext3 journal is invisible, it is not save to deleteit, or modify it while the filesystem is mounted; for this reason the file isimmutable. while checking unmounted filesystems, e2fsck will automatically move .journal files to the invisible, reserved journal inode. for all filesystems except for the root filesystem, this should happen automatically and naturally during the next reboot cycle. since the root filesystem is mounted read-only, e2fsck must be run from a rescue floppy in order to effect this transition.
 
-	-J <journal-options.
+	-J <journal-options>
 	override the default ext3 journal parameters. journal options are comma separeted, and maytake an argument using the equals sign. the following jornal options are supported:
 
 	size=<journal-size>
@@ -804,6 +871,7 @@ sysctl
 
 /dev/sd*
 
+
 204.3 logical volume manager
 ============================
 
@@ -822,6 +890,7 @@ resizing, renaming, creating, and removing logical volumes, volume groups and ph
 	Logical Volumes
 
 		as stated earlier, logical volumes are the ultimate goal of LVM. They're created and managed in volume groups much like you create and manage files in a filesystem. unlike partitions on a disk, logical volumes are created without reference to device sector numbers, and the LVM subsystem can create logical volumes than span multiple disks or that are discontiguous.
+
 
 /sbin/pv*
 
@@ -1086,6 +1155,11 @@ mount
 utilities to configure and manipulate ehternet network interfaces
 configuring wireless networks
 
+iwconfig
+	is similar to ifconfig, but is dedicated to the wireless interfaces. it is used to set the parameters of the network interface which are specific to the wireless operation (e.g., frequency). iwconfig may also be used to display those parameters, and the wireless statistics. (extracted from /proc/net/wireless)
+
+	all these parameters and statistics are device dependent. each driver will provide only some of them depending on hardware support, and the range of values may change. pelase refer to the man page of each device for details.
+
 205.1 advanced network configuration and troubleshooting
 ========================================================
 
@@ -1140,6 +1214,13 @@ openvpn
 
 
 /usr/sbing/tcpdump
+
+	tcpdump prints out a description of the contents of packets on a network interface that match the boolean expression. it can also be run with the -w flag, which uses it to save the packet data to a file for later analysis, and/or with the -r flag, which causes it to read from a saved packet file rather than to read packets from a network interface. it can also be run with the -V flag, which causes it to read a list of saved packet files. In all cases, only packets that match expression will be processed by tcpdump.
+
+	x packets captured
+	x packets received by filter
+	x print MAC addresses for protocols
+
 
 	-i <interface>
 	select an interface. when dumping the ARP cache only entries matching the specified interface will be printed. when setting a permanent or temp ARP entry this interface will be associated with the entry;
