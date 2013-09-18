@@ -1,0 +1,266 @@
+
+grub 2
+
+/boot/grub/grub.cfg
+	grub file configuration
+
+# grub-install /dev/<device>
+	as root para instalar o grub na particao selecionada
+
+press <E> to edit menu entry grub 2.
+
+# dmesg
+	in a conventional configuration, you'll see a series of messages, which you can later review with dmesg, relating to the kernel's detection of hardware and so on.
+
+<shift> + <page up>
+	to see messages on console
+
+check the kernel ring buffer
+
+	/var/log/dmesg
+	/var/log/boot.log
+
+# uname
+	check the kernel version number
+
+# lspci
+
+	-v
+		increases verbosity of output. this option may be doubled (-vv) or tripled (-vvv) to produce yet more output.
+	-n
+		displays information in numeric codes rather than translating the codes to manufacturer and device names
+
+	-nn
+		displays both the manufacturer and device names and their associated numeric codes
+
+	-x
+		displays the pci configuration space for each device as a hexadecimal dump. this is an extremely advanced option. tripling (-xxx) or quadrupling (-xxxx) this option displays information about more devices.
+
+	-b
+		shows IRQ numbers and other data as seen by devices rather than as seen by the kernel
+
+	-t
+		displays a tree view depicting the relationship between devices
+
+	-s 
+		displays only devices that match the listed specification.
+
+	-d
+		shows data on the specified device.
+
+	-i <file>
+		uses the specified file to map vendor and device ids to names. (the default is /usr/share/misc/pci.ids.)
+
+	-m
+		dumps data in a machine readable form, intended for use by script. a single -m uses a backward-compatible format, whereas doubling (-mm) uses a newer format
+
+	-D
+		displays pci domain numbers. these numbers normally aren't displayed.
+
+	-M
+		performs a scan in bus-mapping mode, which can reveal devices hidden behind a misconfigured pci bridge. this is an advanced option can be used only by root
+
+	--version
+		displays version infromation
+
+# lsusb
+
+	-v
+		increases verbosity of output
+
+	-t
+		displays a tree view depicting the relationship between  devices
+
+	-s
+		displays only devices that match the listed specification
+
+	-d
+		show data on the specified device
+
+	-D <device>
+		displays information on the specified device, which is a device file in the /dev directory tree
+
+	--version
+		display version information
+
+
+
+
+Topico 208
+	implementando um WebService
+
+	- access log and error log
+	- .htaccess
+	- httpd.conf
+	- mod_auth
+	- htpasswd
+	- htgroup
+	- apache2ctl
+	- httpd
+
+/etc/apache2/apache2.conf
+
+	a configuracao principal do apache2
+
+/etc/apache2
+
+	- mods-avalible
+	- mods_enable
+	- conf.d
+	- sites-available
+	- sites-enable
+
+	apache2.conf
+	ports.conf
+	httpd.conf
+	envvars
+
+	sites-available
+		configuracoes dos sites que estao hospedados no nosso servidor
+
+	sites-enable
+		link simbolicos aopntando para os arquivos contido em sites-available
+
+	mods-avaliable
+		modulos disponiveis, que sao ativados atraves da criacao de um arquivo de link simbolico em mods-enable.
+
+	conf.d
+		arquivos com configuracoes que serao carregadas pelo apache atraves de uma chamada no proprio apache2.conf.
+
+	ports.conf
+		e responsavel por informar ao apache as configuracoes de portas tcp que o servidor estara escutando.
+
+/etc/apache2/apache2.conf
+	Server Root
+		define o caminho onde ficarao armazenados os arquivos de configuracao do apache
+
+	PidFile
+		define o caminho onde ficara armazenado o arquivo que contem o PID do prcesso pai do apache
+
+	Timeout
+		o tempo maximo em segundos que o apache aguarda por resposta do cliente, caso o cliente pare de responder, ou de solicitar requisicoes.
+
+	KeepAlive
+		esta diretiva ativa/desativa (on/off) o uso de conexoes persistentes no Apache, ou seja, permite que diversas requisicoes sejam enviadas atraves da mesma conexao. essa opcao habilitada tera como quantidade as diretivas: KeepAliveTimeout e MaxKeepAliveRequests
+
+	MaxKeepAliveRequests
+		numero maximo de requisicoes que um usuario podera fazer utilizando a mesma conexao. para nao ter limites, utilize o valor 0
+
+	KeepAliveTimeout
+		valor maximo em segundos que o servidor aguarrdadara por uma nova requisicao do usuario antes de terminar a conexao
+
+	StartServers
+		a quantidade de processos filhos inicializados juntamente com o processo inicial
+
+	MiniSpareServers
+		esta diretiva informa o numero minimo de processos filhos ociosos no servidor aguardando conexao. Caso a quantidade atual seja menor que a configurada, o servidor inicializara os processos a uma taxa de 1 por segundo ate alcancar o minimo
+
+	MaxSpareServers
+		esta diretiva infora a quantidade maxima de processos ociosos em execucao no servidor. caso ultrapasse o valor informado, processos serao finalizados ate alcancar tal valor.
+
+	MaxClients
+		quantidade maxima de conexoes simultaneas
+
+	MaxRequestsPerChild
+		esta diretiva informa a quantidade de requisicoes que um processo filho podera server antes que seja finalizado. o valor zero define que nao ha limites
+
+	MaxSpareThreads
+		esta diretiva especifica o numero minimo de threads ociosas aguardando requisicoes
+
+	MinSpareThreads
+		esta diretiva especifica o numero maximo de threads ociosas aguardando conexoes.
+
+
+<IfModule mpm_prefork_module>
+	quando recebe a solicitacao de uma conexao, cria um prcesso de controle para que outros processos tratem isoladatamente cada conexao. isso garante um bom desempenho ate alcancar o valor maximo definido em MaxClients. Quando isso acontecer, as proximas conexoes  terao de aguardar. porem, de uma forma interessante, cada conexao e tratada isoladamente.
+
+
+	User
+		usuario utilizado para executar o servidor		
+
+	Group
+		grupo utilizado para executar o servidor
+
+	AccessFileName
+		informa ao apache qual arquivo contem configuracoes sobre as diretivas de acesso (veremos este item isoladamente)
+
+	HostnameLookups
+		nesta configuracao o apache faz resolucao de nomes por origem, especificando o nome do cliente atraves da resolucao DNS. obviamente o tempo de resposta aumentara muito e possivelmente causara problemas na performance no mesmo
+
+	Errorlog
+		especifica o local do arquivo de log onde serao gravadas as mensagens de erro. Veremos tambem os logs isoladamente
+
+	LogLevel
+		esta opcao define qual o nivel de log para mensagens de erro geradas pelo apache
+
+	Include
+		temos algumas entradas com include, que inluirao a leitura dos arquivos especificados nesta opcao. por exemplo, temos httpd.conf, ports.conf, onde os diretorios /etc/apache2/conf.d e /etc/apache2/sites-enabled, entre outros, inclusive os modulos, sao carregados atraves de um include como este apontando para os arquivos mods-enagle
+
+	CustomLog
+		a opcao CustomLog permite especificar onde os logs personalizados atraves da opcao LogFormat: serao gravados. Devemos informar o caminho do log e depois o nome do LogFormat.
+
+	LogFormat
+		esta opcao especifica como os logs serao formatados para serem usados pelo CustomLog ou TransferLog.
+
+
+<VirtualHost: *:80>
+	
+	Serveradmin
+		informa quem e o responsavel pelo dominio. em caso de erros nas paginas, sera informado este endereco para que os clientes possam entrar em contato com o administrador
+
+	DocumentRoot
+		e uma das mais importantes. essa opcao especifica o local onde as paginas web deste dominio estao localizadas.
+
+	<Directory>
+	
+		AllowOverride
+			esta diretiva e mais relacionada a seguranca e autenticao. ela informa opcoes a respeito desses assuntos. normalmente esta relacioinada ao arquivo .htaccess (informando na diretiva AccessFileName)		
+			none
+				o arquivo .htaccess (por padrao nao sera lido)
+
+			Authconfig
+				habilita o uso de diretivas de autorizacao atraves do arquivo .htaccess. diretivas como: AuthType, AuthUserFile, AuthGroupFile, entre outras
+
+			FileInfo
+				habilita o uso de diretivas de controle de tipos de documentos. em suma, altera ou seta opcoes como lingagem, Mime-type, entre outras. diretivas utilizadas: AddType, AddLanguage, DefaultType.
+
+			Indexes
+				habilita o uso de diretivas para controlar a indexacao de diretorios. por exemplo, especifica quais as icones utilizados por padrao, quais os arquivsoque serao abertos por padrao (index.html, index.php, default.html), entre outros. diretivas como: DirectoryIndexes, DefaultIcon.
+
+			Options
+				permite o uso de diretivas para controlar caracteristicas especificas em diretorios. por exemplo, FollowSymLinks, ExecCGI, Indexes. Podemos utilizar o sinal de + para adicionar uma nova opcao ou - para retirar uma opcao que foi herdada por um diretorio de nivel mais alto.
+
+			Order
+				controla como o apache avalia tanto a diretiva de permitir como negar. ordem que for colocada podera influenciar no acesso
+
+			Allow
+				habilita a definicao de uma lista de hosts que poderao ter acesso a um diretorio. quanto mais de um host e especificado, eles devem ser separados por espacos.
+
+			Deny
+				habilita a definicao de uma lista de hosts que nao poderao ter acesso a um diretorio. quando mais de um host e especificado, eles devem ser separados por espacos.
+
+		Exemplo:
+		
+		ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+			<Directory "/usr/lib/cgi-bin">
+				AllowOverride None
+				Options +ExecCGI -MultiViews +SymLinksIf()
+				Order allow, deny
+				Allow from all
+			</Directory>
+
+			ErrorLog /var/log/apache2/error.log
+			LogLevel warn
+
+		diretivas Allow e Deny:
+		
+			<Directory /var/www/financeiro>
+				Options Indexes FollowSymLinks MultiViews
+				AllowOverride None
+				Order allow, deny
+				allow from 192.168.10.0/24
+					deny from all
+			</Directory>
+
+				
+

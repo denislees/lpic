@@ -414,6 +414,33 @@ acl
 
 	access control lists
 
+	every access list definition must begin with an aclname and acltype, followed by either type-specific arguments or a quoted filename that they are read from.
+
+		acl aclname acltype argument ...
+		acl aclname acltype "file" ...
+
+	when using "file", the file should contain one item per line
+
+	ACL types available
+
+	acl aclname src ip-address/mask ...
+	acl aclname src addr1-addr2/mask ...
+	acl aclname dst [-n] ip-address/mask ...
+	acl aclname localip ip-address/mask ...
+
+	acl aclname arp mac-address ...
+		requires the special configure option --enable-arp-acl
+
+	acl aclname srcdomain .foo.com ...
+		reverse lookup from client ip
+
+	acl aclname dstdomain [-n] .foo.com
+		destination server from url
+
+	acl aclname srcdom_regex [-i] \.foo\.com ...
+	acl aclname dstdom_regex [-n] [-i] \.foo\.com ...
+
+	http://www.squid-cache.org/Doc/config/acl/
 
 http_access
 
@@ -1088,6 +1115,7 @@ Topic 211: E-Mail Services
 ==========================
 
 Weight: 3
+
 Description: Candidates should be able to manage an e-mail server, including the configuration of e-mail aliases, e-mail quotas and virtual e-mail domains. This objective includes configuring internal e-mail relays and monitoring e-mail servers.
 Key Knowledge Areas
 
