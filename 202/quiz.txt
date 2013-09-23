@@ -1,0 +1,388 @@
+quiz
+
+- default proxy port 3128
+
+Enter a line for the squid.cfg file which would all access for the access control list "internal"
+	R: http_access allow internal
+
+Which of the following is not one of the PAM module-types.
+	R: login
+
+What is the name of the command used to generate the ssh keys for the openssh server?
+	R: ssh-keygen
+
+By default what tcp port is used by the squid proxy server?
+	R: 3128
+
+Which of the following allow you to edit the cron jobs for the current user?
+	R: crontab -e
+
+What is the file used for logging boot messages?
+	R: /var/log/dmesg
+
+What is the name of the command normally used to control the Apache web server and can also query the status?
+Enter the command name only.
+	R: apachectl
+
+Using vsftpd (and some other ftp servers) what is the option in the configuration file to allow anonymous ftp? Include the parameter and value.
+	R: anonymous_enable=yes
+
+After the operating system is up and running, what command can be used to view errors that occurred during the bootup?
+	R: dmesg
+
+What command is used to reinstall grub into the MBR (assuming that is what is configured)
+	R: grub-install
+
+What command can be used to view all the entries in the arp cache? Enter the command only with options (do not include the path).
+	R: arp -a
+
+Using NFS what file is used to define the filesystems that can be exported? Provide the full path and filename.
+	R: /etc/exports
+
+What command can be used to see the MAC addresses to IP address information that your machine knows about on your local lan?
+	R: arp	
+
+What parameter and value is used to allow ssh logins as root to the openssh server, as long as the user enters the password?
+	R: PermitRootLogin yes
+
+What is the name of the file used to hold the DHCP lease on a DHCP Server? Enter the filename, without any path.
+	R: dhcpd.leases
+
+When configuring a DHCP server what is the option used to ensure a certain machine is always given the same address?
+	R: fixed-address
+
+Enter a line for the squid.conf file which would create an access control list called "internal" for the IP network range 192.168.1.0 with a network mask of 255.255.255.0. This is to be used as a source address range.
+	R: acl internal src 192.168.1.0/24
+
+Which of the following programs is required for a computer to act as a DHCP client?
+	R: dhclient
+
+Which of the following are tools able to query an LDAP database. Select 3 answers.
+	R: ldapsearch
+		slapcat
+		slurpd
+
+Which of the following is an option in the /etc/exports file which will allow root to connect to the share with full root permissions?
+	R: no_root_squash
+
+What is the name of the file used to hold the DHCP lease on a client machine? Enter the filename, without any path.
+	R: dhclient.leases
+
+What format is used for the sendmail /etc/aliases file? Select the most appropriate answer.
+	R: alias: user
+
+Write an entry for dhcpd.conf to give the dns server 192.168.1.2 and 192.168.3.3.
+	R: option domain-name-servers 192.168.1.2, 192.168.3.3;
+
+What parameter in the squid configuration file will prevent objects over a specified size from being cached?
+	R: maximum_object_size
+
+Using ssh protocol 2 with a dsa key, what is the default name and path for the private key. The $HOME/ part is already included.
+	R: $HOME/.ssh/id_dsa
+
+What is the default name and path for the file which stores ssh public keys to allow a client to login using public private key authentication. The $HOME/ part is already included.
+	R: $HOME/.ssh/authorized_keys
+		$HOME/.ssh/authorized_keys2
+
+What is the name of the file used to configure the openssh server?
+	R: /etc/ssh/sshd_config
+
+You need to use tcpwrappers so that address 192.168.1.7 can access all the services. What entry should you put in the /etc/hosts.allow file to enable this?
+	R: ALL: 192.168.1.7
+
+Write an entry for dhcpd.conf to give the dns server 192.168.1.2 and 192.168.3.3.
+	R: option domain-name-servers 192.168.1.2, 192.168.3.3;
+
+Which of the following will test that test.txt is a regular file?
+	R: test -f test.txt
+
+Which of the following daemons is not normally involved in NFS?
+	R: rpc.tcpd
+
+What protocol(s) are supported by TCP wrappers?
+	R: tcp and udp
+
+Which of the following is a command to see what clients have mounted partitions off the local server using nfs?
+	R: showmount
+
+What is the name of the daemon used to interface tcp/ip connections to the appropriate RPC calls? Just provide the named of the daemon, no options or path information.
+	R: portmap or portmapper
+
+What port is normally used by POP3 (PostOffice Protocol Version 3)?
+	R: 110
+
+What is the command that can be used to test the smb.conf file? Just enter the command name, no path.
+	R: testparm
+
+What command in a script would print on the screen the first variable past to that script?
+	R: /usr/bin/echo $1
+
+What parameter and value is used to allow port forwarding (tunnelling) to an ssh server? Include the parameter and value.
+	R: AllowTcpForwarding=yes
+
+---------------------------------
+208: WebService (apache)
+
+1. Voce esta tentando deixar o apache seguro apos ter sucesso em configura-lo e executa-lo em um ambiente chroot. voce esta tentando executa-lo como um usuario nao root, e verifica que o servidor httpd nao inicia. qual a causa mais provavel?
+	(a) o apache precisa iniciar como root para usar a porta 80
+
+2. seu website esta exibindo um grande numero de arquvios nao encontrados no log, como erros 404. voce quer selecionar tais visitantes e envia-los para um arquivo especifico. a diretiva do apache que devera ser usada e:
+	(d) ErrorDocument
+
+3. qual o nome da ferramenta do apache para criacao e manutencao de arquivos de autenticacao de usuarios?
+	(?) htpasswd
+
+4. quais das seguintes diretivas instruem o apache a responder requisicoes na porta 8080 (selecione duas).
+	(b) Port 8080
+	(d) Listen 8080
+
+5. voce esta executando um dns e um http server. voce ve mensagens reclamando que o apache nao consegue resolver qualquer entrada de virtual host quando o sistema e iniciado. o que pode estar causando isso?
+	(a) a rede ainda nao esta configurada, entao o apache nao e capaz de verificar o DNS
+
+6. visando evitar a paralisacao desnecessaria do apache apos a alteracao do arquivo de configuracao, como podemos proceder para verificar a sintaxe deste arquivo?
+	OK (e) apachectl configtest
+
+7. quais das diretivas a seguir permitem ao apache usar um arquivo de configuracao externo passado pela diretiva AccessFileName?
+	OK (e) AllowOverride
+
+8. escreva a diretiva de configuracao do apache que define onde os arquivos de log de erros serao armazenados.
+	X (?) 
+	ErrorLog
+
+9. qual arquivo de sistema, e visualizado pelo cliente, quando acessar, por exemplo http://servidor/joao/index.html e a diretiva noservidor "UserDire site/html"
+	/home/joao/site/html/index.html	
+
+10. qual diretiva do apache e usada para configurar o diretorio principal das paginas?
+	OK (e) DocumentRoot
+
+11. quando o apache e configurado para usar nomes baseados em VirtualHosts:
+	X (a)
+	(d) e tambem necessario criar um bloco de configuracoes para Virtual Host
+
+12. existe uma area restrita no site apache que exige que os usuarios sejam autenticados a partir de um arquivo em /srv/www/security/site-passwd. qual comando e usando para alterar a senha de usuarios existentes, sem que ocorram perdas de dados, quando a autenticacao basica esta sendo usada?
+	X (?)
+	(b) htpasswd -m /srv/www/security/site-passwd user
+
+13. qual das afirmacoes sobre as diretivas Alias e Redirect no arquivo de configuracao do Apache sao verdadeiras?
+	x (?)
+	(a) redirect e tratado do lado do cliente
+	(b) alias e tratado do lado do servidor 
+
+14. baseando-se no arquivo /srv/www/default/html/restricted/.htaccess e considerando que o DocumentRoot esta configurado em /srv/www/default/html, quais duas opcoes sao verdadeiras?
+	AuthType Basic
+	AuthUserFile /srv/www/security/site-passwd
+	AuthName Restricted
+	Require valid-user
+	Order allow, deny
+	Deny from all
+	Allow From 10.1.2.0/24
+	Satisfy Any
+	x(a) e (c)
+	(b) esta configuracao somente ira funcioanr se o diretorio /srv/www/default/restricted estiver configurado com AllowOverride AuthConfig Limit 
+	(d) usuarios conectados da rede 10.1.2.0/24 nao necessitarao autenticar para acessar http://server/restricted 
+
+15. quais das seguintes linhas no arquivo de configuracao do apache permitem apenas clientes com certificados?
+	x(?)
+	(e) SSLVerifyClient Required 
+
+16. Verifique as linhas a seguir.
+	Serveradmin admin9@server.example.org
+	DocumentRoot /home/http/admin
+	ServerName admin.server.example.org
+	DirectoryIndex index.php default.php
+	ErrorLog logs/admin.server.example.org.erro_log
+	CustomLog logs/admin.server.example.org.access_log common
+	x (b)	
+	(e) nenhuma. todas as opcoes sao validas
+
+17. usuarios de um recem instalado servidor de proxy cache squid estao reclamando que apos acessar um determinado site que solicita o nome de usuario e senha individuais, o sistema do site retorna erro para outros usuarios conectados. porem, quando o proxy e desativado do browser, tudo funciona perfeitamente. qual a causa mais provavel desse problema?
+	OK (d) o cache do proxy nao esta atualizando e devera ser apagado
+
+18. ao se configurar um proxy server squid, qual seria a razao para limitar o valor de entrada com reply_body_max_size?
+	x (b)
+	(d) prevenir usuarios de fazer downloads de arquivos acima de um determinado tamanho
+
+19. a lista a seguir e uma entrada do arquivo de configuracao do Squid:
+
+	acl all src 0.0.0.0/0.0.0.0
+	acl manager proto cache_object
+	acl localhost src 127.0.0.1/255.255.255.255
+	acl to_localhost dst 127.0.0.0/8
+	acl SSL_ports port 443
+	acl safe_ports port 80 443 1025-65535
+	acl CONNECT method CONNECT
+	acl localnet src 10.0.0.0/24
+
+	http_access allow manager localhost
+	http_access deny manager
+	http_access !Safe_ports
+	http_access deny CONNECT !Safe_ports
+	http_access allow localnet
+
+	quais das opcoes sao verdadeiras?
+	x(b) e (d)
+	(d) este proxy nao pode ser usado para acessar servidores FTP na porta padrao.
+
+20. um gateway de internet conecta clientes na internet usando um proxy squid. somente clientes da rede 192.168.1.0/24 deveriam estar habilitados a usar o proxy. quais das seguintes opcoes de configuracao esta correta?
+	OK (b) acl local src 192.168.1.0/24 http_access allow local
+
+21. qual diretiva de configuracao do squid permite usar um metodo de autenticacao?
+	x (b)
+	(a) auth_param
+
+22. qual das opcoes e remendada para reduzir o consumo de recursos em disco pelo squid?
+	x (b)
+	(d) desabilitar nomes qualidades (FQDN) nos logs
+
+23. no arquivo /var/squid/url_blacklist contem uma lita de URLS nao permitidas para os usuarios. qual a entrada correta do arquivo de configuracao do squid para a criacao de uma acl chamada blacklist baseada neste arquivo?
+	x (c)
+	(d) acl blacklist urlpath_regex "/var/squid/url_blacklist"
+
+24. qual tipo de acl no arquivo de configuracao do squid e usado com o proposito de autenticacao?
+	OK (b) proxy_auth
+
+25. qual das seguintes opcoes, quando configurada no squid, NAO e uma acl valida
+	x (d)
+	(b) source
+
+26. um servidor web esta lidando com aproximadamente 200 conexoes simultaneas em uso normal, mas quando ocorre um pico de atividade, o desempenho dele cai tornando-o lento. qual das diretivas no arquivo de configuracao precisa ser ajustada?
+	x (a)
+	(b) minSpareServers, MaxSapreServers, StartServers & MaxClients
+
+27. uma acl chamda sales_net precisa permitir acesso a internet em horarios especificados em uma para uma acl chamada sales_time. qual das opcoes esta correta?
+	OK (b) http_access allow sales_net sales_time
+
+28. digite o comando completo de criacao de um novo arquivo de senhas para autenticacao basica http (/home/http/web_passwd) para o usuario john
+	x?
+	htpasswd -c /home/http/web_passwd john
+
+29. considerando o texto em uma configuracao no httpd.conf, selecione as respostas corretas
+	<Limit>
+		AllowOverride Authconfig Indexes
+	</Limit>
+
+	x(d)
+	(e) O trecho esta incorreto, porque Allow override nao pode ser usado em uma secao Location
+
+30. usuarios do seu website reclamam que em horario de pico, eles so conectam em seu servidor com extrema dificuldade e recebem erros de tempo esgotado. voce verificou no sistema que a carga minima, que existe memoria suficiente e que a banda esta disponivel. nao ha problemas de hardware e ainda nao existem erros logados. qual e a causa mais provavel para o problema?
+	x(d)
+	(e) O valor de "StartServers" e muito baixo
+
+
+---------------------------------------------------
+
+Topico 209
+
+1. qaul dos seguintes parametros no arquivo smb.conf especifica um relacionamento entre usuarios Windows/SMB e usuarios Linux/Unix?
+	OK (b) username map = /etc/smbusers
+
+2. para que alteracoes feitas no arquivo de configuracao smb.conf de um Samba primario tenham efeito, o que e necessario fazer?
+	OK (a) reiniciar os processos smbd e nmbd
+
+3. para permitir que mais de um usuario de clieten complartilhe uma conta no servidor samba, quais das seguintes diretivas de configuracoes podem ser usadas?
+	x(a)
+	(e) username map
+
+4. um usuario solicitou um compartilhamento oculto denominado confidential, similar ao compartilhamento administrativo do windows. como isso pode ser configurado?
+	x(c)
+	(e) [ confidential$ ]
+	comment = hidden share
+	path = /srv/smb/hidden
+	write list = user
+	create mask = 0700
+	directory mask = 0700
+
+5. como o samba deve ser configurado para que possa verificar as senhas nos arquivos /etc/passwd e /etc/shadow?
+	OK (d) nao e possivel para o samba usar /etc/passwd e /etc/shadow
+
+6. o parametro do path nao esta configurado para um compartilhamento no smb.conf, o compartilhamento ira fazer referencia para qual dos seguintes diretorios?
+	x(b)
+	(c) /.samba
+
+7. qual das seguintes opcoes e usada no arquivo de configuracao do samba para definir quais arquivos e diretorios sao visiveis e acessiveis para o usuario?
+	x(e)
+	(b) veto files
+
+8. o arquivo de confiugracao do samba esta usando o parametro 'read only = Yes'. quais das opcoes sao equivalentes?
+	x(e)
+	(c) writable = no
+
+9. qual comando pode ser usado para checar o arquivo de configuracao do samba?
+	OK (e) testparm
+
+10. qual das seguintes opcoes e necessaria para sincronizar a senha do linux com as senhas do samba, quando as senhas encriptografadas do samba no arquivo smbpasswd forem alteradas?
+	x(e)
+	(d) adicionar unix password sync = Yes no smb.conf
+
+11. um novo servidor de arquivos e membro de um dominio windows chamado foo. quais as duas opcoes de configuracoes irao permitir que membros grupo all do dominio possam ler, escrever e executar arquivos em /srv/smb/data?
+	(b) [ data ]
+	comment = data share
+	path = /srv/smb/data
+	write list = @foo+all
+	force group = @foo+all
+	create mask = 0770
+	directory mask = 0770
+
+	(c) [ data ]
+	path = /.srv/smb/data
+	write list = @foo+all
+	force group = @foo+all
+	create mask = 0770
+	directory mask = 0770
+
+12. qual parametro no arquivo smb.conf pode fazer um compartilhamento ser oculto?
+	browsable ou $
+
+13. por padrao, qual arquivo o samba usara para armazenar as senhas dos usuarios (coloque apenas o nome do arquivo, sem o caminho)?
+	smbpasswd
+
+14. como voce pode procurar todas as opcoes que nao foram usadas no smb.conf e estao habilitadas por padrao?
+	testparm -v
+
+15. voce quer verificar como os compartilhamentos estao configurados para o sistemas windows. qual dos seguintes comandos poderia ser usado para realizar esta tarefa?
+	x(a)
+	(c) smbclient
+
+16. voce quer montar em /data um sistema de arquivos de um servidor nfs (srv21) que nao tem suporte a locking. qual das seguintes opceos deveria ser usada?
+	OK (d)
+
+17. para listar os sistemas de arquivos disponiveis em um servidor nfs chamado 'castor', o comando _______ -e castor pode ser usado
+	showmount
+
+18. quais dos seguintes daemons sao necessarios para executar um servidor nfs?
+	(a) Portmap
+	(c) nfsd
+	(e) mountd
+
+19. voce adicionou um novo sistema de arquivos em /etc/eexports, mas os usuarios estao reclamando que eles ainda estao recebendo a mensagem de "permissao negada" quando eles tetam montar o novo sistema de arquivos. qual das seguintes opcoes e a melhor solucao para esse problema?
+	x(e)
+	(d) executar o comando export -nfs
+
+20. voce precisa configurar um servidor NFS. mas e necessario bloquear tudo, menos o acesso ao NFS. qual das seguintes acoes deveria ser feita para alcancar isso?
+	x(b)
+	(d) colocar "ALL:ALL" no arquivo hosts.denyu e "portmap:ALL" no arquivo hosts.allow.
+
+21. quais das seguinte slinhas de configuracao irao exportar /usr/local/share para nfsclients como leitura e escrita, garantindo que todas as alteracoes sejam gravadas diretamente no disco?
+	OK (d) /src/local/share nfsclient(rw)
+
+22. em um servidor NFS, os daemons portmap, nfsd e ______ precisam estar em execucao
+	mountd
+
+23. como e possivel habilitar atenticao kerberos com nfs?
+	x(e)
+	(a) sec-krb5
+
+24. voce alterou alguns sistema de arquivos no servidor NFS, mas os usuarios ainda nao conseguem acessar os arquivos. o que deve ser feito para resolver esse problema? voce tera que escolher 2 (duas) opcoes.
+	(b) exportfs -a
+	(e) Reiniciar o daemon NFS 
+
+25. voce quer exportar um sistema de rquivo local em /data, e permitir acesso de leitura e escrito para todos os usuarios no hostA. alem disso, a conta do root deve ter acesso ate o nivel raiz. todos os outros hosts deverao ter acesso de apenas leitura. qual das seguintes opcoes no /etc/exports devera ser usada?
+	(a) /data hostA(rw, no_root_squash) (ro)
+
+26. quais as duas opcoes abaixo sao opcoes validas , em um arquivo /etc/exports?
+	(a) rw
+	(b) ro
+
+--------------------------------------------------------------
+
+Topico 210

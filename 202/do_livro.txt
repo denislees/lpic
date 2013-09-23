@@ -262,5 +262,379 @@ Topico 208
 					deny from all
 			</Directory>
 
-				
+		para permitir apenas o ip 192.168.10.15
 
+		/var/www/financeiro/.htaccess
+
+		Order allow, deny
+			allow from 192.168.10.15
+				deny from all
+
+
+	AllowOverride AuthConfig
+		permite que se utilize o arquivo .htaccess
+
+
+	Ativar a autenticacao
+		AuthType Basic
+		AuthName "Acesso Restrito"
+		AuthUserfile /etc/apache/passwd
+		Require valid-user
+
+
+	mod-avaliable
+		a2enmod auth_digest
+
+
+
+============================================================
+
+208.3 Implmentando um servidor proxy
+
+
+/etc/squid/squid.conf
+	arquivo de configuracao para o squid.
+
+3128
+	squid port
+
+http_port 3128 transparent
+	configurando o iptables para ir para essa porta
+
+http_port 192.168.0.1:3128 transparent
+	tambem e possivel setar o ip para isso tambem
+
+# squid -z
+	recria o cache do squid
+
+ACL -> Access Control List
+
+acl sites dstdomain .dominio.com.br
+
+	src
+		utilizado para filtrar endereco ip de origem ou do cliente
+	dst
+		utilizado para filtrar endereco de destino
+	dstdomain
+		utilizado para filtrar dominio de destino
+	time
+		utilizado para filtrar horarios e dias da semana
+	url_regex
+		utilizado para filtrar expressoes regulares dentro de uma url
+	proxy_auth
+		utilizado para filtrar usuarios autenticados
+
+http_access allow/deny acl1 acl2 !acl3
+
+-------------------------------------------------------------
+209: compartilhamento de Arquivos
+
+/etc/samba/smb.conf
+	arquivo de configuracao do samba
+
+# useradd -m joao
+	adiciona usuario no sistema do linux
+# gpasswd -a joao contabilidade
+	adiciona o usuario no grupo de contabilidade
+# smbpasswd -a joao
+	adiciona o usuario na base do Samba
+
+# smbpasswd
+	-a
+		adiciona um novo usuario
+	-x
+		remove um usuario
+	-m
+		adiciona uma conta de computador
+	-d
+		desabilita um usuario
+	-e
+		habilita um usuario
+
+# pbdedit
+	-a
+		adiciona um usuario
+	-L
+		alista os usuarios cadastrados
+	-r
+		modifica opcoes do usuario
+	-x
+		deleta usuario
+	-m
+		adiciona uma conta de computador
+	-v
+		lista no modo detalhado
+
+nmdb
+	responsavel pelo servico de resolucao de nomes
+
+smbd
+	e o compartilhament, inclusive com suas autenticacoes, se for o caso
+
+# /etc/init.d/samba restart
+	comando para reinciar o servidor samba
+
+# smbcontrol smbd reload
+# smbcontrol nmbd reload
+	 recarregar o arquivo de configuracao
+
+# testparm
+	verifica a sintaxe do smb.conf
+
+# smbclient -L servidor
+# smbclient //Servidor/publico -u usuario
+	e utilizado para visualizar os compartilhamentos, bem como acessar compartilhamentos sem a necessidade de montar o volume.		
+	
+# nmblookup Servidor2
+	procura pelo servidor2
+
+# nmblookup -M DOMINIO 
+	procura pelo master browser
+
+rpc.nfsd
+	e o servico que implementa o servico de NFS a nivel de usuario, utilizando o proprio modulo do kernel nfsd.ko
+
+rpc.lockd
+	inicia o aplicativo que gerencia o bloqueio (NLM) no kernel. normalmente o proprio kerenlpossui este recurso, sendo que ele nao e tao necessario, mas ainda usual
+
+rpc.statd
+	este programa implementa o servico de NSM (network status monitor) para o protocolo RPC. o proprio NSM implementa um servico de notificacao de reinicializacao usado pelo rpc.lockd para recuperar o bloqueio quando houver falhas no NFS;
+
+rpc.mountd
+	implementa o protocolo de montagem do NFS quando recebe uma nolicitacao de montagem
+
+rpc.quota
+	implementa o uso de quota atraves do NFS
+
+/etc/exports
+	secure
+		exige que as requisicoes se originem em porta menores que a 1024
+	insecure
+		esta flag reverte a anterior, ou seja, aceitara requisicoes em porta acima de 1024
+	ro
+		especifica que o compartilhamento exportado seja montado somente como leitura
+	rw
+		esta opcao permite a montagem como leitura e escrita
+	no_root_squash
+		permite a montagem do sistema como o mapeamento do uid/gid 0
+
+	root_squash
+		mapeia todas as requisicoes do uid/gid 0 para usuario e grupo anonimo
+
+	all_squash
+		mapeia todos os usuarios para o usuario anonimo
+	link_relative
+		converte links absolutos em links relativos. todos aqueles cominhos comecados com / (barra) serao alterados para caminhos relativos ../., em relacao ao compartilhamento via nfs
+
+	link_absolute
+		esta opcao mantem os links simbolicos
+
+	map_identity
+		mapeia o UID dos clientes para os UID do servdor, opcao default do NFS
+
+	map_daemon
+		esta opcao informa ao servido que os clientes e o servidor nao compartilham o mesmo uid/gid, de forma que o servidor iera construir uma lista de identificacao para os clientes atraves de uma consulta ao daemon rpc.ugidd
+
+	anouid e anongid
+		esta opcao permite especificar o UID/GID para o usuario anonimo
+
+	subtree_check
+		esta opcao verifica a cada requisicao de um arquivo do cliente, se tal arquivo esta exportado em um diretorio
+
+	no_subtree_check
+		nesta opcao sera verificado se o arquivo e exportado no file-system, diferente da anterior no subdiretorio. esta opcao sera mais bem usada para aumento de velocidade. apesar disso, em locais publicos e melhor utilizar o esquema subtre_check, por exemplo, quando o arquivo e renomeado ou quando o mesmo esta sendo utilizado por outro usuario. o subtree_check nao permitiria
+
+
+# rpcinfo -p
+	esse comando traz informacoes sobre as portas utilizadas pelos programas RPC. no caso de verificacao em host remoto, basta adicionar o nome do host a frente, ou endereco IP
+
+	e possivel ainda verificar um servico especifico como nfs, mountd, etc. ele trara informacoes sobre quais sao os programas rpc rodando, quais versoes e se os mesmos estao funcinando.
+
+------------------------------------------
+
+Topico 210
+
+
+# arp
+	-a
+		lista todas as entradas existentes
+	-d
+		apaga uma entrada especifica
+	-s
+		e utilizada para definir uma nova entrada
+
+/etc/dhcpd.conf
+	arquivo de configuracao do servidor dhcpd
+
+default-lease-time
+	valor do tempo em segundos que o servidor concede ao cliente para ficar no endereco ip
+
+max-lease-time
+	o valor maximo que o servidor ermitira, em termos de tempo, para uma solicitacao de um cliente.
+
+log-facility
+	refere-se as facilidades que uso do dhcp para envio de logs. as facilidades sao os tipos, por exemplo, kern para kernel, cron para cronrab
+
+BOOTP (boot-strap)
+
+filename
+	informa ao cliente qual arquivo devera ser carregado
+
+next-server
+	informa ao cliente qual o servidor TFTP que possui os arquivos.
+
+
+/var/lib/dhcp3/dhcpd.leases
+	armazena tanto os leases dos clientes como seus respectivos mac addresses, informacoes sobre tempo de leases, max-time, entre outros dados.
+
+
+/var/lib/dhcp3/dhclient.leases
+	arquivo que traz as informacoes que foram obtidas no servidor como endereco ip, mascara, gateway, tempo de lease etc
+
+/var/log/daemon.log
+	informacoes sobre o que esta ocorrendo no servidor, sejam informacoes sobre leases para clientes ou erros de sintaxe, ajudando nas correcoes no arquivo de configuracao
+
+
+PAM (pluggable authentication modules)
+
+/etc/pam.d
+
+/etc/pam.conf
+	arquvivo de configuracao do pam
+
+/lib/security
+	modulos estao localizados
+
+auth
+	e utilizado para autenticar usuarios, configurar e cancelar credenciais
+account
+	executa acoes que tem relacao com o acesso, com a expiracao da conta, com restricoes e regras de senha
+
+session
+	utilizado para iniciar e finalizar uma sessao
+
+passwd
+	executa acoes especificas para quando ocorrerem alteracoes e atualizacoes de senha
+
+alguns modulos
+		
+pam_unix
+	fornece autenticacao de senha no metodo tradicional de /etc/passwd
+
+pam_cracklib
+	verifica a senha em relacao as regras para senhas
+
+pam_limits
+	configura o limite de recursos que podem ser obtidos em uma sessao
+
+pam_listfile
+	este modulo implementa uma forma de liberara ou negar acesso a um aplicativo atraves de arquivo contendo a relacao de usuarios
+
+pam_deny
+	bloqueia acesso. ele negara acesso a outros modulos
+
+pam_debug
+	usado para depurar o pam
+
+pam_echo
+	exibe mensagens
+
+pam_exec
+	executa um comando externo
+
+pam_ftp
+	modulo utilizado para acesso anonimo via FTP
+
+pam_localuser
+	requer que o usuario seja listado em /etc/passwd
+
+pam_access
+	e utilizado principalmente para o gerenciamento de acesso
+
+pam_env
+	permite a criacao ou remocao de variaveis de ambiente
+
+pam_time
+	controla os horarios de logons
+
+etc/pam.conf
+	sintaxe
+		servico <tipo> <controle> <modulo> <argumentos>	
+
+	<tipo>
+		requisite
+			o resultado do modulo deve ser bem sucedido para que a autenticacao continue. o usuario e informado imediatamente da famalha de autenticacao
+
+		required
+			o resulttado do modulo deve ser bem sucedido para que a autenticacao continue. o usuario nao e inmformado, ate que todos os testes de todos os modulos que facam referencia aquela  interface estejam completos
+
+		sufficient
+			o resultado do modulo e ignorado em caso de falha. entretando, se o resultado de um modulo sinalizado como suficiente e de sucesso, e nenhum modulo previamente sinalizado como required falhou, entao nenhum outro resultado e necessario e o usuario e autenticado ao servido
+
+		optional
+			o resultado do modulo e ignorado . um modulo sinalizado como optional tonra-se necessario a autentaicao bem sucedido apenas quando nenhum outro modulo faz referencia a interface
+
+
+pam_unix.so
+	nullok
+		permite senhas em branco
+
+	try_first_pass
+		esta opcao informa ao pam_unix que ele deve usar uma senha ja utilizada anteriormente antes de peedir uma nova senha. por exemplo, se houver uma linha referente a logons do ldap, ele tentara utilizar a mesma senha tanto para o sistema anterior como para o prooprio pam_unix
+
+	use_first_pass
+		este item forca o modulo a usar a senha informada no modulo anterior e nunca perguntar uma nova senha para o usuario.
+
+
+pam_unix.so
+
+	obscure
+
+		palindrome
+			verifica se a senha nao e o reverso da anterior
+
+		case change only
+			checa se a senha nao e a mesma que a anterior, verificando apenas altercacoes entre letras maiusculas e minusculas
+
+		similar
+			ver8ifica se a senha nao e parecida com a anterior
+
+		simple
+			verifica se a senha nao e muito simples em relacao ao tamanho e caracteres especificados.
+
+		rotated
+			verifica se a senha nao e uma versao rotacionada da antiga, por exemplo, loja e olja
+
+	md5
+		criptografa a senha do usuario utilizando o algoritmo md5
+
+pam_cracklib
+
+	normalmente e utilizado para gerenciamento de senhas, verificando senhas fracas, impedindo o usuario de cadastrar senhas que podem ser verificadas por dicionario.
+
+	retry
+		informa a quantidade de tentativas antes de informar o erro
+
+	difok
+		especifica o numero de caracteres que devem ser diferentes da senha antiga para a nova. entretanto, se metade dos caracteres da  senha nova forem diferentes ele ira aceitar.
+
+	minlen
+		numero minimo de caracteres na senha. em adicao a nova senha sao dados creditos (para cada tipo de caractere como maiusculo, minusculo, outros e numeros)
+
+	dcredit
+		e o valor maximo de creditos por digitos para serem contatos em minlen. o maximo de 4 (maisuculo ou minusculo, letras, caracters e numeros) para serem adicionados, e de +1 para minlen quando esses valores forem inseridos.
+
+	minclass
+		e o valor minimo de classes de caracteres requeridas para a nova senha. neste caso estamos formcando o uso de maiusculas, minusculas, numeros e outros. ele especifica quantas classes sao necessarias para uma nova senha de no maximo 4 e com o padrao 0
+
+	use_authok
+		esta opcao e utilizada para forcar o modulo a nao perguntar por uma nova senha, e sim usar a nova senha provida por modulos anteriores, como o proprio pam_unix
+
+
+password required pam_cracklib.so retry=3 minlen=6 difok=3
+
+pam_limits.so
+
+	estabelece limites para uso de recursos do sistema que podem ser obtidos em uma sessao de usuario estabelecida.
+
+	
