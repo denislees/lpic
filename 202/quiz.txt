@@ -386,3 +386,124 @@ Topico 209
 --------------------------------------------------------------
 
 Topico 210
+
+1. qual das seguintes opcoes pode ser passada para uma maquina cliente DHCP usando um DHCP server?
+	OK (c) A mascara de sub-rede
+
+2. voce deseja atribuir enderecos IP dinamicamente a partir de uma rede classe C para os seus clientes bootp. o que voce deve adicionar ao dhcpd.conf?
+	x(e)
+	(c) range dynamic-bootp 192.168.0.2 192.168.0.255
+
+3. foi solicitada a alocacao de um endereco IP especifico e de um DNS especifico via DHCP para um determinado cliente. qual das seguintes linhas devera ser adicionada para o host no dhcpd.conf?
+	(b) hardware ethernet FF:FF:FF:FF:FF:FF; fixed-address IP_ADDRESS; option domain-name-server DNS_IP;
+
+4. qual das seguintes opcoes podem ser passadas para um computador cliente DHCP via servidor DHCP?
+	x(b)
+	(a) Nome de dominio NIS
+
+5. qual das seguintes sentencas e verdadeira sobre o ISC DHCP?
+	x(e)
+	(d) Ele nao pode ser configurado para atribuir enderecos para clientes conhecidos
+
+6. escola a opcao do dhcpd.conf que define qual endereco(s) de DNS que sera enviado via DHCP?
+	x(d)
+	(b) domain-name-servers
+
+7. um host chamado "servidor" com um MAC address "08:00:2B:4C:59:23" deveria sempre receber o endereco IP 192.168.1.2 via DHCP. qual das opcoes de configuracao alcancou este objetivo?
+	x(e)
+	(a) host servidor {
+		hardware-ethernet 08:00:2b:4c:59:23;
+		fixed-address 192.167.1.2;
+	}
+
+8. de acordo com o arquivo dhcpd.conf, qual o nome do dominio que sera utilizado pelos clientes, via DHCP, na rede 172.16.87.0/24?
+	default lease-time 1800;
+	default-lease-time 7200
+	option domain-name "lpi.org";
+
+	subnet 172.16.87.0 netmask 255.255.255.0 {
+		range 172.16.87.128 172.16.87.254;
+		option broadcast-address 172.16.87.255;
+		option subnet-mask 255.255.255.0;
+		option domain-name-servers 172.16.87.1;
+		option domain-name "lab.lpi.org";
+	}
+
+	subnet 172.16.88.0 netmask 255.255.255.0 {
+		range 172.16.88.128 172.16.88.254;
+		option broadcast-address 172.16.87.255;
+		option subnet-mask 255.255.255.0;
+		option domain-name-servers 172.16.88.1;
+	}
+
+	lab.lpi.org
+
+9. qual comando deveria fazer release do corrente endereco Ip que foi adquirido via DHCP server?
+	(c) dhclient -r
+
+10. qual daemon e requerido para que um cliente ethernet obtenha um endereco IP de um servidor central?
+	(b) dhcpcd
+
+11. uma rede tem muitas impressoras de rede conectadas. e elas deveriam obter enderecos IP via DHCP. qual informacao de cada impressora e necesaria para que elas obtenham sempre o mesmo IP quando usarem o DHCP server?
+	(a) MAC Address
+
+12. qual comando pode ser usado para alteradr a senha para uma entrada ldap?
+	ldappasswd
+
+13.ao configurar um servico LDAP para a empresa LPI Ltda, quais das seguintes entradas deveriam ser adicionadas no slapd.conf, na diretiva de secao de banco de dados, para configurar o rootdn, onde o common name e manager e o dominio e lpi.org?
+	(b) rootdn "cn-manager,dc=lpi,dc=org"
+
+14. a autenticacao baseada em novo servidor LDAP instalado nao esta funcionando corretamente. o arquivo /etc/pam.d/login inclui as configuracoes em questao. qual delas esta incorreta?
+	(e) auth required /lib/securyt/pam_ldap.so
+
+15. qual a vantagem de usar autenticacao SASL com OpenLDAP?
+	(a) ela pode evitar a transmissao de senhas em texto puro pela rede
+
+16. qual das seguintes sentencas e verdadeira se considerarmos o arquivo /etc/pam.d/login?
+	#%PAM-1.0
+	auth required /lib/security/pam_securetty.so
+	auth required /lib/security/pam_nologin.so
+	auth sufficient /lib/security/pam_unix.so shadow nullok md5 use_authok
+	auth required /lib/curity/pam_ldap.so use_first_pass
+	account sufficient /lib/security/pam_unix.so
+	account required /lib/securitypam_ldap.so
+	password required /lib/pam/cracklib.so
+	password sufficient /lib/security/pam_unix.so nullok use_authok md5 shadown
+	password required /lib/security/pam_ldap.so use_first_pass
+	session optional /lib/security/pam_console.so
+	session sufficient /lib/security/pam_unix.so
+	session required /lib/security/pam_ldap.so
+
+	() /etc/nologin /etc/nologin
+
+17. no arquivo de configuracao do PAM, qual das opcoes e verdadeira sobre a flag de controle required?
+	(e?)
+
+18. o acesso remoto a um dispositivo CDRW em uma maquina na rede precisa ser restrito a um grupo selecionado de usuarios. selecione DUAS alternativas que possivelmente solucionariam esse problema:
+	(c) o modulo pam_console pode ser usado para controlar o acesso a esse dispositivo via console, permitindo ou negando o acesso.
+	(e) atraves do arquivo de configuracao do sudo e possivel definir os usuarios que terao o poder do usuario root, para que eles possam acessar o dispositivo. alem disso, e importante configurar o arquivo /etc/pam.d/su para garantir a seguranca do servico.
+
+19. selecione a alternativa que mostra corretamente uma forma de desabilitar o login dos usuarios, exceto para o root.
+	(e) o uso do modulo pam_nologin junto com o arquivo de con figuracao /etc/nologin
+
+20. no arquivo de configuracao do PAM, um controle suficient permite o acesso:
+	(d) verificar por pistas no arquivo de log, onde mensagens de auth e authpriv estao logadas
+
+21. voce instalou um servico que autentica via PAM, e colocou a sua configuracao em local apropriado em /etc/pam.d/servico, mas voce nao consegue autenticar. qual o melhor local para verificar por problemas?
+	(d) somente o controle requisite pode logar no syslog quando existirem falhas
+
+22. em uma configuracao de arquivo PAM, qual a diferenca entre os controles required e requisite?
+	(c) uma falha no contorle requisite e executada imediatamente, enquanto uma falha do required e ignorada ate que outro modulo a valide 
+
+23. voce esta usando o PAM para autenticar sshd e quer habilitar senhas vazias para login. qual opcao voce deve adicionar no arquivo /etc/pam.d/sshd para pertmitir isso?
+	(d) auth required /lib/security/pam_unix.so shadow nodelay nullok 
+
+24. voce usa o modulo pam_lastlog.so para se certificar de que uma entrada e feita no lastlog durante o logon. em qual tipo de gerenciamento de controle devera o modulo ser listado?
+	(d) session
+
+25. em qual diretorio os modulos pam sao armazenados?
+	/lib/security
+
+26. qual das seguintes opcoes e verdadeira, quando um servidor usa autenticacao PAM e ambos /etc/pam.conf e /etc/pam.d existirem?
+	(a) /etc/pam.conf sera ignorado
+
